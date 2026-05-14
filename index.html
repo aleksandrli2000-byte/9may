@@ -2,11 +2,9 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <!-- Идеальный Viewport для Telegram Mini Apps: без зума, во весь экран, учет челок -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Инструкция к боту «Чубайс»</title>
     
-    <!-- API Telegram -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Merriweather:wght@300;400;700;900&display=swap" rel="stylesheet">
@@ -22,24 +20,38 @@
                     },
                     colors: {
                         bot: {
-                            orange: 'var(--bot-orange)',
-                            light: 'var(--bot-light)',
-                            dark: 'var(--bot-dark)',
-                            bg: 'var(--bot-bg)',
-                            card: 'var(--bot-card)',
-                            text: 'var(--bot-text)',
-                            muted: 'var(--bot-muted)',
-                            border: 'var(--bot-border)',
+                            orange: '#ff6b00',
+                            light: '#ff9d4d',
+                            dark: '#cc5500',
+                            bg: '#f0f2f6', // Нативный цвет фона TG
+                            card: '#ffffff',
+                            text: '#000000',
                         }
                     },
                     animation: {
-                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
                         'float': 'float 4s ease-in-out infinite',
+                        'glow': 'glow 3s ease-in-out infinite alternate',
+                        'slide-up': 'slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                        'shake': 'shake 0.5s cubic-bezier(.36,.07,.19,.97) both',
                     },
                     keyframes: {
                         float: {
-                            '0%, 100%': { transform: 'translateY(0)' },
-                            '50%': { transform: 'translateY(-10px)' },
+                            '0%, 100%': { transform: 'translateY(0) scale(1)' },
+                            '50%': { transform: 'translateY(-10px) scale(1.02)' },
+                        },
+                        glow: {
+                            '0%': { boxShadow: '0 0 15px rgba(255, 107, 0, 0.2)' },
+                            '100%': { boxShadow: '0 0 30px rgba(255, 107, 0, 0.6)' },
+                        },
+                        slideUp: {
+                            '0%': { opacity: 0, transform: 'translateY(40px)' },
+                            '100%': { opacity: 1, transform: 'translateY(0)' },
+                        },
+                        shake: {
+                            '10%, 90%': { transform: 'translate3d(-1px, 0, 0)' },
+                            '20%, 80%': { transform: 'translate3d(2px, 0, 0)' },
+                            '30%, 50%, 70%': { transform: 'translate3d(-4px, 0, 0)' },
+                            '40%, 60%': { transform: 'translate3d(4px, 0, 0)' }
                         }
                     }
                 }
@@ -49,376 +61,342 @@
 
     <style>
         :root {
-            /* Молодые спецы (Современный TMA) */
-            --bot-orange: #f97316;
-            --bot-light: #fdba74;
-            --bot-dark: #ea580c;
-            --bot-bg: #f1f5f9; /* Серый фон как в TG */
-            --bot-card: #ffffff;
-            --bot-text: #0f172a;
-            --bot-muted: #64748b;
-            --bot-border: #e2e8f0;
-            --bot-font: 'Nunito', sans-serif;
+            --app-bg: #f0f2f6;
+            --card-bg: #ffffff;
+            --text-main: #000000;
+            --text-muted: #707579;
+            --accent: #ff6b00;
         }
 
-        /* Бывалые наладчики (Ретро) */
         body.retro-mode {
-            --bot-orange: #d97706; 
-            --bot-light: #fcd34d;
-            --bot-dark: #b45309;
-            --bot-bg: #e6ddce; /* Бумажный фон */
-            --bot-card: #fdf6e3;
-            --bot-text: #3d342b;
-            --bot-muted: #6b5c4d;
-            --bot-border: #d6caba;
-            --bot-font: 'Merriweather', serif;
+            --app-bg: #e8e2d2; 
+            --card-bg: #fdf6e3;
+            --text-main: #3d342b;
+            --text-muted: #6b5c4d;
+            --accent: #d97706;
+            font-family: 'Merriweather', serif;
         }
 
-        /* Ветераны ПНР (Контрастный) */
         body.elderly-mode {
-            --bot-orange: #0284c7; 
-            --bot-light: #38bdf8;
-            --bot-dark: #0369a1;
-            --bot-bg: #ffffff; 
-            --bot-card: #ffffff;
-            --bot-text: #000000; 
-            --bot-muted: #222222;
-            --bot-border: #94a3b8;
-            --bot-font: 'Arial', sans-serif; 
+            --app-bg: #ffffff; 
+            --card-bg: #ffffff;
+            --text-main: #000000; 
+            --text-muted: #222222;
+            --accent: #0284c7;
+            font-family: 'Arial', sans-serif; 
         }
-        
-        body.elderly-mode .text-sm { font-size: 1.15rem !important; line-height: 1.5; }
-        body.elderly-mode .text-base { font-size: 1.25rem !important; line-height: 1.5; }
-        body.elderly-mode .hide-for-elderly { display: none !important; }
-        body.elderly-mode .tma-card { border: 2px solid #000 !important; box-shadow: none !important; }
 
         body {
-            background-color: var(--bot-bg);
-            color: var(--bot-text);
-            font-family: var(--bot-font);
-            transition: background-color 0.3s ease, color 0.3s ease;
+            background-color: var(--app-bg);
+            color: var(--text-main);
+            transition: background-color 0.4s ease;
             -webkit-tap-highlight-color: transparent;
-            overscroll-behavior-y: none; /* Убираем эффект резинки */
-            padding-top: env(safe-area-inset-top);
-            padding-bottom: env(safe-area-inset-bottom);
+            overscroll-behavior-y: none;
+            padding-top: calc(env(safe-area-inset-top) + 60px);
+            padding-bottom: calc(env(safe-area-inset-bottom) + 100px);
+            /* Декоративный бэкграунд */
+            background-image: radial-gradient(circle at 50% 0%, rgba(255,107,0,0.08) 0%, transparent 60%);
         }
 
-        /* Стили карточек в духе iOS / Telegram */
-        .tma-card {
-            background-color: var(--bot-card);
-            border-radius: 20px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.03);
-            border: 1px solid var(--bot-border);
+        /* TMA Карточки со стеклянным эффектом (Glassmorphism) */
+        .glass-card {
+            background: var(--card-bg);
+            border-radius: 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.03), inset 0 0 0 1px rgba(255,255,255,0.5);
+            margin-bottom: 20px;
             overflow: hidden;
-        }
-
-        /* Тактильные кнопки */
-        .tma-active {
-            transition: transform 0.1s ease, opacity 0.1s ease;
-        }
-        .tma-active:active {
-            transform: scale(0.97);
-            opacity: 0.8;
-        }
-
-        /* Сегментированный контрол (Переключатель режимов) */
-        .segmented-control {
-            background: rgba(241, 245, 249, 0.8);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--bot-border);
-        }
-        body.retro-mode .segmented-control { background: rgba(230, 221, 206, 0.9); }
-        body.elderly-mode .segmented-control { background: #fff; border-bottom: 2px solid #000; }
-
-        .mode-btn {
             position: relative;
-            z-index: 1;
-            transition: color 0.3s ease;
+            z-index: 10;
         }
-        .mode-btn.active { color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
-        
+        body.elderly-mode .glass-card {
+            border: 3px solid #000 !important;
+            box-shadow: none !important;
+            border-radius: 16px;
+        }
+
+        /* Плавное появление (Scroll Animation) */
+        .reveal-item { opacity: 0; }
+
+        /* Segmented Control (iOS style) */
+        .segmented-wrapper {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+            padding: calc(env(safe-area-inset-top) + 8px) 16px 12px;
+            background: rgba(var(--app-bg), 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+        .segmented-control {
+            display: flex; position: relative; background: rgba(118, 118, 128, 0.12);
+            border-radius: 12px; padding: 2px;
+        }
         .mode-indicator {
-            position: absolute;
-            top: 4px; bottom: 4px;
-            border-radius: 8px;
-            background: var(--bot-orange);
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            z-index: 0;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: absolute; top: 2px; bottom: 2px;
+            background: var(--card-bg); border-radius: 10px;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.12), 0 3px 1px rgba(0,0,0,0.04);
+            transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1), width 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+            z-index: 1;
         }
+        .mode-btn {
+            flex: 1; position: relative; z-index: 2;
+            text-align: center; font-size: 13px; font-weight: 700;
+            padding: 8px 0; color: var(--text-muted); transition: color 0.3s;
+        }
+        .mode-btn.active { color: var(--text-main); }
 
-        /* Шторка (Bottom Sheet) для Досье */
-        .bottom-sheet {
-            position: fixed;
-            bottom: 0; left: 0; right: 0;
-            background: var(--bot-card);
-            border-radius: 24px 24px 0 0;
-            transform: translateY(100%);
-            transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
-            z-index: 1000;
-            padding-bottom: calc(24px + env(safe-area-inset-bottom));
-            box-shadow: 0 -10px 40px rgba(0,0,0,0.1);
-        }
-        .bottom-sheet.show { transform: translateY(0); }
-        .sheet-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.5);
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-            z-index: 999;
-        }
-        .sheet-overlay.show { opacity: 1; pointer-events: auto; }
-
-        /* Иконка жены (FAB) */
-        #wife-container {
-            position: fixed;
-            bottom: max(20px, env(safe-area-inset-bottom));
-            left: 16px;
-            z-index: 90;
-        }
-        .wife-bubble {
-            position: absolute; bottom: 70px; left: 0;
-            background: var(--bot-card); border: 2px solid var(--bot-orange);
-            padding: 12px 16px; border-radius: 16px; border-bottom-left-radius: 4px;
-            width: max-content; max-width: calc(100vw - 40px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-            opacity: 0; transform: scale(0.9) translateY(10px) origin-bottom-left;
-            pointer-events: none; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-        .wife-bubble::after {
-            content: ''; position: absolute; bottom: -8px; left: 16px;
-            border-width: 8px 8px 0 0; border-style: solid;
-            border-color: var(--bot-orange) transparent transparent transparent;
-        }
-        #wife-container:hover .wife-bubble, #wife-container:active .wife-bubble, .wife-bubble.show {
-            opacity: 1; transform: scale(1) translateY(0); pointer-events: auto;
-        }
-
-        /* Списки в стиле Telegram Settings */
+        /* Нативные списки TG */
         .tg-list-item {
-            display: flex;
-            align-items: center;
-            padding: 12px 16px;
-            border-bottom: 1px solid var(--bot-border);
+            display: flex; align-items: center; padding: 14px 16px;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            transition: background-color 0.2s;
         }
+        .tg-list-item:active { background-color: rgba(0,0,0,0.03); }
         .tg-list-item:last-child { border-bottom: none; }
-        .tg-icon-box {
-            width: 32px; height: 32px; border-radius: 8px;
+        
+        .icon-box {
+            width: 36px; height: 36px; border-radius: 10px;
             display: flex; align-items: center; justify-content: center;
-            margin-right: 12px; flex-shrink: 0;
+            margin-right: 14px; flex-shrink: 0; font-size: 16px;
         }
+
+        /* Жена Чубайса (FAB + Spring Bubble) */
+        #wife-container {
+            position: fixed; bottom: calc(env(safe-area-inset-bottom) + 20px); left: 16px; z-index: 90;
+        }
+        .wife-fab {
+            width: 56px; height: 56px; border-radius: 28px;
+            background: var(--card-bg); box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            display: flex; align-items: center; justify-content: center;
+            border: 2px solid rgba(0,0,0,0.05); position: relative;
+            transition: transform 0.1s;
+        }
+        .wife-fab:active { transform: scale(0.92); }
+        .wife-bubble {
+            position: absolute; bottom: 76px; left: 0; width: max-content; max-width: calc(100vw - 40px);
+            background: rgba(255,255,255,0.95); backdrop-filter: blur(10px);
+            border: 2px solid #ec4899; padding: 14px 18px; border-radius: 20px 20px 20px 4px;
+            box-shadow: 0 12px 30px rgba(236, 72, 153, 0.2);
+            opacity: 0; transform: scale(0.8) translateY(20px); transform-origin: bottom left;
+            pointer-events: none; transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .wife-bubble.show { opacity: 1; transform: scale(1) translateY(0); pointer-events: auto; }
+
+        /* Скрытия для пенсионеров */
+        body.elderly-mode .hide-for-elderly { display: none !important; }
+        body.elderly-mode .text-xs { font-size: 16px !important; line-height: 1.4; }
+        body.elderly-mode .text-sm { font-size: 18px !important; line-height: 1.4; }
+
+        /* Кастомный тост */
+        .tma-toast {
+            position: fixed; top: 80px; left: 50%; transform: translateX(-50%) translateY(-100px);
+            background: rgba(0,0,0,0.8); color: #fff; padding: 12px 20px; border-radius: 100px;
+            font-weight: bold; font-size: 14px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 1000; opacity: 0; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            backdrop-filter: blur(8px);
+        }
+        .tma-toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
     </style>
 </head>
-<body class="pb-24">
+<body class="antialiased selection:bg-orange-200">
 
-    <!-- Стеклянный переключатель поколений (TMA Style) -->
-    <div class="segmented-control fixed w-full z-[100] top-0 pt-[env(safe-area-inset-top)] px-3 pb-2 shadow-sm">
-        <div class="relative flex bg-gray-200/50 dark:bg-gray-800/20 rounded-xl p-1" id="mode-tabs">
+    <div class="segmented-wrapper" id="top-nav">
+        <div class="segmented-control" id="mode-tabs">
             <div id="mode-indicator" class="mode-indicator"></div>
-            <button onclick="setMode(0, this)" class="mode-btn active flex-1 text-[11px] sm:text-xs font-bold py-2 rounded-lg text-center" style="width: 33.33%;">Молодые спецы</button>
-            <button onclick="setMode(1, this)" class="mode-btn flex-1 text-[11px] sm:text-xs font-bold py-2 rounded-lg text-center text-slate-600" style="width: 33.33%;">Бывалые</button>
-            <button onclick="setMode(2, this)" class="mode-btn flex-1 text-[11px] sm:text-xs font-bold py-2 rounded-lg text-center text-slate-600" style="width: 33.33%;">Ветераны ПНР</button>
+            <button onclick="setMode(0, this)" class="mode-btn active" style="width: 33.33%;">Молодые спецы</button>
+            <button onclick="setMode(1, this)" class="mode-btn" style="width: 33.33%;">Бывалые</button>
+            <button onclick="setMode(2, this)" class="mode-btn" style="width: 33.33%;">Ветераны ПНР</button>
         </div>
     </div>
 
-    <div class="pt-20 px-4 max-w-2xl mx-auto">
+    <!-- Всплывающее уведомление (Тост) -->
+    <div id="tma-toast" class="tma-toast flex items-center">
+        <i class="fa-solid fa-circle-check text-green-400 mr-2"></i> <span id="toast-text">Скопировано</span>
+    </div>
+
+    <div class="px-4 max-w-2xl mx-auto">
         
-        <!-- Окно для Ветеранов ПНР -->
-        <div class="tma-card mb-6 hidden border-2 border-red-500 bg-red-50" id="elderly-start-warning">
-            <div class="p-5 text-center">
-                <i class="fa-solid fa-triangle-exclamation text-4xl text-red-500 mb-3 animate-pulse"></i>
-                <h2 class="text-xl font-black text-red-700 mb-2 uppercase">Важное правило!</h2>
-                <p class="text-gray-900 font-bold text-base mb-4">Чтобы кнопки появились на экране телефона, вам нужно <strong>обязательно</strong> отправить боту команду старта.</p>
-                <div class="bg-white p-3 rounded-xl border border-red-200">
-                    <p class="text-gray-800 text-sm font-bold mb-2">Нажмите на большую кнопку внизу экрана:</p>
-                    <div class="bg-blue-500 text-white font-black py-2 px-4 rounded-lg inline-block uppercase tracking-wide">СТАРТ</div>
-                    <p class="text-gray-500 text-xs mt-2">Или напишите английскими буквами: <strong>/start</strong></p>
+        <!-- Красное окно для Ветеранов ПНР -->
+        <div class="glass-card mb-6 hidden bg-red-50 border-2 border-red-500 reveal-item" id="elderly-start-warning">
+            <div class="p-6 text-center">
+                <i class="fa-solid fa-triangle-exclamation text-5xl text-red-500 mb-4 animate-pulse"></i>
+                <h2 class="text-2xl font-black text-red-700 mb-3 uppercase tracking-wider">Внимание!</h2>
+                <p class="text-gray-900 font-bold text-lg mb-4">Чтобы кнопки появились на экране, вам нужно <strong>обязательно</strong> отправить боту команду старта.</p>
+                <div class="bg-white p-4 rounded-xl border-2 border-red-200 shadow-sm">
+                    <p class="text-gray-800 font-bold mb-3">Нажмите на большую кнопку внизу экрана:</p>
+                    <div class="bg-blue-600 text-white font-black py-3 px-6 rounded-xl inline-block uppercase tracking-wide text-xl shadow-lg cursor-pointer" onclick="copyStart()">СТАРТ</div>
+                    <p class="text-gray-600 font-medium mt-3">Или напишите английскими буквами: <strong>/start</strong></p>
                 </div>
             </div>
         </div>
 
-        <!-- Главный экран -->
-        <div class="text-center mb-8 pt-4">
-            <div class="w-20 h-20 mx-auto bg-white rounded-full shadow-md flex items-center justify-center border-2 border-bot-orange mb-4 animate-float relative">
-                <i class="fa-solid fa-cat text-4xl text-bot-orange"></i>
-                <div class="absolute -bottom-1 -right-1 bg-green-500 w-5 h-5 rounded-full border-2 border-white"></div>
+        <!-- Главный экран (Hero) -->
+        <div class="text-center mb-8 pt-2 reveal-item">
+            <div id="cat-avatar" class="w-24 h-24 mx-auto bg-gradient-to-tr from-orange-100 to-orange-50 rounded-full shadow-lg flex items-center justify-center border-4 border-white mb-4 animate-float relative cursor-pointer active:scale-95 transition-transform">
+                <i class="fa-solid fa-cat text-5xl text-bot-orange drop-shadow-md"></i>
+                <div class="absolute bottom-0 right-0 bg-green-500 w-6 h-6 rounded-full border-4 border-white shadow-sm"></div>
             </div>
-            <h1 class="text-3xl font-black tracking-tight mb-2 leading-tight text-bot-text" data-id="main_title">
+            <h1 class="text-3xl sm:text-4xl font-black tracking-tight mb-3 leading-tight" data-id="main_title">
                 Документация <br>
-                <span class="text-bot-orange">бота «Чубайс»</span>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-amber-500">бота «Чубайс»</span>
             </h1>
-            <p class="text-sm font-semibold text-bot-muted px-2 mb-6" data-id="main_desc">
-                Ваш карманный помощник для учета заявок. Автоматически собирает отчеты, пока спит на батарее. Подчиняется исключительно Насте. (Версия 2026)
+            <p class="text-sm font-semibold text-[var(--text-muted)] px-2 mb-6 leading-relaxed" data-id="main_desc">
+                Ваш карманный помощник. Собирает отчеты, пока спит на батарее. Подчиняется исключительно Насте. (Версия 2026)
             </p>
-            
-            <div class="flex gap-3 justify-center hide-for-elderly">
-                <button onclick="copyCommand()" class="tma-active flex-1 bg-bot-text text-white font-bold py-3 px-4 rounded-xl shadow-md flex items-center justify-center text-sm">
-                    <i class="fa-solid fa-copy mr-2"></i> /start
-                </button>
-                <button onclick="toggleDossier(true)" class="tma-active flex-1 bg-white border border-bot-border text-bot-text font-bold py-3 px-4 rounded-xl shadow-sm flex items-center justify-center text-sm">
-                    <i class="fa-solid fa-folder-open mr-2 text-bot-orange"></i> Досье
-                </button>
-            </div>
         </div>
 
-        <h2 class="text-sm font-black text-bot-muted uppercase tracking-wider mb-2 ml-2" data-id="menu_title">Главное меню</h2>
+        <h2 class="text-xs font-black text-[var(--text-muted)] uppercase tracking-widest mb-3 ml-4 opacity-70 reveal-item" data-id="menu_title">Главное меню</h2>
         
-        <div class="tma-card mb-6">
+        <div class="glass-card mb-6 reveal-item">
             <!-- Заявка -->
-            <div class="p-4 border-b border-bot-border">
-                <div class="flex items-center mb-2">
-                    <div class="tg-icon-box bg-blue-100 text-blue-600"><i class="fa-solid fa-plus"></i></div>
-                    <h3 class="text-lg font-black text-bot-text">Новая заявка</h3>
+            <div class="p-5 border-b border-gray-100 relative overflow-hidden group hover:bg-gray-50/50 transition-colors">
+                <div class="absolute top-0 right-0 w-24 h-24 bg-blue-500 opacity-5 rounded-full blur-2xl -mr-10 -mt-10"></div>
+                <div class="flex items-center mb-3">
+                    <div class="icon-box bg-blue-100 text-blue-600 shadow-sm"><i class="fa-solid fa-plus"></i></div>
+                    <h3 class="text-xl font-black">Новая заявка</h3>
                 </div>
-                <p class="text-sm text-bot-muted font-semibold mb-3" data-id="card1_desc">Поймали новую мышь? Зафиксируйте её здесь.</p>
-                <div class="bg-bot-bg rounded-lg p-3 text-xs font-bold text-bot-text space-y-2">
-                    <div class="flex" data-id="c1_li1"><i class="fa-solid fa-check text-green-500 mr-2 mt-0.5"></i> Введите номер заявки.</div>
-                    <div class="flex" data-id="c1_li2"><i class="fa-solid fa-check text-green-500 mr-2 mt-0.5"></i> Выберите состав бригады.</div>
-                    <div class="flex" data-id="c1_li3"><i class="fa-solid fa-check text-green-500 mr-2 mt-0.5"></i> Нажмите «ПОДТВЕРДИТЬ».</div>
+                <p class="text-sm font-semibold text-[var(--text-muted)] mb-4" data-id="card1_desc">Поймали новую мышь? Зафиксируйте её здесь.</p>
+                <div class="bg-[var(--app-bg)] rounded-xl p-4 text-xs font-bold space-y-2.5">
+                    <div class="flex items-start" data-id="c1_li1"><i class="fa-solid fa-check text-green-500 mr-2 mt-0.5"></i> Введите номер заявки.</div>
+                    <div class="flex items-start" data-id="c1_li2"><i class="fa-solid fa-check text-green-500 mr-2 mt-0.5"></i> Выберите состав бригады.</div>
+                    <div class="flex items-start" data-id="c1_li3"><i class="fa-solid fa-check text-green-500 mr-2 mt-0.5"></i> Нажмите «ПОДТВЕРДИТЬ».</div>
                 </div>
             </div>
 
             <!-- Лоток -->
-            <div class="p-4 border-b border-bot-border">
-                <div class="flex items-center mb-2">
-                    <div class="tg-icon-box bg-indigo-100 text-indigo-600"><i class="fa-solid fa-clipboard-list"></i></div>
-                    <h3 class="text-lg font-black text-bot-text" data-id="card2_title">Мои заявки (Лоток)</h3>
+            <div class="p-5 border-b border-gray-100 relative overflow-hidden hover:bg-gray-50/50 transition-colors">
+                <div class="absolute top-0 right-0 w-24 h-24 bg-indigo-500 opacity-5 rounded-full blur-2xl -mr-10 -mt-10"></div>
+                <div class="flex items-center mb-3">
+                    <div class="icon-box bg-indigo-100 text-indigo-600 shadow-sm"><i class="fa-solid fa-clipboard-list"></i></div>
+                    <h3 class="text-xl font-black" data-id="card2_title">Мои заявки (Лоток)</h3>
                 </div>
-                <p class="text-sm text-bot-muted font-semibold mb-3" data-id="card2_desc">Ваш рабочий стол.</p>
-                
-                <div class="space-y-0">
-                    <div class="tg-list-item px-0">
-                        <span class="bg-yellow-100 text-yellow-800 text-[10px] font-black px-2 py-1 rounded w-20 text-center shrink-0">⏸ Пауза</span>
-                        <span class="text-xs font-bold text-bot-text ml-3 leading-tight" data-id="st_pause_desc">Бросить работу и уйти спать.</span>
-                    </div>
-                    <div class="tg-list-item px-0">
-                        <span class="bg-blue-100 text-blue-800 text-[10px] font-black px-2 py-1 rounded w-20 text-center shrink-0">▶️ В работу</span>
-                        <span class="text-xs font-bold text-bot-text ml-3 leading-tight" data-id="st_work_desc">Снять с паузы.</span>
-                    </div>
-                    <div class="tg-list-item px-0">
-                        <span class="bg-green-100 text-green-800 text-[10px] font-black px-2 py-1 rounded w-20 text-center shrink-0">✅ Сдано</span>
-                        <span class="text-xs font-bold text-bot-text ml-3 leading-tight" data-id="st_done_desc">Отправить в Архив.</span>
-                    </div>
-                    <div class="tg-list-item px-0 border-none pb-0">
-                        <span class="bg-purple-100 text-purple-800 text-[10px] font-black px-2 py-1 rounded w-20 text-center shrink-0">📝 На завтра</span>
-                        <span class="text-xs font-black text-purple-700 ml-3 leading-tight" data-id="st_tmrw_desc">Добавляет в план на завтра!</span>
-                    </div>
+                <p class="text-sm font-semibold text-[var(--text-muted)] mb-3" data-id="card2_desc">Ваш рабочий стол.</p>
+                <div class="space-y-1">
+                    <div class="tg-list-item px-0"><span class="bg-yellow-100 text-yellow-800 text-[10px] uppercase font-black px-2 py-1 rounded-md w-24 text-center shrink-0 shadow-sm">⏸ Пауза</span><span class="text-xs font-bold ml-3" data-id="st_pause_desc">Бросить работу и уйти спать.</span></div>
+                    <div class="tg-list-item px-0"><span class="bg-blue-100 text-blue-800 text-[10px] uppercase font-black px-2 py-1 rounded-md w-24 text-center shrink-0 shadow-sm">▶️ В работу</span><span class="text-xs font-bold ml-3" data-id="st_work_desc">Снять с паузы.</span></div>
+                    <div class="tg-list-item px-0"><span class="bg-green-100 text-green-800 text-[10px] uppercase font-black px-2 py-1 rounded-md w-24 text-center shrink-0 shadow-sm">✅ Сдано</span><span class="text-xs font-bold ml-3" data-id="st_done_desc">Мышь съедена. Отправить в Архив.</span></div>
+                    <div class="tg-list-item px-0 border-none pb-0"><span class="bg-purple-100 text-purple-800 text-[10px] uppercase font-black px-2 py-1 rounded-md w-24 text-center shrink-0 shadow-sm">📝 На завтра</span><span class="text-xs font-black text-purple-600 ml-3" data-id="st_tmrw_desc">Добавляет в план на завтра! Важно!</span></div>
                 </div>
             </div>
 
             <!-- На завтра -->
-            <div class="p-4 bg-orange-50/50">
-                <div class="flex items-center mb-2">
-                    <div class="tg-icon-box bg-bot-orange text-white"><i class="fa-solid fa-calendar-day"></i></div>
-                    <h3 class="text-lg font-black text-bot-text" data-id="card3_title">На завтра (Миска)</h3>
+            <div class="p-5 bg-gradient-to-br from-orange-50/80 to-transparent">
+                <div class="flex items-center mb-3">
+                    <div class="icon-box bg-gradient-to-tr from-bot-dark to-bot-orange text-white shadow-md"><i class="fa-solid fa-calendar-day"></i></div>
+                    <h3 class="text-xl font-black" data-id="card3_title">На завтра (Миска)</h3>
                 </div>
-                <p class="text-sm text-bot-muted font-semibold mb-3" data-id="card3_desc">Корзина планов. Можно нажать ❌ Убрать.</p>
-                <div class="bg-white p-3 rounded-lg border border-red-200 border-l-4 border-l-red-500 shadow-sm">
-                    <p class="text-red-700 text-xs font-black mb-1 uppercase"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Внимание</p>
-                    <p class="text-bot-text text-xs font-bold leading-tight" data-id="card3_rule">Запись на завтра строго <strong>с 12:00 до 16:30</strong>. После кормушка закрывается!</p>
+                <p class="text-sm font-semibold text-[var(--text-muted)] mb-4" data-id="card3_desc">Корзина планов. Можно нажать ❌ Убрать.</p>
+                <div class="bg-white p-4 rounded-xl border border-red-100 border-l-4 border-l-red-500 shadow-sm">
+                    <p class="text-red-600 text-xs font-black mb-1.5 uppercase tracking-wide"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Железное правило</p>
+                    <p class="text-sm font-bold leading-tight" data-id="card3_rule">Запись на завтра строго <strong>с 12:00 до 16:30</strong>. После кормушка закрывается!</p>
                 </div>
             </div>
         </div>
 
         <!-- Сообщить о проблеме -->
-        <div class="tma-card mb-8 p-4 bg-red-50/30 border-red-100 tma-active cursor-pointer">
-            <div class="flex items-center">
-                <div class="tg-icon-box bg-red-500 text-white shadow-md animate-pulse-slow"><i class="fa-solid fa-life-ring"></i></div>
+        <div class="glass-card mb-8 reveal-item cursor-pointer transform transition-transform active:scale-95" onclick="triggerHaptic('heavy')">
+            <div class="p-5 bg-gradient-to-r from-red-50/80 to-transparent border-l-4 border-l-red-500 flex items-center">
+                <div class="icon-box bg-red-500 text-white shadow-lg shadow-red-500/30 animate-pulse-slow"><i class="fa-solid fa-life-ring"></i></div>
                 <div>
-                    <h3 class="text-base font-black text-red-900 leading-tight" data-id="card4_title">🆘 Сообщить о проблеме</h3>
-                    <p class="text-xs text-red-700 font-bold mt-0.5" data-id="card4_desc">Прямая связь с Настей.</p>
+                    <h3 class="text-lg font-black text-red-800 leading-tight" data-id="card4_title">🆘 Сообщить о проблеме</h3>
+                    <p class="text-xs font-bold text-red-600/80 mt-1" data-id="card4_desc">Бот принесет жалобу в зубах прямо Насте.</p>
                 </div>
             </div>
         </div>
 
-        <h2 class="text-sm font-black text-bot-muted uppercase tracking-wider mb-2 ml-2 hide-for-elderly" data-id="routine_title">Режим дня</h2>
-        <div class="tma-card mb-8 hide-for-elderly">
+        <h2 class="text-xs font-black text-[var(--text-muted)] uppercase tracking-widest mb-3 ml-4 opacity-70 hide-for-elderly reveal-item" data-id="routine_title">Режим дня</h2>
+        <div class="glass-card mb-8 hide-for-elderly reveal-item">
             <div class="tg-list-item">
-                <div class="font-black text-lg text-bot-orange w-14 text-center">12:00</div>
-                <div class="ml-3">
-                    <strong class="text-sm font-black text-bot-text block" data-id="r_1_title">Утренний опрос (Мяу!)</strong>
-                    <span class="text-xs font-bold text-bot-muted" data-id="r_1_desc">Бот спрашивает: «Что завтра делаем?»</span>
+                <div class="font-black text-xl text-bot-orange w-16 text-center drop-shadow-sm">12:00</div>
+                <div class="ml-2">
+                    <strong class="text-base font-black block" data-id="r_1_title">Утренний опрос (Мяу!)</strong>
+                    <span class="text-xs font-bold text-[var(--text-muted)]" data-id="r_1_desc">Спрашивает: «Что завтра делаем?»</span>
                 </div>
             </div>
             <div class="tg-list-item bg-orange-50/50">
-                <div class="font-black text-sm text-yellow-600 w-14 text-center leading-tight">12:00<br><span class="text-[10px] opacity-50">▼</span><br>16:30</div>
-                <div class="ml-3">
-                    <strong class="text-sm font-black text-orange-900 block" data-id="r_2_title">Время планирования</strong>
-                    <span class="text-xs font-bold text-orange-800" data-id="r_2_desc">Жмем 📝 Записать на завтра.</span>
+                <div class="font-black text-sm text-amber-600 w-16 text-center leading-tight">12:00<br><span class="text-[10px] opacity-40">▼</span><br>16:30</div>
+                <div class="ml-2">
+                    <strong class="text-base font-black text-amber-900 block" data-id="r_2_title">Время планирования</strong>
+                    <span class="text-xs font-bold text-amber-700" data-id="r_2_desc">Жмем 📝 Записать на завтра.</span>
                 </div>
             </div>
             <div class="tg-list-item">
-                <div class="font-black text-lg text-red-500 w-14 text-center">16:30</div>
-                <div class="ml-3">
-                    <strong class="text-sm font-black text-bot-text block" data-id="r_3_title">Закрытие смены</strong>
-                    <span class="text-xs font-bold text-bot-muted" data-id="r_3_desc">Отчет улетает в Google. Телефоны очищаются.</span>
+                <div class="font-black text-xl text-red-500 w-16 text-center drop-shadow-sm">16:30</div>
+                <div class="ml-2">
+                    <strong class="text-base font-black block" data-id="r_3_title">Закрытие смены</strong>
+                    <span class="text-xs font-bold text-[var(--text-muted)]" data-id="r_3_desc">Отчет в Google. Бот уходит к кошечкам.</span>
                 </div>
             </div>
         </div>
 
-        <h2 class="text-sm font-black text-purple-600 uppercase tracking-wider mb-2 ml-2 hide-for-elderly"><i class="fa-solid fa-crown mr-1"></i> Админ-панель</h2>
-        <div class="tma-card mb-8 hide-for-elderly p-2 grid grid-cols-2 gap-2 bg-purple-50/30">
-            <div class="bg-white p-3 rounded-xl border border-bot-border tma-active">
-                <div class="text-xl mb-1">🚀</div><h4 class="font-black text-xs text-bot-text">Опрос</h4><p class="text-[10px] text-bot-muted font-bold leading-tight" data-id="adm_1">Разбудить всех пинком.</p>
+        <h2 class="text-xs font-black text-purple-600 uppercase tracking-widest mb-3 ml-4 opacity-80 hide-for-elderly reveal-item"><i class="fa-solid fa-crown mr-1"></i> Вожакам стаи</h2>
+        <div class="glass-card mb-8 hide-for-elderly p-3 grid grid-cols-2 gap-3 bg-gradient-to-br from-purple-50/50 to-transparent reveal-item">
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-purple-100 active:scale-95 transition-transform" onclick="triggerHaptic('light')">
+                <div class="text-2xl mb-2">🚀</div><h4 class="font-black text-sm mb-1">Опрос</h4><p class="text-[10px] font-bold text-gray-500 leading-tight" data-id="adm_1">Разбудить всех пинком.</p>
             </div>
-            <div class="bg-white p-3 rounded-xl border border-bot-border tma-active">
-                <div class="text-xl mb-1">💾</div><h4 class="font-black text-xs text-bot-text">На завтра</h4><p class="text-[10px] text-bot-muted font-bold leading-tight" data-id="adm_2">Подсмотреть черновик.</p>
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-purple-100 active:scale-95 transition-transform" onclick="triggerHaptic('light')">
+                <div class="text-2xl mb-2">💾</div><h4 class="font-black text-sm mb-1">На завтра</h4><p class="text-[10px] font-bold text-gray-500 leading-tight" data-id="adm_2">Подсмотреть черновик.</p>
             </div>
-            <div class="bg-white p-3 rounded-xl border border-bot-border border-l-2 border-l-red-400 tma-active">
-                <div class="text-xl mb-1">💩</div><h4 class="font-black text-xs text-red-900">Кто не записался</h4><p class="text-[10px] text-red-700 font-bold leading-tight" data-id="adm_3">Раздать лещи отлынивающим.</p>
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-purple-100 border-l-4 border-l-amber-500 active:scale-95 transition-transform" onclick="triggerHaptic('medium')">
+                <div class="text-2xl mb-2">💩</div><h4 class="font-black text-sm text-amber-900 mb-1">Кто не записался</h4><p class="text-[10px] font-bold text-amber-700 leading-tight" data-id="adm_3">Раздать лещи вонючкам.</p>
             </div>
-            <div class="bg-white p-3 rounded-xl border border-bot-border border-l-2 border-l-green-400 tma-active">
-                <div class="text-xl mb-1 animate-pulse">🟢</div><h4 class="font-black text-xs text-green-900">Live-отчет</h4><p class="text-[10px] text-green-700 font-bold leading-tight" data-id="adm_4">Онлайн-слежка ВКЛ/ВЫКЛ.</p>
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-purple-100 border-l-4 border-l-green-500 active:scale-95 transition-transform" onclick="triggerHaptic('medium')">
+                <div class="text-2xl mb-2 animate-pulse">🟢</div><h4 class="font-black text-sm text-green-900 mb-1">Live-отчет</h4><p class="text-[10px] font-bold text-green-700 leading-tight" data-id="adm_4">Онлайн-слежка ВКЛ/ВЫКЛ.</p>
             </div>
-            <div class="bg-white p-3 rounded-xl border border-bot-border col-span-2">
-                <h4 class="font-black text-xs text-bot-text mb-2"><i class="fa-solid fa-stopwatch text-bot-orange mr-1"></i> Таймер заявок</h4>
-                <div class="flex text-[10px] font-bold gap-2">
-                    <div class="flex-1 bg-gray-100 p-1.5 rounded text-center">⏲ Авто</div>
-                    <div class="flex-1 bg-green-100 text-green-800 p-1.5 rounded text-center">🔓 Открыть</div>
-                    <div class="flex-1 bg-red-100 text-red-800 p-1.5 rounded text-center">🔒 Закрыть</div>
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-purple-100 col-span-2">
+                <h4 class="font-black text-sm mb-3 flex items-center"><i class="fa-solid fa-stopwatch text-bot-orange mr-2"></i> Таймер заявок</h4>
+                <div class="flex text-[11px] font-black uppercase tracking-wide gap-2">
+                    <div class="flex-1 bg-gray-100 p-2 rounded-lg text-center shadow-inner">⏲ Авто</div>
+                    <div class="flex-1 bg-green-100 text-green-800 p-2 rounded-lg text-center shadow-inner">🔓 Открыть</div>
+                    <div class="flex-1 bg-red-100 text-red-800 p-2 rounded-lg text-center shadow-inner">🔒 Закрыть</div>
                 </div>
             </div>
         </div>
 
-        <h2 class="text-sm font-black text-bot-muted uppercase tracking-wider mb-2 ml-2 hide-for-elderly"><i class="fa-solid fa-table mr-1"></i> База данных</h2>
-        <div class="tma-card mb-8 hide-for-elderly">
-            <div class="tg-list-item"><div class="tg-icon-box bg-blue-100 text-blue-600"><i class="fa-solid fa-users"></i></div><div><h3 class="text-sm font-black">1. Сотрудники</h3><p class="text-xs font-bold text-bot-muted">Допущенные к боту. Уволить = удалить строку.</p></div></div>
-            <div class="tg-list-item"><div class="tg-icon-box bg-purple-100 text-purple-600"><i class="fa-solid fa-crown"></i></div><div><h3 class="text-sm font-black">2. Админы</h3><p class="text-xs font-bold text-bot-muted">Получают жалобы для Насти.</p></div></div>
-            <div class="tg-list-item"><div class="tg-icon-box bg-green-100 text-green-600">🟢</div><div><h3 class="text-sm font-black">3. Live</h3><p class="text-xs font-bold text-bot-muted">Дашборд онлайн. Не трогать вручную!</p></div></div>
-            <div class="tg-list-item"><div class="tg-icon-box bg-gray-200 text-gray-600">🏁</div><div><h3 class="text-sm font-black">4. Завершенные</h3><p class="text-xs font-bold text-bot-muted">Архив закопанных работ.</p></div></div>
-            <div class="tg-list-item"><div class="tg-icon-box bg-blue-100 text-blue-600">💾</div><div><h3 class="text-sm font-black">5. Просмотр на завтра</h3><p class="text-xs font-bold text-bot-muted">Черновик. Обновляется каждый час.</p></div></div>
-            <div class="tg-list-item bg-orange-50"><div class="tg-icon-box bg-bot-orange text-white"><i class="fa-solid fa-star"></i></div><div><h3 class="text-sm font-black">6. Отчеты</h3><p class="text-xs font-bold text-orange-900">Главный архив. Выгружается в 16:30 вниз.</p></div></div>
-            <div class="tg-list-item bg-red-50"><div class="tg-icon-box bg-red-500 text-white"><i class="fa-solid fa-brain"></i></div><div><h3 class="text-sm font-black text-red-900">7. Память (Опасно)</h3><p class="text-xs font-bold text-red-800">Если бот завис, удалите строку сотрудника здесь.</p></div></div>
+        <h2 class="text-xs font-black text-[var(--text-muted)] uppercase tracking-widest mb-3 ml-4 opacity-70 hide-for-elderly reveal-item"><i class="fa-solid fa-table mr-1"></i> База Данных (Google)</h2>
+        <div class="glass-card mb-8 hide-for-elderly reveal-item">
+            <div class="tg-list-item"><div class="icon-box bg-blue-100 text-blue-600"><i class="fa-solid fa-users"></i></div><div><h3 class="text-sm font-black">1. Сотрудники</h3><p class="text-[11px] font-bold text-gray-500">Допущенные к боту. Уволить = удалить строку.</p></div></div>
+            <div class="tg-list-item"><div class="icon-box bg-purple-100 text-purple-600"><i class="fa-solid fa-crown"></i></div><div><h3 class="text-sm font-black">2. Админы</h3><p class="text-[11px] font-bold text-gray-500">Получают жалобы для Насти.</p></div></div>
+            <div class="tg-list-item"><div class="icon-box bg-green-100 text-green-600 animate-pulse">🟢</div><div><h3 class="text-sm font-black">3. Live</h3><p class="text-[11px] font-bold text-gray-500">Дашборд онлайн. Не трогать вручную!</p></div></div>
+            <div class="tg-list-item"><div class="icon-box bg-gray-100 text-gray-600">🏁</div><div><h3 class="text-sm font-black">4. Завершенные</h3><p class="text-[11px] font-bold text-gray-500">Архив закопанных работ.</p></div></div>
+            <div class="tg-list-item"><div class="icon-box bg-indigo-100 text-indigo-600">💾</div><div><h3 class="text-sm font-black">5. Просмотр на завтра</h3><p class="text-[11px] font-bold text-gray-500">Черновик. Обновляется каждый час.</p></div></div>
+            <div class="tg-list-item bg-orange-50/50"><div class="icon-box bg-bot-orange text-white shadow-md"><i class="fa-solid fa-star"></i></div><div><h3 class="text-sm font-black text-orange-900">6. Отчеты</h3><p class="text-[11px] font-bold text-orange-700">Главный архив. Выгружается в 16:30 вниз.</p></div></div>
+            <div class="tg-list-item bg-red-50/50"><div class="icon-box bg-red-500 text-white shadow-md"><i class="fa-solid fa-brain"></i></div><div><h3 class="text-sm font-black text-red-900">7. Память (Опасно)</h3><p class="text-[11px] font-bold text-red-700">Если бот завис, удалите строку человека здесь.</p></div></div>
         </div>
 
-        <h2 class="text-sm font-black text-emerald-600 uppercase tracking-wider mb-2 ml-2 hide-for-elderly"><i class="fa-solid fa-server mr-1"></i> IT-лоток (Сисадмину)</h2>
-        <div class="tma-card mb-8 hide-for-elderly bg-slate-900 text-slate-300 border-none">
-            <div class="p-4 border-b border-slate-700">
-                <h3 class="text-sm font-black text-emerald-400 mb-2"><i class="fa-solid fa-heart-pulse mr-1"></i> Анти-Сон и Cloudflare</h3>
-                <p class="text-xs font-bold mb-2">Бот дергает себя раз в минуту. Cloudflare шлет сигнал для авторестарта при падении.</p>
-                <p class="text-xs font-bold text-orange-400">В случае блокировок РКН: менять домен воркера.</p>
+        <h2 class="text-xs font-black text-emerald-500 uppercase tracking-widest mb-3 ml-4 opacity-90 hide-for-elderly reveal-item"><i class="fa-solid fa-terminal mr-1"></i> IT-лоток (Киберпанк)</h2>
+        <div class="glass-card mb-8 hide-for-elderly bg-[#0d1117] border border-emerald-500/30 shadow-[0_0_20px_rgba(16,185,129,0.1)] text-emerald-50 reveal-item">
+            <div class="p-5 border-b border-emerald-500/20">
+                <h3 class="text-sm font-black text-emerald-400 mb-2 drop-shadow-[0_0_5px_rgba(52,211,153,0.8)]"><i class="fa-solid fa-heart-pulse mr-2"></i>Анти-Сон & Cloudflare</h3>
+                <p class="text-[11px] font-bold text-emerald-100/70 mb-2">Бот пингует себя раз в минуту. <strong class="text-emerald-300">Cloudflare</strong> шлет сигнал для авторестарта при падении.</p>
+                <code class="block bg-black/50 p-2 rounded text-[10px] text-emerald-300 font-mono mt-2 border border-emerald-500/30">status: "online", pings: 1/min</code>
             </div>
-            <div class="p-4 border-b border-slate-700">
-                <h3 class="text-sm font-black text-white mb-1">Защита от падений в 16:30</h3>
-                <p class="text-xs font-bold">Упал в момент отчета? При включении он <strong>сначала выгрузит всё из памяти</strong> в Гугл, и только потом очистит телефоны.</p>
+            <div class="p-5 border-b border-emerald-500/20 bg-emerald-900/10">
+                <h3 class="text-sm font-black text-white mb-2">Защита от сбоев в 16:30</h3>
+                <p class="text-[11px] font-bold text-emerald-100/70">Если сервер упал в 16:29, после перезапуска бот <strong>сначала выгрузит всё из памяти</strong> в Гугл, и только потом очистит телефоны. Ни одна заявка не пропадет.</p>
             </div>
-            <div class="p-4">
-                <h3 class="text-sm font-black text-white mb-2">Чек-лист поломок</h3>
-                <ol class="list-decimal pl-4 text-xs font-bold space-y-1">
-                    <li>Спящий сервер: нажать Restart в облаке.</li>
-                    <li>Google 503/429: бот сам подождет и повторит (экспоненциально).</li>
-                    <li>Завис 1 человек: удалить его из листа 7 "Память".</li>
-                </ol>
+            <div class="p-5">
+                <h3 class="text-sm font-black text-emerald-400 mb-3">> Чек-лист поломок</h3>
+                <ul class="text-[11px] font-bold space-y-2 text-emerald-100/80 list-none pl-0">
+                    <li class="flex items-start"><span class="text-emerald-500 mr-2">1.</span> Спящий сервер: нажать Restart в облаке.</li>
+                    <li class="flex items-start"><span class="text-emerald-500 mr-2">2.</span> Google 503/429: бот сам подождет (экспоненциально).</li>
+                    <li class="flex items-start"><span class="text-emerald-500 mr-2">3.</span> Завис 1 человек: очистить его из листа 7 "Память".</li>
+                </ul>
             </div>
         </div>
 
-        <div class="tma-card bg-gray-100 p-5 text-center mt-6 shadow-inner border-2 border-gray-200">
-            <h3 class="text-lg font-black uppercase text-bot-text border-b-2 border-gray-300 pb-2 mb-3" data-id="warn_title">Лист ознакомления</h3>
-            <p class="text-base font-black text-bot-orange mb-3" data-id="warn_subtitle">ЧУБАЙС КУСАЕТСЯ!</p>
-            <div class="bg-red-100 text-red-800 text-xs font-black px-3 py-2 rounded-lg inline-block uppercase border border-red-200" data-id="warn_action">ЗА ШКИРКУ НЕ БРАТЬ!</div>
+        <!-- Планшет ознакомления (3D эффект) -->
+        <div class="relative bg-[#e5e5f7] p-6 rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.1),inset_0_2px_4px_rgba(255,255,255,0.8)] border border-gray-300 mt-10 mb-8 transform rotate-1 hover:rotate-0 transition-transform duration-300 reveal-item">
+            <!-- Клипса планшета -->
+            <div class="absolute -top-3 left-1/2 -translate-x-1/2 w-20 h-6 bg-gradient-to-b from-gray-300 to-gray-400 rounded-lg shadow-md border border-gray-400"></div>
+            
+            <div class="bg-white p-5 rounded border border-gray-200 shadow-sm text-center relative mt-2">
+                <h3 class="text-xl font-black uppercase text-gray-900 border-b-2 border-dashed border-gray-300 pb-3 mb-4" data-id="warn_title">Лист ознакомления</h3>
+                <p class="text-lg font-black text-red-600 mb-4 animate-pulse" data-id="warn_subtitle">ЧУБАЙС КУСАЕТСЯ!</p>
+                <div class="bg-red-50 text-red-800 text-sm font-black px-4 py-3 rounded-lg inline-block uppercase border-2 border-red-200 shadow-sm" data-id="warn_action">ЗА ШКИРКУ НЕ БРАТЬ!</div>
+                <div class="mt-6 border-t border-gray-200 pt-4 flex justify-between items-end">
+                    <span class="text-[10px] text-gray-400 font-bold uppercase">Подпись:</span>
+                    <span class="border-b border-gray-400 w-32 inline-block"></span>
+                </div>
+            </div>
         </div>
 
     </div>
@@ -426,69 +404,71 @@
     <!-- Жена (Мадам Эс.) - FAB -->
     <div id="wife-container">
         <!-- Подсказка -->
-        <div class="absolute -top-12 left-4 bg-bot-text text-white text-[10px] font-black py-1.5 px-3 rounded-lg shadow-lg w-40 animate-bounce z-50 whitespace-nowrap" id="wife-alert-hint" data-id="wife_hint">
-            Что делать, если молчит? 👇
-            <div class="absolute -bottom-1 left-4 w-2 h-2 bg-bot-text transform rotate-45"></div>
+        <div class="absolute -top-16 left-2 bg-bot-text text-white text-[11px] font-black py-2 px-4 rounded-xl shadow-xl w-48 animate-bounce z-50 text-center" id="wife-alert-hint" data-id="wife_hint">
+            Запомни, что делать, если Чубайс молчит! 👇
+            <div class="absolute -bottom-1.5 left-6 w-3 h-3 bg-bot-text transform rotate-45"></div>
         </div>
 
         <!-- Кнопка -->
-        <div class="w-14 h-14 bg-bot-card rounded-full shadow-[0_4px_15px_rgba(0,0,0,0.15)] border-2 border-bot-border flex items-center justify-center cursor-pointer tma-active z-10 relative" onclick="toggleWife(this)">
-            <i class="fa-solid fa-cat text-2xl text-bot-muted"></i>
-            <i class="fa-solid fa-ribbon absolute -top-1 -right-1 text-pink-500 text-xl animate-pulse"></i>
+        <div class="wife-fab cursor-pointer" onclick="toggleWife(this)">
+            <i class="fa-solid fa-cat text-2xl text-[var(--text-muted)]"></i>
+            <i class="fa-solid fa-ribbon absolute -top-1 -right-1 text-pink-500 text-xl drop-shadow-md"></i>
+            <!-- Кошачьи следы к ней -->
+            <div class="absolute -right-8 -top-10 text-orange-300/50 text-sm rotate-45 animate-pulse"><i class="fa-solid fa-paw"></i></div>
+            <div class="absolute -right-14 -top-4 text-orange-300/50 text-sm rotate-12 animate-pulse" style="animation-delay: 0.5s"><i class="fa-solid fa-paw"></i></div>
         </div>
 
         <!-- Облачко -->
         <div class="wife-bubble text-sm font-medium" id="wife-bubble">
-            <p class="font-black text-pink-600 mb-1 text-base border-b border-pink-100 pb-1" data-id="wife_name"><i class="fa-solid fa-crown text-yellow-400 mr-1"></i> Мадам Эс. <span class="text-[9px] text-pink-400 ml-1">(Сыкуха)</span></p>
-            <p class="mb-1 text-xs font-bold text-bot-text" data-id="wife_text1">Не ссым! Чубайс под валерьянкой.</p>
-            <p class="font-bold bg-pink-50 p-2 rounded-lg border border-pink-100 text-pink-900 text-[10px] leading-snug" data-id="wife_text2">Если <strong>5-6 минут не на связи</strong> — я его пинаю. 14 котят кормить надо!</p>
-        </div>
-    </div>
-
-    <!-- TMA Bottom Sheet: Досье -->
-    <div class="sheet-overlay hide-for-elderly" id="sheet-overlay" onclick="toggleDossier(false)"></div>
-    <div class="bottom-sheet hide-for-elderly" id="dossier-sheet">
-        <div class="w-12 h-1.5 bg-gray-300 rounded-full mx-auto mt-3 mb-4"></div>
-        <div class="px-6 pb-6 text-center">
-            <div class="w-20 h-20 bg-gray-100 rounded-full border-2 border-bot-border flex items-center justify-center shadow-inner mx-auto mb-3">
-                <i class="fa-solid fa-cat text-4xl text-bot-orange"></i>
-            </div>
-            <h3 class="text-2xl font-black text-bot-text mb-1">Чубайс (Бот)</h3>
-            <p class="text-xs font-black mb-4 uppercase text-bot-orange">Старший смены</p>
-            <div class="text-left bg-bot-bg p-4 rounded-xl text-xs text-bot-text space-y-2 border border-bot-border font-bold">
-                <p><strong class="text-bot-muted">Начальство:</strong> Только Настя.</p>
-                <p><strong class="text-bot-muted">Жена:</strong> Мадам Эс. (14 котят).</p>
-                <p><strong class="text-red-600">ВНИМАНИЕ:</strong> Кусается! За шкирку не брать.</p>
-            </div>
-            <button onclick="toggleDossier(false)" class="mt-6 w-full bg-bot-bg text-bot-text font-bold py-3 rounded-xl border border-bot-border tma-active">Закрыть</button>
+            <p class="font-black text-pink-600 mb-2 text-lg border-b border-pink-100 pb-2" data-id="wife_name"><i class="fa-solid fa-crown text-yellow-400 mr-2 drop-shadow"></i> Мадам Эс. <span class="text-[10px] text-pink-400 ml-1 uppercase bg-pink-50 px-1 rounded">(Сыкуха)</span></p>
+            <p class="mb-2 text-xs font-bold text-gray-800" data-id="wife_text1">Без паники! Чубайс под валерьянкой.</p>
+            <p class="font-bold bg-pink-50 p-3 rounded-xl border border-pink-200 text-pink-900 text-[11px] leading-relaxed shadow-inner" data-id="wife_text2">Если <strong>5-6 минут не на связи</strong> — я его пинаю. У нас алименты и 14 котят, расслабляться некогда!</p>
         </div>
     </div>
 
     <script>
+        // Инициализация Telegram API
         const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
+        
         if (tg) {
             tg.ready();
-            tg.expand(); // Разворачиваем на весь экран
-            // Применяем цвета из темы TG, если нужно (оставляем свои для брендинга)
-            if(tg.setHeaderColor) tg.setHeaderColor('bg_color'); 
+            tg.expand(); 
+            // Пытаемся применить тему ТГ, но держим наш фон для красоты
+            if(tg.setHeaderColor) tg.setHeaderColor('#f0f2f6');
+            if(tg.setBackgroundColor) tg.setBackgroundColor('#f0f2f6');
+            
+            // Активируем Main Button для Молодых и Ветеранов
+            tg.MainButton.setText('🚀 ЗАПУСТИТЬ ЧУБАЙСА (/START)');
+            tg.MainButton.show();
+            tg.MainButton.onClick(() => {
+                copyStart();
+                triggerHaptic('success');
+            });
         }
 
-        // Тактильный отклик (Haptic Feedback)
-        function vibrate() {
+        // Haptic Feedback (Вибрация)
+        function triggerHaptic(style = 'light') {
             if (tg && tg.HapticFeedback) {
-                tg.HapticFeedback.impactOccurred('light');
+                switch(style) {
+                    case 'light': tg.HapticFeedback.impactOccurred('light'); break;
+                    case 'medium': tg.HapticFeedback.impactOccurred('medium'); break;
+                    case 'heavy': tg.HapticFeedback.impactOccurred('heavy'); break;
+                    case 'success': tg.HapticFeedback.notificationOccurred('success'); break;
+                    case 'error': tg.HapticFeedback.notificationOccurred('error'); break;
+                }
             }
         }
 
+        // Словари для трех режимов
         const texts = {
             main_title: { 
-                normal: "Документация <br> <span class='text-bot-orange'>бота «Чубайс»</span>", 
+                normal: "Документация <br> <span class='text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-amber-500'>бота «Чубайс»</span>", 
                 retro: "Руководство <br> <span class='text-bot-orange'>ЭВМ «Чубайс»</span>",
-                elderly: "Крупная памятка <br> <span class='text-bot-orange'>для телефона</span>"
+                elderly: "Крупная памятка <br> <span class='text-blue-600'>для телефона</span>"
             },
             main_desc: { 
-                normal: "Ваш карманный помощник для учета заявок. Собирает отчеты, пока спит на батарее. Подчиняется исключительно Насте.", 
-                retro: "Комплекс учета выработки. Одобрено парткомом. Старший мастер - т. Настя.",
+                normal: "Ваш карманный помощник. Собирает отчеты, пока спит на батарее. Подчиняется исключительно Насте. (Версия 2026)", 
+                retro: "Комплекс учета выработки. Одобрено парткомом. Старший мастер - т. Настя. (1984г)",
                 elderly: "Прочитайте простые правила, куда нажимать на экране телефона."
             },
             menu_title: { normal: "Главное меню", retro: "Пульт управления", elderly: "Главное меню" },
@@ -502,8 +482,8 @@
             card2_desc: { normal: "Ваш рабочий стол.", retro: "Журнал учета рабочего времени.", elderly: "Здесь ваши текущие дела." },
             st_pause_desc: { normal: "Бросить работу и уйти спать.", retro: "Приостановить производство.", elderly: "Отложить работу на потом." },
             st_work_desc: { normal: "Снять с паузы.", retro: "Продолжить стахановское движение.", elderly: "Продолжить работу." },
-            st_done_desc: { normal: "Отправить в Архив.", retro: "Работа сдана ОТК. В архив.", elderly: "Работа сделана. Спрятать дело." },
-            st_tmrw_desc: { normal: "Добавляет в план на завтра!", retro: "Внести в план следующей смены.", elderly: "Обязательно нажать в конце дня!" },
+            st_done_desc: { normal: "Мышь съедена. Отправить в Архив.", retro: "Работа сдана ОТК. В архив.", elderly: "Работа сделана. Спрятать дело." },
+            st_tmrw_desc: { normal: "Добавляет в план на завтра! Важно!", retro: "Внести в план следующей смены.", elderly: "Обязательно нажать в конце дня!" },
             
             card3_title: { normal: "На завтра (Миска)", retro: "На завтра (План-график)", elderly: "На завтра" },
             card3_desc: { normal: "Корзина планов. Можно нажать ❌ Убрать.", retro: "Картотека запланированных норм выработки.", elderly: "Ваш план. Можно нажать ❌ Убрать." },
@@ -514,48 +494,43 @@
             },
             
             card4_title: { normal: "🆘 Сообщить о проблеме", retro: "🆘 Сообщить о проблеме", elderly: "Сообщить о проблеме" },
-            card4_desc: { normal: "Прямая связь с Настей.", retro: "Телеграмма товарищу Насте.", elderly: "Позвать Настю на помощь." },
+            card4_desc: { normal: "Бот принесет жалобу в зубах прямо Насте.", retro: "Телеграмма товарищу Насте.", elderly: "Позвать Настю на помощь." },
 
             routine_title: { normal: "Режим дня", retro: "График сменности", elderly: "" },
             r_1_title: { normal: "Утренний опрос (Мяу!)", retro: "Утренняя разнарядка", elderly: "" },
-            r_1_desc: { normal: "Бот спрашивает: «Что завтра делаем?»", retro: "Авто-выдача нарядов-заданий.", elderly: "" },
+            r_1_desc: { normal: "Спрашивает: «Что завтра делаем?»", retro: "Авто-выдача нарядов-заданий.", elderly: "" },
             r_2_title: { normal: "Время планирования", retro: "Время планирования", elderly: "" },
             r_2_desc: { normal: "Жмем 📝 Записать на завтра.", retro: "Утверждение планов.", elderly: "" },
             r_3_title: { normal: "Закрытие смены", retro: "Закрытие смены", elderly: "" },
-            r_3_desc: { normal: "Отчет улетает в Google. Телефоны очищаются.", retro: "Сдача продукции ОТК. Цех опечатывается.", elderly: "" },
+            r_3_desc: { normal: "Отчет в Google. Бот уходит к кошечкам.", retro: "Сдача продукции ОТК. Цех опечатывается.", elderly: "" },
 
             adm_1: { normal: "Разбудить всех пинком.", retro: "Сбор на планерку.", elderly: "" },
             adm_2: { normal: "Подсмотреть черновик.", retro: "Ревизия до звонка.", elderly: "" },
-            adm_3: { normal: "Раздать лещи отлынивающим.", retro: "Путевки на картошку тунеядцами.", elderly: "" },
+            adm_3: { normal: "Раздать лещи вонючкам.", retro: "Путевки на картошку тунеядцами.", elderly: "" },
             adm_4: { normal: "Онлайн-слежка ВКЛ/ВЫКЛ.", retro: "Радар учета стахановцев.", elderly: "" },
 
             warn_title: { normal: "Лист ознакомления", retro: "ЖУРНАЛ ПО ТБ", elderly: "Журнал ознакомления" },
             warn_subtitle: { normal: "ЧУБАЙС КУСАЕТСЯ!", retro: "БЕЗ КАСКИ НЕ ВХОДИТЬ! (Штраф)", elderly: "Поставьте свою подпись" },
             warn_action: { normal: "ЗА ШКИРКУ НЕ БРАТЬ!", retro: "ЗА ШКИРКУ НЕ БРАТЬ!", elderly: "ОЗНАКОМЛЕН" },
             
-            wife_hint: { normal: "Что делать, если молчит? 👇", retro: "Действия при отказе оборудования 👇", elderly: "Что делать, если сломалась 👇" },
-            wife_name: { normal: "<i class='fa-solid fa-crown text-yellow-400 mr-1'></i> Мадам Эс. <span class='text-[9px] text-pink-400 ml-1'>(Сыкуха)</span>", retro: "<i class='fa-solid fa-crown text-yellow-400 mr-1'></i> Мадам Эс.", elderly: "Техподдержка" },
-            wife_text1: { normal: "Не ссым! Чубайс под валерьянкой.", retro: "Валидол под язык! Супруг план перевыполняет.", elderly: "Ничего страшного! Программа обновляется." },
-            wife_text2: { normal: "Если <strong>5-6 минут не на связи</strong> — я его пинаю. 14 котят кормить надо!", retro: "Если <strong>5-6 минут телеграмму не отбивает</strong> — я беру скалку.", elderly: "Если не отвечает 5-6 минут, подождите немного." }
+            wife_hint: { normal: "Запомни, что делать, если Чубайс молчит! 👇", retro: "Действия при отказе оборудования 👇", elderly: "Что делать, если сломалась 👇" },
+            wife_name: { normal: "<i class='fa-solid fa-crown text-yellow-400 mr-2 drop-shadow'></i> Мадам Эс. <span class='text-[10px] text-pink-400 ml-1 uppercase bg-pink-50 px-1 rounded'>(Сыкуха)</span>", retro: "<i class='fa-solid fa-crown text-yellow-400 mr-2'></i> Мадам Эс.", elderly: "Техподдержка" },
+            wife_text1: { normal: "Без паники! Чубайс под валерьянкой.", retro: "Валидол под язык! Супруг план перевыполняет.", elderly: "Ничего страшного! Программа обновляется." },
+            wife_text2: { normal: "Если <strong>5-6 минут не на связи</strong> — я его пинаю. У нас алименты и 14 котят, расслабляться некогда!", retro: "Если <strong>5-6 минут телеграмму не отбивает</strong> — я беру скалку.", elderly: "Если не отвечает 5-6 минут, подождите немного." }
         };
 
         function setMode(index, btnElement) {
-            vibrate();
+            triggerHaptic('medium');
             
-            // Сдвиг индикатора
+            // Движение ползунка
             const indicator = document.getElementById('mode-indicator');
             indicator.style.width = btnElement.offsetWidth + 'px';
-            indicator.style.transform = `translateX(${btnElement.offsetLeft - 4}px)`; // -4px для компенсации padding родителя
+            indicator.style.transform = `translateX(${btnElement.offsetLeft - 2}px)`; // -2px из-за padding родителя
             
-            // Обновление кнопок
+            // Обновление стилей кнопок
             document.querySelectorAll('.mode-btn').forEach((btn, i) => {
-                if (i === index) {
-                    btn.classList.add('active');
-                    btn.classList.remove('text-slate-600');
-                } else {
-                    btn.classList.remove('active');
-                    btn.classList.add('text-slate-600');
-                }
+                if (i === index) btn.classList.add('active');
+                else btn.classList.remove('active');
             });
 
             // Смена темы Body
@@ -563,83 +538,120 @@
             if (index === 1) document.body.classList.add('retro-mode');
             if (index === 2) document.body.classList.add('elderly-mode');
 
-            // Показ/скрытие красного окна для Ветеранов
+            // Показ/скрытие красного окна для пенсионеров
             const startWarning = document.getElementById('elderly-start-warning');
             if (startWarning) {
-                if (index === 2) startWarning.classList.remove('hidden');
-                else startWarning.classList.add('hidden');
+                if (index === 2) {
+                    startWarning.classList.remove('hidden');
+                    if(tg && tg.MainButton) tg.MainButton.hide(); // Прячем системную кнопку, у них есть своя огромная
+                } else {
+                    startWarning.classList.add('hidden');
+                    if(tg && tg.MainButton) tg.MainButton.show();
+                }
             }
 
-            // Обновление текстов
+            // Обновление текстов с анимацией
             const modeKey = index === 0 ? 'normal' : (index === 1 ? 'retro' : 'elderly');
             document.querySelectorAll('[data-id]').forEach(el => {
                 const id = el.getAttribute('data-id');
-                if (texts[id] && texts[id][modeKey] !== undefined) el.innerHTML = texts[id][modeKey];
+                if (texts[id] && texts[id][modeKey] !== undefined) {
+                    el.style.opacity = '0';
+                    setTimeout(() => {
+                        el.innerHTML = texts[id][modeKey];
+                        el.style.opacity = '1';
+                    }, 150);
+                }
             });
             
-            // Синхронизация цветов шапки TG (если поддерживается)
+            // TG Theme Sync
             if(tg && tg.setHeaderColor) {
-                if(index === 0) tg.setHeaderColor('#f1f5f9');
-                if(index === 1) tg.setHeaderColor('#e6ddce');
+                if(index === 0) tg.setHeaderColor('#f0f2f6');
+                if(index === 1) tg.setHeaderColor('#e8e2d2');
                 if(index === 2) tg.setHeaderColor('#ffffff');
             }
         }
 
+        // Логика жены
         function toggleWife(element) {
-            vibrate();
+            triggerHaptic('heavy');
             const hint = document.getElementById('wife-alert-hint');
             const bubble = document.getElementById('wife-bubble');
             
-            if (hint) hint.style.opacity = '0'; // Скрываем подсказку навсегда при первом клике
+            if (hint) {
+                hint.style.transform = 'scale(0)';
+                setTimeout(() => hint.remove(), 300); // Удаляем навсегда
+            }
             bubble.classList.toggle('show');
         }
 
-        function toggleDossier(show) {
-            vibrate();
-            const sheet = document.getElementById('dossier-sheet');
-            const overlay = document.getElementById('sheet-overlay');
-            if (show) {
-                sheet.classList.add('show');
-                overlay.classList.add('show');
-            } else {
-                sheet.classList.remove('show');
-                overlay.classList.remove('show');
-            }
-        }
-
-        function copyCommand() {
-            vibrate();
-            // В TMA нет полного доступа к clipboard API браузера, но можно использовать fallback
-            const el = document.createElement('textarea');
-            el.value = '/start';
-            document.body.appendChild(el);
-            el.select();
-            document.execCommand('copy');
-            document.body.removeChild(el);
+        // Копирование старта + Тост
+        function copyStart() {
+            const tempInput = document.createElement("input");
+            tempInput.value = "/start";
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand("copy");
+            document.body.removeChild(tempInput);
             
-            if(tg && tg.showAlert) {
-                tg.showAlert('Команда /start скопирована! Вставьте ее в чат.');
-            } else {
-                alert('Команда /start скопирована!');
-            }
+            showToast("Команда /start скопирована!");
         }
 
-        // Инициализация при загрузке
+        function showToast(msg) {
+            const toast = document.getElementById('tma-toast');
+            document.getElementById('toast-text').innerText = msg;
+            toast.classList.add('show');
+            setTimeout(() => { toast.classList.remove('show'); }, 3000);
+        }
+
+        // Пасхалка с котом
+        let catClicks = 0;
+        document.getElementById('cat-avatar').addEventListener('click', function() {
+            catClicks++;
+            triggerHaptic('light');
+            this.classList.add('animate-shake');
+            setTimeout(() => this.classList.remove('animate-shake'), 500);
+            
+            if (catClicks === 3) {
+                triggerHaptic('heavy');
+                if(tg && tg.showPopup) {
+                    tg.showPopup({
+                        title: 'Мяу!',
+                        message: 'Хватит меня тыкать, я сплю! Заявки сами себя не запишут.',
+                        buttons: [{id: 'ok', type: 'ok', text: 'Понял, босс'}]
+                    });
+                } else {
+                    showToast('Чубайс недовольно зарычал.');
+                }
+                catClicks = 0;
+            }
+        });
+
+        // Инициализация UI (Плавное появление при скролле)
         window.onload = () => {
+            // Установка ползунка
             const firstBtn = document.querySelector('.mode-btn.active');
             if (firstBtn) {
-                // Небольшая задержка для правильного просчета offsetWidth
                 setTimeout(() => {
                     const indicator = document.getElementById('mode-indicator');
                     indicator.style.width = firstBtn.offsetWidth + 'px';
-                    indicator.style.transform = `translateX(${firstBtn.offsetLeft - 4}px)`;
-                }, 100);
+                    indicator.style.transform = `translateX(${firstBtn.offsetLeft - 2}px)`;
+                }, 50);
             }
-            
-            // Добавляем обработку кликов ко всем элементам с классом tma-active для вибрации
-            document.querySelectorAll('.tma-active').forEach(el => {
-                el.addEventListener('click', vibrate);
-            });
+
+            // Scroll Animation Observer
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry, index) => {
+                    if (entry.isIntersecting) {
+                        setTimeout(() => {
+                            entry.target.classList.add('animate-slide-up');
+                            entry.target.classList.remove('reveal-item');
+                        }, index * 100); // Легкий каскад
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
+
+            document.querySelectorAll('.reveal-item').forEach(el => observer.observe(el));
         };
     </script>
 </body>
