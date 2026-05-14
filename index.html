@@ -52,17 +52,15 @@
     <style>
         :root {
             /* APPLE SILVER/WHITE 3D STYLE */
-            --bg-color: #F2F2F7; /* Фирменный эппловский серый фон */
+            --bg-color: #F2F2F7;
             --text-main: #1D1D1F; 
             --text-muted: #86868B;
             
-            /* Сложное 3D-стекло */
             --card-bg: rgba(255, 255, 255, 0.65);
             --card-border: rgba(255, 255, 255, 0.8);
             --inset-bg: rgba(0, 0, 0, 0.03);
             --highlight: rgba(0, 0, 0, 0.85);
             
-            /* Комбинация падающей тени и внутреннего свечения (Neumorphism + Glassmorphism) */
             --glass-shadow: 
                 0 20px 40px rgba(0, 0, 0, 0.06), 
                 0 1px 3px rgba(0,0,0,0.05),
@@ -70,15 +68,6 @@
             
             --nav-bg: rgba(242, 242, 247, 0.75);
             --accent-glow: rgba(255, 149, 0, 0.4); 
-            
-            /* Выпуклые 3D иконки */
-            --icon-bg: linear-gradient(135deg, #ffffff 0%, #e5e5ea 100%);
-            --icon-border: rgba(255,255,255,0.8);
-            --icon-color: #F97316; /* Рыжий цвет Чубайса */
-            --icon-shadow: 
-                4px 4px 10px rgba(0,0,0,0.1), 
-                -4px -4px 10px rgba(255,255,255,0.8),
-                inset 0 1px 1px rgba(255,255,255,1);
         }
 
         body {
@@ -90,7 +79,6 @@
             overflow-x: hidden;
         }
 
-        /* Холст для 3D пыли/снега */
         #dust-canvas {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             pointer-events: none; z-index: -1; opacity: 0.7;
@@ -104,59 +92,75 @@
             box-shadow: var(--glass-shadow);
             transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1), box-shadow 0.4s ease;
             position: relative; overflow: hidden; margin-bottom: 20px;
-            /* Включаем 3D пространство для дочерних элементов */
             transform-style: preserve-3d;
             perspective: 1000px;
         }
         
-        /* Световой блик (Glare) на стекле */
         .apple-card::before {
             content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
             background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255,255,255,0.8) 0%, transparent 40%);
             opacity: 0; transition: opacity 0.3s; z-index: 1; pointer-events: none; mix-blend-mode: overlay;
         }
         .apple-card:hover::before { opacity: 1; }
-        
         .apple-card:active {
             transform: scale(0.96) translateZ(-10px) !important;
             box-shadow: 0 5px 15px rgba(0,0,0,0.05), inset 0 2px 5px rgba(0,0,0,0.05);
         }
 
-        /* 3D-вдавленности */
         .apple-inset {
             background: var(--inset-bg); border-radius: 18px; padding: 16px;
             border: 1px solid rgba(255,255,255,0.4); position: relative; z-index: 2;
             box-shadow: inset 0 2px 8px rgba(0,0,0,0.04);
-            transform: translateZ(10px); /* Легкий выход вперед */
+            transform: translateZ(10px);
+            transform-style: preserve-3d;
         }
 
-        /* 3D-Иконка Apple */
         .apple-app-icon {
-            width: 52px; height: 52px; border-radius: 14px; flex-shrink: 0;
-            background: var(--icon-bg); border: 1px solid var(--icon-border);
-            box-shadow: var(--icon-shadow);
+            width: 56px; height: 56px; border-radius: 16px; flex-shrink: 0;
+            background: linear-gradient(145deg, #ffffff 0%, #e6e6ea 100%);
+            border: 1px solid rgba(255,255,255,0.6);
+            box-shadow: 
+                6px 6px 15px rgba(0,0,0,0.12), 
+                -6px -6px 15px rgba(255,255,255,0.9),
+                inset 2px 2px 4px rgba(255,255,255,1),
+                inset -2px -2px 4px rgba(0,0,0,0.05);
             display: flex; align-items: center; justify-content: center;
-            font-size: 22px; color: var(--icon-color);
-            position: relative; overflow: hidden;
+            position: relative; overflow: visible; /* Changed from hidden for 3D pop */
             transition: transform 0.3s ease;
-            transform: translateZ(30px); /* Иконка сильно парит над карточкой */
+            transform-style: preserve-3d;
+            transform: translateZ(30px); 
         }
-        /* Внутренний блик иконки */
         .apple-app-icon::after {
             content: ''; position: absolute; top: 0; left: 0; right: 0; height: 50%;
-            background: linear-gradient(180deg, rgba(255,255,255,0.6) 0%, transparent 100%);
-            border-radius: 14px 14px 0 0;
+            background: linear-gradient(180deg, rgba(255,255,255,0.8) 0%, transparent 100%);
+            border-radius: 16px 16px 0 0;
+            pointer-events: none;
         }
 
-        /* Тексты парят в 3D */
+        .icon-3d {
+            transition: transform 0.3s ease, text-shadow 0.3s ease;
+            transform: translateZ(25px); /* Icon pops out of the wrapper */
+            display: inline-block;
+        }
+        
+        .icon-3d-orange { color: #F97316; text-shadow: 0 1px 0 #d85c0b, 0 2px 0 #c25108, 0 3px 0 #a64405, 0 4px 0 #8b3703, 0 8px 10px rgba(249,115,22,0.4), 0 12px 20px rgba(0,0,0,0.15); }
+        .icon-3d-blue { color: #3b82f6; text-shadow: 0 1px 0 #2563eb, 0 2px 0 #1d4ed8, 0 3px 0 #1e40af, 0 4px 0 #1e3a8a, 0 8px 10px rgba(59,130,246,0.4), 0 12px 20px rgba(0,0,0,0.15); }
+        .icon-3d-purple { color: #a855f7; text-shadow: 0 1px 0 #9333ea, 0 2px 0 #7e22ce, 0 3px 0 #6b21a8, 0 4px 0 #581c87, 0 8px 10px rgba(168,85,247,0.4), 0 12px 20px rgba(0,0,0,0.15); }
+        .icon-3d-red { color: #ef4444; text-shadow: 0 1px 0 #dc2626, 0 2px 0 #b91c1c, 0 3px 0 #991b1b, 0 4px 0 #7f1d1d, 0 8px 10px rgba(239,68,68,0.4), 0 12px 20px rgba(0,0,0,0.15); }
+        .icon-3d-green { color: #22c55e; text-shadow: 0 1px 0 #16a34a, 0 2px 0 #15803d, 0 3px 0 #166534, 0 4px 0 #14532d, 0 8px 10px rgba(34,197,94,0.4), 0 12px 20px rgba(0,0,0,0.15); }
+        .icon-3d-gray { color: #64748b; text-shadow: 0 1px 0 #475569, 0 2px 0 #334155, 0 3px 0 #1e293b, 0 4px 0 #0f172a, 0 8px 10px rgba(100,116,139,0.4), 0 12px 20px rgba(0,0,0,0.15); }
+        .icon-3d-amber { color: #f59e0b; text-shadow: 0 1px 0 #d97706, 0 2px 0 #b45309, 0 3px 0 #92400e, 0 4px 0 #78350f, 0 8px 10px rgba(245,158,11,0.4), 0 12px 20px rgba(0,0,0,0.15); }
+
         .content-3d {
-            transform: translateZ(20px); transition: transform 0.3s ease;
+            transform: translateZ(20px); transition: transform 0.3s ease; transform-style: preserve-3d;
         }
 
         .ios-pill {
-            background: #ffffff; border: 1px solid rgba(0,0,0,0.05);
+            background: linear-gradient(180deg, #ffffff 0%, #f2f2f7 100%); 
+            border: 1px solid rgba(0,0,0,0.05);
             color: var(--text-main); font-weight: 600; padding: 4px 10px; border-radius: 20px;
-            font-size: 13px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            font-size: 13px; text-align: center; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05), inset 0 1px 2px #fff;
             flex-shrink: 0;
         }
 
@@ -188,10 +192,10 @@
         #wife-container { position: fixed; bottom: calc(env(safe-area-inset-bottom) + 24px); left: 20px; z-index: 90; perspective: 1000px; }
         .apple-fab {
             width: 56px; height: 56px; border-radius: 28px;
-            background: var(--icon-bg); border: 1px solid var(--icon-border);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.15), inset 0 1px 1px rgba(255,255,255,1);
+            background: linear-gradient(145deg, #ffffff, #e6e6ea); border: 1px solid rgba(255,255,255,0.8);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15), inset 0 2px 2px rgba(255,255,255,1);
             display: flex; align-items: center; justify-content: center; position: relative;
-            transition: transform 0.5s cubic-bezier(0.32, 0.72, 0, 1); transform-style: preserve-3d; color: var(--icon-color);
+            transition: transform 0.5s cubic-bezier(0.32, 0.72, 0, 1); transform-style: preserve-3d;
         }
         .apple-fab:active { transform: scale(0.85) translateZ(-10px); }
         
@@ -206,14 +210,19 @@
         .imessage-bubble.show { opacity: 1; transform: scale(1) translateY(0) rotate(0deg); pointer-events: auto; }
 
         .profile-avatar {
-            width: 130px; height: 130px; margin: 0 auto 20px; border-radius: 65px;
-            background: linear-gradient(135deg, #ffffff 0%, #e5e5ea 100%);
-            border: 2px solid #ffffff;
-            box-shadow: 0 20px 40px rgba(249, 115, 22, 0.15), inset 0 2px 10px rgba(0,0,0,0.05);
+            width: 140px; height: 140px; margin: 0 auto 20px; border-radius: 70px;
+            background: linear-gradient(145deg, #ffffff, #d1d1d6);
+            border: 4px solid #ffffff;
+            box-shadow: 
+                15px 15px 30px rgba(0,0,0,0.12), 
+                -15px -15px 30px rgba(255,255,255,0.9),
+                inset 5px 5px 10px rgba(255,255,255,1),
+                inset -5px -5px 10px rgba(0,0,0,0.05);
             display: flex; align-items: center; justify-content: center; position: relative; z-index: 10;
+            transform-style: preserve-3d;
         }
         .profile-avatar::after {
-            content: ''; position: absolute; inset: -6px; border-radius: 70px;
+            content: ''; position: absolute; inset: -8px; border-radius: 80px;
             background: conic-gradient(from 0deg, transparent, var(--accent-glow), transparent);
             animation: spin 4s linear infinite; z-index: -1; opacity: 0.8;
         }
@@ -222,32 +231,34 @@
         body.retro-mode {
             --bg-color: #EFE9D9; --text-main: #3E3222; --text-muted: #6B5A42; --card-bg: rgba(234, 227, 210, 0.85);
             --card-border: #C8BCA7; --inset-bg: rgba(0,0,0,0.03); --highlight: #3E3222;
-            --glass-shadow: 4px 4px 0 rgba(62, 50, 34, 0.15); --nav-bg: rgba(239, 233, 217, 0.85);
-            --icon-bg: #EAE3D2; --icon-border: #C8BCA7; --icon-color: #3E3222; --accent-glow: rgba(62, 50, 34, 0.1);
-            --icon-shadow: 2px 2px 0 rgba(62, 50, 34, 0.15);
+            --glass-shadow: 6px 6px 0 rgba(62, 50, 34, 0.15); --nav-bg: rgba(239, 233, 217, 0.85);
             font-family: 'Russo One', sans-serif;
             background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100' height='100' fill='transparent' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E");
         }
         body.retro-mode #dust-canvas { opacity: 0; } 
         body.retro-mode .apple-card { border-radius: 12px; backdrop-filter: blur(10px); transform-style: flat; }
+        body.retro-mode .apple-app-icon { border-radius: 8px; background: #EAE3D2; box-shadow: 4px 4px 0 rgba(62,50,34,0.15); border: 2px solid #C8BCA7; transform: none;}
+        body.retro-mode .icon-3d { color: #3E3222 !important; text-shadow: 2px 2px 0px #C8BCA7, 4px 4px 0px rgba(62,50,34,0.2) !important; transform: none; }
         body.retro-mode .mode-indicator { background: #3E3222; }
         body.retro-mode .mode-btn.active { color: #EFE9D9; }
         body.retro-mode .ios-pill { background: #D9D0B8; color: #3E3222; border-color: #C8BCA7; border-radius: 6px; box-shadow: 2px 2px 0 rgba(62,50,34,0.1); }
+        body.retro-mode .profile-avatar { border-radius: 12px; background: #EAE3D2; box-shadow: 6px 6px 0 rgba(62,50,34,0.15); border: 3px solid #3E3222; }
 
         body.elderly-mode { 
             --bg-color: #FFFFFF; --text-main: #000000; --text-muted: #333333; --card-bg: #FFFFFF;
             --card-border: #000000; --inset-bg: #F5F5F5; --highlight: #000000;
             --glass-shadow: 0 4px 12px rgba(0,0,0,0.05); --nav-bg: rgba(255, 255, 255, 0.95);
-            --icon-bg: #F5F5F5; --icon-border: #000000; --icon-color: #000000; --accent-glow: transparent;
-            --icon-shadow: none;
             font-family: -apple-system, sans-serif; 
         }
         body.elderly-mode #dust-canvas { opacity: 0; }
         body.elderly-mode .apple-card { border: 2px solid #000; border-radius: 16px; box-shadow: none; transform: none !important; }
+        body.elderly-mode .apple-app-icon { background: #F5F5F5; box-shadow: none; border: 2px solid #000; border-radius: 12px; transform: none;}
+        body.elderly-mode .icon-3d { color: #000000 !important; text-shadow: none !important; transform: none; }
         body.elderly-mode .hide-for-elderly { display: none !important; }
         body.elderly-mode .mode-indicator { background: #000000; }
         body.elderly-mode .mode-btn.active { color: #FFFFFF; }
         body.elderly-mode .ios-pill { background: #E5E5E5; color: #000; border-color: #000; box-shadow: none; }
+        body.elderly-mode .profile-avatar { background: #fff; box-shadow: none; border: 4px solid #000; border-radius: 70px; }
 
         .text-liquid-gradient {
             background: linear-gradient(to right, #F97316, #FFB347, #F97316);
@@ -281,7 +292,7 @@
         <!-- Красный блок предупреждения (Только для Ветеранов) -->
         <div class="apple-card mb-8 hidden border-red-500 reveal bg-red-50/90" id="elderly-start-warning" style="--card-bg: #fff; --card-border: #000; border-width: 3px;">
             <div class="p-6 text-center content-3d">
-                <i class="fa-solid fa-triangle-exclamation text-5xl mb-3 text-red-600"></i>
+                <i class="fa-solid fa-triangle-exclamation text-5xl mb-3 icon-3d icon-3d-red"></i>
                 <h2 class="font-display text-2xl font-black mb-2 text-dynamic-text">ОЧЕНЬ ВАЖНО!</h2>
                 <p class="text-dynamic-text font-bold text-lg mb-4 text-morph" data-id="eld_warn1">Чтобы программа начала с вами работать, нужно отправить ей команду один раз.</p>
                 <div class="apple-inset">
@@ -294,16 +305,16 @@
 
         <!-- Заголовок и Аватар -->
         <div class="text-center mb-12 pt-8 reveal">
-            <div class="relative w-[130px] h-[130px] mx-auto mb-6 cursor-pointer animate-breathe group" id="cat-avatar">
+            <div class="relative w-[140px] h-[140px] mx-auto mb-6 cursor-pointer animate-breathe group" id="cat-avatar">
                 <div class="profile-avatar transition-transform duration-500 group-hover:scale-95 group-active:scale-90">
-                    <i class="fa-solid fa-cat text-[65px] text-orange-500 drop-shadow-md"></i>
+                    <i class="fa-solid fa-cat text-[60px] icon-3d icon-3d-orange"></i>
                 </div>
             </div>
             
-            <h1 class="font-display text-4xl sm:text-5xl font-black tracking-tight mb-3 text-dynamic-text text-morph" data-id="main_title">
+            <h1 class="font-display text-4xl sm:text-5xl font-black tracking-tight mb-3 text-dynamic-text text-morph content-3d" data-id="main_title">
                 Чубайс <span class="text-liquid-gradient block mt-1">Pro (2026)</span>
             </h1>
-            <p class="text-[17px] text-dynamic-muted leading-relaxed px-4 font-medium text-morph max-w-lg mx-auto" data-id="main_desc">
+            <p class="text-[17px] text-dynamic-muted leading-relaxed px-4 font-medium text-morph max-w-lg mx-auto content-3d" data-id="main_desc">
                 Интеллектуальный помощник. Собирает отчеты, пока спит на сервере. Подчиняется исключительно Насте.
             </p>
         </div>
@@ -314,7 +325,7 @@
         <div class="apple-card reveal tilt-card" onclick="triggerHaptic('light')">
             <div class="p-6">
                 <div class="flex items-center mb-4 content-3d">
-                    <div class="apple-app-icon"><i class="fa-solid fa-plus"></i></div>
+                    <div class="apple-app-icon"><i class="fa-solid fa-plus text-2xl icon-3d icon-3d-blue"></i></div>
                     <h3 class="font-display text-2xl font-bold ml-4 text-dynamic-text">Новая заявка</h3>
                 </div>
                 <p class="text-[15px] text-dynamic-muted mb-5 leading-relaxed font-medium text-morph content-3d" data-id="card1_desc">Поймали новую мышь? Зафиксируйте её здесь.</p>
@@ -330,7 +341,7 @@
         <div class="apple-card reveal tilt-card" onclick="triggerHaptic('light')">
             <div class="p-6">
                 <div class="flex items-center mb-4 content-3d">
-                    <div class="apple-app-icon"><i class="fa-solid fa-list-ul"></i></div>
+                    <div class="apple-app-icon"><i class="fa-solid fa-list-ul text-2xl icon-3d icon-3d-purple"></i></div>
                     <h3 class="font-display text-2xl font-bold ml-4 text-dynamic-text text-morph" data-id="card2_title">Мои заявки (Лоток)</h3>
                 </div>
                 <p class="text-[15px] text-dynamic-muted mb-5 leading-relaxed font-medium text-morph content-3d" data-id="card2_desc">Ваш рабочий стол.</p>
@@ -338,7 +349,7 @@
                     <div class="flex items-center"><span class="ios-pill w-28">Пауза</span><span class="ml-3 text-dynamic-text font-medium text-morph" data-id="st_pause_desc">Бросить работу (указать причину).</span></div>
                     <div class="flex items-center"><span class="ios-pill w-28">В работу</span><span class="ml-3 text-dynamic-text font-medium text-morph" data-id="st_work_desc">Снять с паузы.</span></div>
                     <div class="flex items-center"><span class="ios-pill w-28">Завершить</span><span class="ml-3 text-dynamic-text font-medium text-morph" data-id="st_done_desc">Мышь съедена. В Архив.</span></div>
-                    <div class="flex items-center mt-2 pt-3 border-t border-dynamic-border"><span class="ios-pill w-28 shadow-md font-bold" style="color:var(--icon-color)">На завтра</span><span class="ml-3 text-dynamic-text font-bold text-morph" data-id="st_tmrw_desc">Важно! Добавляет в план.</span></div>
+                    <div class="flex items-center mt-2 pt-3 border-t border-dynamic-border"><span class="ios-pill w-28 shadow-md font-bold text-orange-600">На завтра</span><span class="ml-3 text-dynamic-text font-bold text-morph" data-id="st_tmrw_desc">Важно! Добавляет в план.</span></div>
                 </div>
             </div>
         </div>
@@ -347,7 +358,7 @@
         <div class="apple-card reveal tilt-card overflow-hidden" onclick="triggerHaptic('light')">
             <div class="p-6">
                 <div class="flex items-center mb-4 relative z-10 content-3d">
-                    <div class="apple-app-icon"><i class="fa-solid fa-calendar-day"></i></div>
+                    <div class="apple-app-icon"><i class="fa-solid fa-calendar-day text-2xl icon-3d icon-3d-orange"></i></div>
                     <h3 class="font-display text-2xl font-bold ml-4 text-dynamic-text text-morph" data-id="card3_title">На завтра (Миска)</h3>
                 </div>
                 <p class="text-[15px] text-dynamic-muted mb-5 leading-relaxed font-medium relative z-10 text-morph content-3d" data-id="card3_desc">Корзина планов. Если передумали — жмите Убрать.</p>
@@ -361,7 +372,7 @@
         <!-- Карточка 4 -->
         <div class="apple-card reveal tilt-card" onclick="triggerHaptic('heavy')">
             <div class="p-6 flex items-center content-3d">
-                <div class="apple-app-icon text-red-500 shadow-red-500/20"><i class="fa-solid fa-life-ring"></i></div>
+                <div class="apple-app-icon"><i class="fa-solid fa-life-ring text-2xl icon-3d icon-3d-red"></i></div>
                 <div class="ml-4">
                     <h3 class="font-display text-xl font-bold text-dynamic-text text-morph" data-id="card4_title">Сообщить о проблеме</h3>
                     <p class="text-[14px] font-medium text-dynamic-muted mt-1 text-morph" data-id="card4_desc">Принесет жалобу в зубах прямо Насте.</p>
@@ -372,30 +383,30 @@
         <h2 class="text-[13px] font-bold text-dynamic-muted uppercase tracking-widest mb-3 ml-4 mt-10 hide-for-elderly reveal"><i class="fa-solid fa-crown mr-2 opacity-50"></i> Вожакам стаи</h2>
         <div class="apple-card hide-for-elderly p-5 grid grid-cols-2 gap-3 reveal tilt-card">
             <div class="apple-inset flex flex-col justify-between hover:bg-white/50 transition cursor-pointer" onclick="triggerHaptic('light')">
-                <i class="fa-solid fa-bullhorn text-2xl text-blue-500 mb-3 content-3d"></i>
-                <div class="content-3d"><h4 class="font-bold text-[15px] mb-1 text-dynamic-text">Опрос</h4><p class="text-[13px] text-dynamic-muted leading-snug text-morph" data-id="adm_1">Разбудить всех пинком.</p></div>
+                <div class="content-3d w-full flex justify-center mb-4 mt-2"><i class="fa-solid fa-bullhorn text-3xl icon-3d icon-3d-blue"></i></div>
+                <div class="content-3d text-center"><h4 class="font-bold text-[15px] mb-1 text-dynamic-text">Опрос</h4><p class="text-[12px] text-dynamic-muted leading-snug text-morph" data-id="adm_1">Разбудить всех пинком.</p></div>
             </div>
             <div class="apple-inset flex flex-col justify-between hover:bg-white/50 transition cursor-pointer" onclick="triggerHaptic('light')">
-                <i class="fa-solid fa-eye text-2xl text-indigo-500 mb-3 content-3d"></i>
-                <div class="content-3d"><h4 class="font-bold text-[15px] mb-1 text-dynamic-text">Черновик</h4><p class="text-[13px] text-dynamic-muted leading-snug text-morph" data-id="adm_2">Подсмотреть на завтра.</p></div>
+                <div class="content-3d w-full flex justify-center mb-4 mt-2"><i class="fa-solid fa-eye text-3xl icon-3d icon-3d-purple"></i></div>
+                <div class="content-3d text-center"><h4 class="font-bold text-[15px] mb-1 text-dynamic-text">Черновик</h4><p class="text-[12px] text-dynamic-muted leading-snug text-morph" data-id="adm_2">Подсмотреть на завтра.</p></div>
             </div>
             <div class="apple-inset col-span-2 sm:col-span-1 hover:bg-white/50 transition cursor-pointer" onclick="triggerHaptic('medium')">
-                <i class="fa-solid fa-users-slash text-2xl text-amber-600 mb-3 content-3d"></i>
-                <div class="content-3d"><h4 class="font-bold text-[15px] text-dynamic-text mb-1">Кто не записался</h4><p class="text-[13px] text-dynamic-muted leading-snug text-morph" data-id="adm_3">Раздать лещи вонючкам.</p></div>
+                <div class="content-3d w-full flex justify-center mb-4 mt-2"><i class="fa-solid fa-users-slash text-3xl icon-3d icon-3d-amber"></i></div>
+                <div class="content-3d text-center"><h4 class="font-bold text-[15px] text-dynamic-text mb-1">Кто не записался</h4><p class="text-[12px] text-dynamic-muted leading-snug text-morph" data-id="adm_3">Раздать лещи вонючкам.</p></div>
             </div>
             <div class="apple-inset col-span-2 sm:col-span-1 hover:bg-white/50 transition cursor-pointer" onclick="triggerHaptic('medium')">
-                <i class="fa-solid fa-circle-dot text-2xl text-green-500 mb-3 animate-pulse content-3d"></i>
-                <div class="content-3d"><h4 class="font-bold text-[15px] text-dynamic-text mb-1">Live-отчет</h4><p class="text-[13px] text-dynamic-muted leading-snug text-morph" data-id="adm_4">Онлайн-слежка ВКЛ/ВЫКЛ.</p></div>
+                <div class="content-3d w-full flex justify-center mb-4 mt-2"><i class="fa-solid fa-circle-dot text-3xl icon-3d icon-3d-green animate-pulse"></i></div>
+                <div class="content-3d text-center"><h4 class="font-bold text-[15px] text-dynamic-text mb-1">Live-отчет</h4><p class="text-[12px] text-dynamic-muted leading-snug text-morph" data-id="adm_4">Онлайн-слежка ВКЛ/ВЫКЛ.</p></div>
             </div>
         </div>
 
         <h2 class="text-[13px] font-bold text-dynamic-muted uppercase tracking-widest mb-3 ml-4 mt-10 hide-for-elderly reveal"><i class="fa-solid fa-table mr-2 opacity-50"></i> База Данных (Таблицы)</h2>
         <div class="apple-card hide-for-elderly p-0 reveal tilt-card">
-            <div class="p-4 border-b border-dynamic-border flex items-center content-3d"><div class="apple-app-icon w-10 h-10 text-sm mr-4 text-blue-500"><i class="fa-solid fa-users"></i></div><div><h3 class="font-bold text-[15px] text-dynamic-text">1. Сотрудники</h3><p class="text-[13px] text-dynamic-muted mt-0.5">Допущенные к боту.</p></div></div>
-            <div class="p-4 border-b border-dynamic-border flex items-center content-3d"><div class="apple-app-icon w-10 h-10 text-sm mr-4 text-purple-500"><i class="fa-solid fa-crown"></i></div><div><h3 class="font-bold text-[15px] text-dynamic-text">2. Админы</h3><p class="text-[13px] text-dynamic-muted mt-0.5">Получают жалобы.</p></div></div>
-            <div class="p-4 border-b border-dynamic-border flex items-center content-3d"><div class="apple-app-icon w-10 h-10 text-sm mr-4 text-green-500"><i class="fa-solid fa-bolt"></i></div><div><h3 class="font-bold text-[15px] text-dynamic-text">3. Live</h3><p class="text-[13px] text-dynamic-muted mt-0.5">Дашборд онлайн. Не трогать!</p></div></div>
-            <div class="p-4 border-b border-dynamic-border flex items-center content-3d"><div class="apple-app-icon w-10 h-10 text-sm mr-4 text-orange-500"><i class="fa-solid fa-star"></i></div><div><h3 class="font-bold text-[15px] text-dynamic-text">6. Отчеты</h3><p class="text-[13px] text-dynamic-muted mt-0.5">Главный архив (выгрузка в 16:30).</p></div></div>
-            <div class="p-4 flex items-center content-3d"><div class="apple-app-icon w-10 h-10 text-sm mr-4 text-red-500"><i class="fa-solid fa-brain"></i></div><div><h3 class="font-bold text-[15px] text-dynamic-text">7. Память (Опасно)</h3><p class="text-[13px] text-dynamic-muted mt-0.5">Ремонт: удалить строку зависшего.</p></div></div>
+            <div class="p-4 border-b border-dynamic-border flex items-center content-3d"><div class="apple-app-icon w-12 h-12 mr-4"><i class="fa-solid fa-users text-xl icon-3d icon-3d-blue"></i></div><div><h3 class="font-bold text-[15px] text-dynamic-text">1. Сотрудники</h3><p class="text-[13px] text-dynamic-muted mt-0.5">Допущенные к боту.</p></div></div>
+            <div class="p-4 border-b border-dynamic-border flex items-center content-3d"><div class="apple-app-icon w-12 h-12 mr-4"><i class="fa-solid fa-crown text-xl icon-3d icon-3d-purple"></i></div><div><h3 class="font-bold text-[15px] text-dynamic-text">2. Админы</h3><p class="text-[13px] text-dynamic-muted mt-0.5">Получают жалобы.</p></div></div>
+            <div class="p-4 border-b border-dynamic-border flex items-center content-3d"><div class="apple-app-icon w-12 h-12 mr-4"><i class="fa-solid fa-bolt text-xl icon-3d icon-3d-green"></i></div><div><h3 class="font-bold text-[15px] text-dynamic-text">3. Live</h3><p class="text-[13px] text-dynamic-muted mt-0.5">Дашборд онлайн. Не трогать!</p></div></div>
+            <div class="p-4 border-b border-dynamic-border flex items-center content-3d"><div class="apple-app-icon w-12 h-12 mr-4"><i class="fa-solid fa-star text-xl icon-3d icon-3d-orange"></i></div><div><h3 class="font-bold text-[15px] text-dynamic-text">6. Отчеты</h3><p class="text-[13px] text-dynamic-muted mt-0.5">Главный архив (выгрузка в 16:30).</p></div></div>
+            <div class="p-4 flex items-center content-3d"><div class="apple-app-icon w-12 h-12 mr-4"><i class="fa-solid fa-brain text-xl icon-3d icon-3d-red"></i></div><div><h3 class="font-bold text-[15px] text-dynamic-text">7. Память (Опасно)</h3><p class="text-[13px] text-dynamic-muted mt-0.5">Ремонт: удалить строку зависшего.</p></div></div>
         </div>
 
         <h2 class="text-[13px] font-mono text-dynamic-muted uppercase tracking-widest mb-3 ml-4 mt-10 hide-for-elderly reveal">> sys_admin</h2>
@@ -417,11 +428,10 @@
 
         <div class="mt-12 mb-10 relative z-10 reveal tilt-card">
             <div class="apple-card p-6 sm:p-8 border border-dynamic-border text-center mx-auto max-w-lg shadow-2xl relative overflow-visible bg-[#fbfbfd]">
-                <!-- Клипса планшета -->
                 <div class="absolute -top-3 left-1/2 -translate-x-1/2 w-20 h-6 bg-gradient-to-b from-gray-300 to-gray-400 rounded-lg shadow-md border border-gray-400 z-20 flex justify-center items-center">
                     <div class="w-12 h-2 bg-gray-500 rounded-full opacity-50"></div>
                 </div>
-                <i class="fa-solid fa-file-signature text-5xl text-gray-300 mb-4 mt-2 content-3d"></i>
+                <i class="fa-solid fa-file-signature text-5xl text-gray-300 mb-4 mt-2 content-3d icon-3d icon-3d-gray"></i>
                 <h3 class="text-2xl font-bold uppercase text-dynamic-text border-b border-gray-200 pb-4 mb-6 tracking-widest text-morph content-3d" data-id="warn_title">Лист ознакомления</h3>
                 <p class="text-xl font-bold text-red-600 mb-6 text-morph content-3d" data-id="warn_subtitle">ЧУБАЙС КУСАЕТСЯ!</p>
                 <div class="apple-inset bg-red-50 border-red-200 inline-block uppercase text-morph mb-8 font-bold text-[14px] text-red-800" data-id="warn_action">ЗА ШКИРКУ НЕ БРАТЬ!</div>
@@ -440,7 +450,7 @@
         </div>
         
         <div class="apple-fab cursor-pointer hover:scale-105" onclick="toggleWife(this)">
-            <i class="fa-solid fa-cat text-[26px]"></i>
+            <i class="fa-solid fa-cat text-[26px] icon-3d icon-3d-orange" style="transform: translateZ(10px)"></i>
         </div>
 
         <div class="imessage-bubble" id="wife-bubble">
@@ -455,11 +465,10 @@
     </div>
 
     <script>
-        // Интеграция с Telegram Web App
         const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
         
         if (tg) {
-            tg.ready(); tg.expand(); // Раскрываем на весь экран
+            tg.ready(); tg.expand(); 
             if(tg.setHeaderColor) tg.setHeaderColor('#F2F2F7');
             if(tg.setBackgroundColor) tg.setBackgroundColor('#F2F2F7');
             
@@ -499,10 +508,10 @@
             constructor() {
                 this.x = Math.random() * w;
                 this.y = Math.random() * h;
-                this.z = Math.random() * 2 + 0.5; // Параллакс-глубина
+                this.z = Math.random() * 2 + 0.5;
                 this.r = (Math.random() * 2 + 1) * this.z;
                 this.vx = (Math.random() - 0.5) * 0.5;
-                this.vy = -(Math.random() * 0.5 + 0.2) * this.z; // Движение вверх
+                this.vy = -(Math.random() * 0.5 + 0.2) * this.z;
                 this.alpha = Math.random() * 0.5 + 0.1;
             }
             update() {
@@ -514,14 +523,14 @@
             draw() {
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(200, 200, 210, ${this.alpha})`; // Мягкий серо-белый цвет пылинок
+                ctx.fillStyle = `rgba(200, 200, 210, ${this.alpha})`;
                 ctx.fill();
             }
         }
 
         function initParticles() {
             particles = [];
-            let count = window.innerWidth < 600 ? 40 : 100; // Меньше на мобилках
+            let count = window.innerWidth < 600 ? 40 : 100;
             for(let i=0; i<count; i++) particles.push(new Particle());
         }
 
@@ -532,7 +541,6 @@
         }
         initParticles(); animateCanvas();
 
-        // --- Взрыв при нажатии на Аватар ---
         function createExplosion(x, y) {
             const emojis = ['🐾', '🐈', '✨', '💨'];
             for(let i=0; i<15; i++) {
@@ -591,14 +599,13 @@
             warn_title: { normal: "Лист ознакомления", retro: "ЖУРНАЛ ПО ТБ", elderly: "Журнал ознакомления" },
             warn_subtitle: { normal: "ЧУБАЙС КУСАЕТСЯ!", retro: "БЕЗ КАСКИ НЕ ВХОДИТЬ!", elderly: "ОЗНАКОМЛЕН" },
             warn_action: { normal: "ЗА ШКИРКУ НЕ БРАТЬ!", retro: "ЗА ШКИРКУ НЕ БРАТЬ!", elderly: "РАСПИШИТЕСЬ ЗДЕСЬ" },
-            warn_sign: { normal: "Подпись Насти:", retro: "Виза начальника:", elderly: "Подпись:" },
+            warn_sign: { normal: "Подпись Насти:", retro: "Виза Насти:", elderly: "Подпись Насти:" },
             wife_hint: { normal: "Запомни, что делать, если Чубайс молчит! 👇", retro: "Действия при отказе оборудования 👇", elderly: "Что делать, если программа сломалась 👇" },
             wife_name: { normal: "<i class='fa-solid fa-user-circle text-orange-500 mr-2 text-lg'></i> Мадам Эс. <span class='text-[10px] text-gray-500 ml-2 border border-gray-300 px-1.5 py-0.5 rounded uppercase tracking-wide bg-white'>(Сыкуха)</span>", retro: "<i class='fa-solid fa-user-circle text-orange-500 mr-2 text-lg'></i> Дежурный механик", elderly: "<i class='fa-solid fa-user-circle text-orange-500 mr-2 text-lg'></i> Справка" },
             wife_text1: { normal: "Без паники! Он под валерьянкой.", retro: "Валидол под язык! Супруг план перевыполняет.", elderly: "Ничего страшного! Программа обновляется." },
             wife_text2: { normal: "Если он <strong>5-6 минут молчит</strong> — я его пинаю. У нас алименты и 14 котят, кошачья жизнь суровая. Смена продолжается!", retro: "Если <strong>5-6 минут телеграмму не отбивает</strong> — я беру скалку. Смена продолжается!", elderly: "Если не отвечает 5-6 минут, подождите немного. Смена продолжается." }
         };
 
-        // --- Переключение режимов ---
         function setMode(index, btnElement) {
             triggerHaptic('medium');
             
@@ -640,7 +647,6 @@
             }
         }
 
-        // --- Жена (Сыкуха) ---
         function toggleWife(element) {
             triggerHaptic('heavy');
             const hint = document.getElementById('wife-alert-hint');
@@ -649,7 +655,7 @@
             bubble.classList.toggle('show');
         }
 
-        // --- 3D Магнетизм карточек (Только ПК) ---
+        // --- 3D Магнетизм карточек ---
         if (window.matchMedia("(hover: hover)").matches) {
             document.querySelectorAll('.tilt-card').forEach(card => {
                 card.addEventListener('mousemove', e => {
@@ -664,7 +670,6 @@
                     const yc = rect.height / 2;
                     const dx = x - xc;
                     const dy = y - yc;
-                    // Максимальное 3D искажение
                     card.style.transform = `rotateY(${dx / 30}deg) rotateX(${-dy / 30}deg) scale3d(1.02, 1.02, 1.02)`;
                 });
                 card.addEventListener('mouseleave', () => {
@@ -675,7 +680,6 @@
             });
         }
 
-        // Инициализация
         window.onload = () => {
             const firstBtn = document.querySelector('.mode-btn.active');
             if (firstBtn) {
