@@ -7,7 +7,7 @@
     
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Merriweather:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800;900&family=JetBrains+Mono:wght@400;700&family=Merriweather:wght@300;400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <script>
@@ -15,7 +15,8 @@
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['Nunito', 'sans-serif'],
+                        sans: ['Montserrat', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
                         serif: ['Merriweather', 'serif'],
                     },
                     colors: {
@@ -23,35 +24,30 @@
                             orange: '#ff6b00',
                             light: '#ff9d4d',
                             dark: '#cc5500',
-                            bg: '#f0f2f6', // Нативный цвет фона TG
-                            card: '#ffffff',
-                            text: '#000000',
                         }
                     },
                     animation: {
-                        'float': 'float 4s ease-in-out infinite',
-                        'glow': 'glow 3s ease-in-out infinite alternate',
-                        'slide-up': 'slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards',
-                        'shake': 'shake 0.5s cubic-bezier(.36,.07,.19,.97) both',
+                        'blob': 'blob 10s infinite alternate',
+                        'blob-reverse': 'blob-reverse 12s infinite alternate',
+                        'scanline': 'scanline 8s linear infinite',
+                        'glitch': 'glitch 2s infinite',
                     },
                     keyframes: {
-                        float: {
-                            '0%, 100%': { transform: 'translateY(0) scale(1)' },
-                            '50%': { transform: 'translateY(-10px) scale(1.02)' },
+                        blob: {
+                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
                         },
-                        glow: {
-                            '0%': { boxShadow: '0 0 15px rgba(255, 107, 0, 0.2)' },
-                            '100%': { boxShadow: '0 0 30px rgba(255, 107, 0, 0.6)' },
+                        'blob-reverse': {
+                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                            '33%': { transform: 'translate(-30px, 50px) scale(1.1)' },
+                            '66%': { transform: 'translate(20px, -20px) scale(0.9)' },
+                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
                         },
-                        slideUp: {
-                            '0%': { opacity: 0, transform: 'translateY(40px)' },
-                            '100%': { opacity: 1, transform: 'translateY(0)' },
-                        },
-                        shake: {
-                            '10%, 90%': { transform: 'translate3d(-1px, 0, 0)' },
-                            '20%, 80%': { transform: 'translate3d(2px, 0, 0)' },
-                            '30%, 50%, 70%': { transform: 'translate3d(-4px, 0, 0)' },
-                            '40%, 60%': { transform: 'translate3d(4px, 0, 0)' }
+                        scanline: {
+                            '0%': { transform: 'translateY(-100%)' },
+                            '100%': { transform: 'translateY(100vh)' }
                         }
                     }
                 }
@@ -61,340 +57,364 @@
 
     <style>
         :root {
-            --app-bg: #f0f2f6;
-            --card-bg: #ffffff;
-            --text-main: #000000;
-            --text-muted: #707579;
+            --bg-color: #f6f8fd;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --glass-bg: rgba(255, 255, 255, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.8);
             --accent: #ff6b00;
         }
 
-        body.retro-mode {
-            --app-bg: #e8e2d2; 
-            --card-bg: #fdf6e3;
-            --text-main: #3d342b;
-            --text-muted: #6b5c4d;
-            --accent: #d97706;
-            font-family: 'Merriweather', serif;
+        /* Текстура шума поверх всего сайта для "дорогого" лука */
+        .noise-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            pointer-events: none; z-index: 9999; opacity: 0.04;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
         }
 
-        body.elderly-mode {
-            --app-bg: #ffffff; 
-            --card-bg: #ffffff;
-            --text-main: #000000; 
-            --text-muted: #222222;
-            --accent: #0284c7;
-            font-family: 'Arial', sans-serif; 
+        /* Ambient Blobs (Дышащий фон) */
+        .blob {
+            position: absolute; filter: blur(60px); opacity: 0.6; z-index: -1;
+            border-radius: 50%; pointer-events: none;
+            transition: all 1s ease;
         }
 
         body {
-            background-color: var(--app-bg);
-            color: var(--text-main);
-            transition: background-color 0.4s ease;
-            -webkit-tap-highlight-color: transparent;
-            overscroll-behavior-y: none;
-            padding-top: calc(env(safe-area-inset-top) + 60px);
-            padding-bottom: calc(env(safe-area-inset-bottom) + 100px);
-            /* Декоративный бэкграунд */
-            background-image: radial-gradient(circle at 50% 0%, rgba(255,107,0,0.08) 0%, transparent 60%);
+            background-color: var(--bg-color); color: var(--text-main);
+            transition: background-color 0.5s ease;
+            -webkit-tap-highlight-color: transparent; overscroll-behavior-y: none;
+            padding-top: calc(env(safe-area-inset-top) + 80px);
+            padding-bottom: calc(env(safe-area-inset-bottom) + 120px);
+            position: relative; overflow-x: hidden;
         }
 
-        /* TMA Карточки со стеклянным эффектом (Glassmorphism) */
+        /* Ультра-стекло (Ultra Glassmorphism) */
         .glass-card {
-            background: var(--card-bg);
-            border-radius: 24px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.03), inset 0 0 0 1px rgba(255,255,255,0.5);
-            margin-bottom: 20px;
-            overflow: hidden;
-            position: relative;
-            z-index: 10;
+            background: var(--glass-bg);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease;
+            position: relative; overflow: hidden;
         }
-        body.elderly-mode .glass-card {
-            border: 3px solid #000 !important;
-            box-shadow: none !important;
-            border-radius: 16px;
+        .glass-card:active { transform: scale(0.96); }
+
+        /* Анимация органичного появления (Spring Reveal) */
+        .reveal { opacity: 0; transform: translateY(40px) scale(0.95); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+        .reveal.visible { opacity: 1; transform: translateY(0) scale(1); }
+
+        /* Терминал сисадмина */
+        .terminal-box {
+            background: #09090b; border: 1px solid #27272a; border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4), inset 0 0 0 1px rgba(255,255,255,0.05);
+            position: relative; overflow: hidden;
+        }
+        .scanline {
+            position: absolute; top: 0; left: 0; width: 100%; height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(34, 197, 94, 0.5), transparent);
+            opacity: 0.5; z-index: 10; pointer-events: none;
         }
 
-        /* Плавное появление (Scroll Animation) */
-        .reveal-item { opacity: 0; }
-
-        /* Segmented Control (iOS style) */
+        /* Сегментированный контроль iOS Style */
         .segmented-wrapper {
             position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-            padding: calc(env(safe-area-inset-top) + 8px) 16px 12px;
-            background: rgba(var(--app-bg), 0.85);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            padding: calc(env(safe-area-inset-top) + 12px) 16px 12px;
+            background: linear-gradient(180deg, rgba(246, 248, 253, 0.9) 0%, rgba(246, 248, 253, 0) 100%);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
         }
         .segmented-control {
-            display: flex; position: relative; background: rgba(118, 118, 128, 0.12);
-            border-radius: 12px; padding: 2px;
+            display: flex; position: relative; background: rgba(0,0,0,0.06);
+            border-radius: 14px; padding: 3px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
         }
         .mode-indicator {
-            position: absolute; top: 2px; bottom: 2px;
-            background: var(--card-bg); border-radius: 10px;
-            box-shadow: 0 3px 8px rgba(0,0,0,0.12), 0 3px 1px rgba(0,0,0,0.04);
-            transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1), width 0.4s cubic-bezier(0.32, 0.72, 0, 1);
-            z-index: 1;
+            position: absolute; top: 3px; bottom: 3px; background: #fff; border-radius: 11px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08), 0 1px 1px rgba(0,0,0,0.04);
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), width 0.4s ease; z-index: 1;
         }
         .mode-btn {
-            flex: 1; position: relative; z-index: 2;
-            text-align: center; font-size: 13px; font-weight: 700;
-            padding: 8px 0; color: var(--text-muted); transition: color 0.3s;
+            flex: 1; position: relative; z-index: 2; text-align: center;
+            font-size: 13px; font-weight: 700; padding: 10px 0; color: #64748b; transition: color 0.3s;
         }
-        .mode-btn.active { color: var(--text-main); }
+        .mode-btn.active { color: #0f172a; }
 
-        /* Нативные списки TG */
-        .tg-list-item {
-            display: flex; align-items: center; padding: 14px 16px;
-            border-bottom: 1px solid rgba(0,0,0,0.05);
-            transition: background-color 0.2s;
-        }
-        .tg-list-item:active { background-color: rgba(0,0,0,0.03); }
-        .tg-list-item:last-child { border-bottom: none; }
-        
-        .icon-box {
-            width: 36px; height: 36px; border-radius: 10px;
-            display: flex; align-items: center; justify-content: center;
-            margin-right: 14px; flex-shrink: 0; font-size: 16px;
-        }
-
-        /* Жена Чубайса (FAB + Spring Bubble) */
-        #wife-container {
-            position: fixed; bottom: calc(env(safe-area-inset-bottom) + 20px); left: 16px; z-index: 90;
-        }
+        /* Жена (Мадам Эс.) - Spring Animation */
+        #wife-container { position: fixed; bottom: calc(env(safe-area-inset-bottom) + 24px); left: 20px; z-index: 90; }
         .wife-fab {
-            width: 56px; height: 56px; border-radius: 28px;
-            background: var(--card-bg); box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-            display: flex; align-items: center; justify-content: center;
-            border: 2px solid rgba(0,0,0,0.05); position: relative;
-            transition: transform 0.1s;
+            width: 60px; height: 60px; border-radius: 30px;
+            background: rgba(255,255,255,0.8); backdrop-filter: blur(10px);
+            box-shadow: 0 10px 25px rgba(236, 72, 153, 0.2), inset 0 0 0 1px rgba(255,255,255,0.8);
+            display: flex; align-items: center; justify-content: center; position: relative;
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
-        .wife-fab:active { transform: scale(0.92); }
+        .wife-fab::before {
+            content: ''; position: absolute; inset: -4px; border-radius: 34px;
+            background: linear-gradient(45deg, #fbcfe8, #f43f5e); z-index: -1;
+            opacity: 0.4; filter: blur(8px); animation: pulse 2s infinite;
+        }
+        .wife-fab:active { transform: scale(0.85); }
         .wife-bubble {
-            position: absolute; bottom: 76px; left: 0; width: max-content; max-width: calc(100vw - 40px);
-            background: rgba(255,255,255,0.95); backdrop-filter: blur(10px);
-            border: 2px solid #ec4899; padding: 14px 18px; border-radius: 20px 20px 20px 4px;
-            box-shadow: 0 12px 30px rgba(236, 72, 153, 0.2);
-            opacity: 0; transform: scale(0.8) translateY(20px); transform-origin: bottom left;
-            pointer-events: none; transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: absolute; bottom: 85px; left: 0; width: max-content; max-width: calc(100vw - 40px);
+            background: rgba(255,255,255,0.95); backdrop-filter: blur(20px);
+            border: 1px solid rgba(244, 63, 94, 0.2); padding: 16px 20px; border-radius: 24px 24px 24px 4px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            opacity: 0; transform: scale(0.8) translateY(20px) rotate(-5deg); transform-origin: bottom left;
+            pointer-events: none; transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
-        .wife-bubble.show { opacity: 1; transform: scale(1) translateY(0); pointer-events: auto; }
+        .wife-bubble.show { opacity: 1; transform: scale(1) translateY(0) rotate(0deg); pointer-events: auto; }
 
-        /* Скрытия для пенсионеров */
+        /* Режимы (Темы) */
+        body.retro-mode {
+            --bg-color: #f4ecd8; --text-main: #4a3f35; --text-muted: #8b7d6b;
+            --glass-bg: rgba(253, 246, 227, 0.8); --glass-border: rgba(139, 125, 107, 0.2);
+            font-family: 'Merriweather', serif;
+        }
+        body.retro-mode .blob { display: none; } /* Отключаем неон для СССР */
+        body.retro-mode .glass-card { border-radius: 4px; box-shadow: 4px 4px 0 rgba(0,0,0,0.1); border: 2px solid #8b7d6b; backdrop-filter: none; }
+
+        body.elderly-mode {
+            --bg-color: #ffffff; --text-main: #000000; --text-muted: #333333;
+            --glass-bg: #ffffff; --glass-border: #000000;
+        }
+        body.elderly-mode .blob { display: none; }
+        body.elderly-mode .glass-card { border: 3px solid #000; border-radius: 12px; box-shadow: none; }
         body.elderly-mode .hide-for-elderly { display: none !important; }
-        body.elderly-mode .text-xs { font-size: 16px !important; line-height: 1.4; }
-        body.elderly-mode .text-sm { font-size: 18px !important; line-height: 1.4; }
-
-        /* Кастомный тост */
-        .tma-toast {
-            position: fixed; top: 80px; left: 50%; transform: translateX(-50%) translateY(-100px);
-            background: rgba(0,0,0,0.8); color: #fff; padding: 12px 20px; border-radius: 100px;
-            font-weight: bold; font-size: 14px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            z-index: 1000; opacity: 0; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            backdrop-filter: blur(8px);
-        }
-        .tma-toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
     </style>
 </head>
-<body class="antialiased selection:bg-orange-200">
+<body class="antialiased selection:bg-bot-orange selection:text-white">
 
+    <div class="noise-overlay"></div>
+
+    <!-- Живые фоновые пятна -->
+    <div id="ambient-bg" class="fixed inset-0 overflow-hidden pointer-events-none transition-opacity duration-500">
+        <div class="blob bg-orange-300 w-96 h-96 top-0 left-0 animate-blob"></div>
+        <div class="blob bg-amber-200 w-80 h-80 top-40 right-10 animate-blob-reverse" style="animation-delay: 2s"></div>
+        <div class="blob bg-pink-200 w-72 h-72 bottom-20 left-20 animate-blob" style="animation-delay: 4s"></div>
+        <div class="blob bg-blue-100 w-96 h-96 bottom-0 right-0 animate-blob-reverse" style="animation-delay: 6s"></div>
+    </div>
+
+    <!-- Навигация -->
     <div class="segmented-wrapper" id="top-nav">
         <div class="segmented-control" id="mode-tabs">
             <div id="mode-indicator" class="mode-indicator"></div>
-            <button onclick="setMode(0, this)" class="mode-btn active" style="width: 33.33%;">Молодые спецы</button>
-            <button onclick="setMode(1, this)" class="mode-btn" style="width: 33.33%;">Бывалые</button>
-            <button onclick="setMode(2, this)" class="mode-btn" style="width: 33.33%;">Ветераны ПНР</button>
+            <button onclick="setMode(0, this)" class="mode-btn active">Молодые спецы</button>
+            <button onclick="setMode(1, this)" class="mode-btn">Бывалые</button>
+            <button onclick="setMode(2, this)" class="mode-btn">Ветераны ПНР</button>
         </div>
     </div>
 
-    <!-- Всплывающее уведомление (Тост) -->
-    <div id="tma-toast" class="tma-toast flex items-center">
-        <i class="fa-solid fa-circle-check text-green-400 mr-2"></i> <span id="toast-text">Скопировано</span>
-    </div>
+    <div class="px-4 max-w-2xl mx-auto relative z-10">
 
-    <div class="px-4 max-w-2xl mx-auto">
-        
-        <!-- Красное окно для Ветеранов ПНР -->
-        <div class="glass-card mb-6 hidden bg-red-50 border-2 border-red-500 reveal-item" id="elderly-start-warning">
-            <div class="p-6 text-center">
-                <i class="fa-solid fa-triangle-exclamation text-5xl text-red-500 mb-4 animate-pulse"></i>
+        <!-- Блок Старта (Только для Ветеранов) -->
+        <div class="glass-card mb-8 hidden bg-red-50/90 border-2 border-red-500 reveal" id="elderly-start-warning">
+            <div class="p-8 text-center">
+                <div class="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse">
+                    <i class="fa-solid fa-triangle-exclamation text-4xl text-red-600"></i>
+                </div>
                 <h2 class="text-2xl font-black text-red-700 mb-3 uppercase tracking-wider">Внимание!</h2>
-                <p class="text-gray-900 font-bold text-lg mb-4">Чтобы кнопки появились на экране, вам нужно <strong>обязательно</strong> отправить боту команду старта.</p>
-                <div class="bg-white p-4 rounded-xl border-2 border-red-200 shadow-sm">
-                    <p class="text-gray-800 font-bold mb-3">Нажмите на большую кнопку внизу экрана:</p>
-                    <div class="bg-blue-600 text-white font-black py-3 px-6 rounded-xl inline-block uppercase tracking-wide text-xl shadow-lg cursor-pointer" onclick="copyStart()">СТАРТ</div>
-                    <p class="text-gray-600 font-medium mt-3">Или напишите английскими буквами: <strong>/start</strong></p>
+                <p class="text-gray-900 font-bold text-lg mb-6 leading-tight">Чтобы бот начал работать, вам нужно <strong>обязательно</strong> отправить ему команду.</p>
+                <div class="bg-white p-5 rounded-2xl border-2 border-red-100 shadow-sm">
+                    <p class="text-gray-800 font-bold mb-4">Нажмите на кнопку в самом низу экрана:</p>
+                    <div class="bg-blue-600 text-white font-black py-4 px-8 rounded-xl inline-block uppercase tracking-wide text-xl shadow-lg cursor-pointer transform active:scale-95 transition-transform" onclick="copyStart()">ЗАПУСТИТЬ</div>
+                    <p class="text-gray-600 font-medium mt-4">Или напишите вручную: <strong>/start</strong></p>
                 </div>
             </div>
         </div>
 
-        <!-- Главный экран (Hero) -->
-        <div class="text-center mb-8 pt-2 reveal-item">
-            <div id="cat-avatar" class="w-24 h-24 mx-auto bg-gradient-to-tr from-orange-100 to-orange-50 rounded-full shadow-lg flex items-center justify-center border-4 border-white mb-4 animate-float relative cursor-pointer active:scale-95 transition-transform">
-                <i class="fa-solid fa-cat text-5xl text-bot-orange drop-shadow-md"></i>
-                <div class="absolute bottom-0 right-0 bg-green-500 w-6 h-6 rounded-full border-4 border-white shadow-sm"></div>
+        <!-- Hero Section -->
+        <div class="text-center mb-10 pt-4 reveal">
+            <div id="cat-avatar" class="w-28 h-28 mx-auto bg-white rounded-3xl shadow-xl flex items-center justify-center border-4 border-white mb-6 relative cursor-pointer transform hover:scale-105 active:scale-90 transition-all duration-300 z-50">
+                <!-- Внутренний градиент аватара -->
+                <div class="absolute inset-0 rounded-[20px] bg-gradient-to-tr from-orange-100 to-transparent opacity-50"></div>
+                <i class="fa-solid fa-cat text-6xl text-bot-orange drop-shadow-md relative z-10"></i>
+                <div class="absolute -bottom-2 -right-2 bg-green-500 w-7 h-7 rounded-full border-4 border-white shadow-sm z-20"></div>
             </div>
-            <h1 class="text-3xl sm:text-4xl font-black tracking-tight mb-3 leading-tight" data-id="main_title">
+            
+            <h1 class="text-4xl sm:text-5xl font-black tracking-tight mb-4 leading-[1.1]" data-id="main_title">
                 Документация <br>
-                <span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-amber-500">бота «Чубайс»</span>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-red-500">бота «Чубайс»</span>
             </h1>
-            <p class="text-sm font-semibold text-[var(--text-muted)] px-2 mb-6 leading-relaxed" data-id="main_desc">
+            <p class="text-base font-semibold text-[var(--text-muted)] px-2 mb-6 leading-relaxed" data-id="main_desc">
                 Ваш карманный помощник. Собирает отчеты, пока спит на батарее. Подчиняется исключительно Насте. (Версия 2026)
             </p>
         </div>
 
-        <h2 class="text-xs font-black text-[var(--text-muted)] uppercase tracking-widest mb-3 ml-4 opacity-70 reveal-item" data-id="menu_title">Главное меню</h2>
+        <h2 class="text-xs font-black text-[var(--text-muted)] uppercase tracking-widest mb-4 ml-4 opacity-60 reveal" data-id="menu_title">Главное меню</h2>
         
-        <div class="glass-card mb-6 reveal-item">
-            <!-- Заявка -->
-            <div class="p-5 border-b border-gray-100 relative overflow-hidden group hover:bg-gray-50/50 transition-colors">
-                <div class="absolute top-0 right-0 w-24 h-24 bg-blue-500 opacity-5 rounded-full blur-2xl -mr-10 -mt-10"></div>
-                <div class="flex items-center mb-3">
-                    <div class="icon-box bg-blue-100 text-blue-600 shadow-sm"><i class="fa-solid fa-plus"></i></div>
-                    <h3 class="text-xl font-black">Новая заявка</h3>
+        <!-- Заявка -->
+        <div class="glass-card mb-5 reveal group cursor-pointer" onclick="triggerHaptic('light')">
+            <div class="p-6 relative">
+                <div class="absolute -top-10 -right-10 w-32 h-32 bg-blue-500 opacity-10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
+                <div class="flex items-center mb-4 relative z-10">
+                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-100 to-blue-50 text-blue-600 flex items-center justify-center text-xl shadow-sm mr-4 border border-blue-200/50"><i class="fa-solid fa-plus"></i></div>
+                    <h3 class="text-2xl font-black">Новая заявка</h3>
                 </div>
-                <p class="text-sm font-semibold text-[var(--text-muted)] mb-4" data-id="card1_desc">Поймали новую мышь? Зафиксируйте её здесь.</p>
-                <div class="bg-[var(--app-bg)] rounded-xl p-4 text-xs font-bold space-y-2.5">
-                    <div class="flex items-start" data-id="c1_li1"><i class="fa-solid fa-check text-green-500 mr-2 mt-0.5"></i> Введите номер заявки.</div>
-                    <div class="flex items-start" data-id="c1_li2"><i class="fa-solid fa-check text-green-500 mr-2 mt-0.5"></i> Выберите состав бригады.</div>
-                    <div class="flex items-start" data-id="c1_li3"><i class="fa-solid fa-check text-green-500 mr-2 mt-0.5"></i> Нажмите «ПОДТВЕРДИТЬ».</div>
-                </div>
-            </div>
-
-            <!-- Лоток -->
-            <div class="p-5 border-b border-gray-100 relative overflow-hidden hover:bg-gray-50/50 transition-colors">
-                <div class="absolute top-0 right-0 w-24 h-24 bg-indigo-500 opacity-5 rounded-full blur-2xl -mr-10 -mt-10"></div>
-                <div class="flex items-center mb-3">
-                    <div class="icon-box bg-indigo-100 text-indigo-600 shadow-sm"><i class="fa-solid fa-clipboard-list"></i></div>
-                    <h3 class="text-xl font-black" data-id="card2_title">Мои заявки (Лоток)</h3>
-                </div>
-                <p class="text-sm font-semibold text-[var(--text-muted)] mb-3" data-id="card2_desc">Ваш рабочий стол.</p>
-                <div class="space-y-1">
-                    <div class="tg-list-item px-0"><span class="bg-yellow-100 text-yellow-800 text-[10px] uppercase font-black px-2 py-1 rounded-md w-24 text-center shrink-0 shadow-sm">⏸ Пауза</span><span class="text-xs font-bold ml-3" data-id="st_pause_desc">Бросить работу и уйти спать.</span></div>
-                    <div class="tg-list-item px-0"><span class="bg-blue-100 text-blue-800 text-[10px] uppercase font-black px-2 py-1 rounded-md w-24 text-center shrink-0 shadow-sm">▶️ В работу</span><span class="text-xs font-bold ml-3" data-id="st_work_desc">Снять с паузы.</span></div>
-                    <div class="tg-list-item px-0"><span class="bg-green-100 text-green-800 text-[10px] uppercase font-black px-2 py-1 rounded-md w-24 text-center shrink-0 shadow-sm">✅ Сдано</span><span class="text-xs font-bold ml-3" data-id="st_done_desc">Мышь съедена. Отправить в Архив.</span></div>
-                    <div class="tg-list-item px-0 border-none pb-0"><span class="bg-purple-100 text-purple-800 text-[10px] uppercase font-black px-2 py-1 rounded-md w-24 text-center shrink-0 shadow-sm">📝 На завтра</span><span class="text-xs font-black text-purple-600 ml-3" data-id="st_tmrw_desc">Добавляет в план на завтра! Важно!</span></div>
+                <p class="text-sm font-semibold text-[var(--text-muted)] mb-5 relative z-10" data-id="card1_desc">Поймали новую мышь? Зафиксируйте её здесь.</p>
+                <div class="bg-[var(--glass-bg)] border border-[var(--glass-border)] rounded-2xl p-5 text-sm font-bold space-y-3 relative z-10 shadow-inner">
+                    <div class="flex items-start" data-id="c1_li1"><div class="w-5 h-5 rounded-full bg-green-100 text-green-600 flex items-center justify-center mr-3 shrink-0 mt-0.5"><i class="fa-solid fa-check text-[10px]"></i></div> Введите номер заявки.</div>
+                    <div class="flex items-start" data-id="c1_li2"><div class="w-5 h-5 rounded-full bg-green-100 text-green-600 flex items-center justify-center mr-3 shrink-0 mt-0.5"><i class="fa-solid fa-check text-[10px]"></i></div> Выберите состав бригады.</div>
+                    <div class="flex items-start" data-id="c1_li3"><div class="w-5 h-5 rounded-full bg-green-100 text-green-600 flex items-center justify-center mr-3 shrink-0 mt-0.5"><i class="fa-solid fa-check text-[10px]"></i></div> Нажмите «ПОДТВЕРДИТЬ».</div>
                 </div>
             </div>
+        </div>
 
-            <!-- На завтра -->
-            <div class="p-5 bg-gradient-to-br from-orange-50/80 to-transparent">
-                <div class="flex items-center mb-3">
-                    <div class="icon-box bg-gradient-to-tr from-bot-dark to-bot-orange text-white shadow-md"><i class="fa-solid fa-calendar-day"></i></div>
-                    <h3 class="text-xl font-black" data-id="card3_title">На завтра (Миска)</h3>
+        <!-- Лоток -->
+        <div class="glass-card mb-5 reveal group cursor-pointer" onclick="triggerHaptic('light')">
+            <div class="p-6 relative">
+                <div class="absolute -top-10 -right-10 w-32 h-32 bg-indigo-500 opacity-10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
+                <div class="flex items-center mb-4 relative z-10">
+                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-100 to-indigo-50 text-indigo-600 flex items-center justify-center text-xl shadow-sm mr-4 border border-indigo-200/50"><i class="fa-solid fa-clipboard-list"></i></div>
+                    <h3 class="text-2xl font-black" data-id="card2_title">Мои заявки (Лоток)</h3>
                 </div>
-                <p class="text-sm font-semibold text-[var(--text-muted)] mb-4" data-id="card3_desc">Корзина планов. Можно нажать ❌ Убрать.</p>
-                <div class="bg-white p-4 rounded-xl border border-red-100 border-l-4 border-l-red-500 shadow-sm">
-                    <p class="text-red-600 text-xs font-black mb-1.5 uppercase tracking-wide"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Железное правило</p>
-                    <p class="text-sm font-bold leading-tight" data-id="card3_rule">Запись на завтра строго <strong>с 12:00 до 16:30</strong>. После кормушка закрывается!</p>
+                <p class="text-sm font-semibold text-[var(--text-muted)] mb-5 relative z-10" data-id="card2_desc">Ваш рабочий стол.</p>
+                <div class="space-y-4 relative z-10">
+                    <div class="flex items-center"><span class="bg-yellow-100 text-yellow-800 text-xs uppercase font-black px-3 py-1.5 rounded-lg w-28 text-center shrink-0 shadow-sm">⏸ Пауза</span><span class="text-sm font-bold ml-4 text-[var(--text-main)]" data-id="st_pause_desc">Бросить работу и уйти спать.</span></div>
+                    <div class="flex items-center"><span class="bg-blue-100 text-blue-800 text-xs uppercase font-black px-3 py-1.5 rounded-lg w-28 text-center shrink-0 shadow-sm">▶️ В работу</span><span class="text-sm font-bold ml-4 text-[var(--text-main)]" data-id="st_work_desc">Снять с паузы.</span></div>
+                    <div class="flex items-center"><span class="bg-green-100 text-green-800 text-xs uppercase font-black px-3 py-1.5 rounded-lg w-28 text-center shrink-0 shadow-sm">✅ Завершить</span><span class="text-sm font-bold ml-4 text-[var(--text-main)]" data-id="st_done_desc">Мышь съедена. Отправить в Архив.</span></div>
+                    <div class="flex items-center"><span class="bg-gradient-to-r from-purple-100 to-pink-100 text-purple-800 text-xs uppercase font-black px-3 py-1.5 rounded-lg w-28 text-center shrink-0 shadow-sm">📝 На завтра</span><span class="text-sm font-black text-purple-600 ml-4" data-id="st_tmrw_desc">Добавляет в план! Важно!</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- На завтра -->
+        <div class="glass-card mb-5 reveal group cursor-pointer border-t-4 border-t-bot-orange" onclick="triggerHaptic('light')">
+            <div class="p-6 relative">
+                <div class="absolute top-4 right-4 text-6xl opacity-5 group-hover:rotate-12 transition-transform duration-500 text-bot-orange"><i class="fa-solid fa-moon"></i></div>
+                <div class="flex items-center mb-4 relative z-10">
+                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-bot-orange to-red-500 text-white flex items-center justify-center text-xl shadow-lg shadow-orange-500/30 mr-4"><i class="fa-solid fa-calendar-day"></i></div>
+                    <h3 class="text-2xl font-black" data-id="card3_title">На завтра (Миска)</h3>
+                </div>
+                <p class="text-sm font-semibold text-[var(--text-muted)] mb-5 relative z-10" data-id="card3_desc">Корзина планов. Можно нажать ❌ Убрать.</p>
+                <div class="bg-orange-50/80 backdrop-blur-md p-5 rounded-2xl border border-orange-200 shadow-sm relative z-10">
+                    <p class="text-orange-600 text-xs font-black mb-2 uppercase tracking-widest"><i class="fa-solid fa-bolt mr-1"></i> Железное правило</p>
+                    <p class="text-sm font-bold text-orange-900 leading-relaxed" data-id="card3_rule">Запись на завтра строго <strong>с 12:00 до 16:30</strong>. После кормушка закрывается!</p>
                 </div>
             </div>
         </div>
 
         <!-- Сообщить о проблеме -->
-        <div class="glass-card mb-8 reveal-item cursor-pointer transform transition-transform active:scale-95" onclick="triggerHaptic('heavy')">
-            <div class="p-5 bg-gradient-to-r from-red-50/80 to-transparent border-l-4 border-l-red-500 flex items-center">
-                <div class="icon-box bg-red-500 text-white shadow-lg shadow-red-500/30 animate-pulse-slow"><i class="fa-solid fa-life-ring"></i></div>
+        <div class="glass-card mb-10 reveal cursor-pointer hover:shadow-xl transition-all" onclick="triggerHaptic('heavy')">
+            <div class="p-6 bg-gradient-to-r from-red-50 to-transparent flex items-center">
+                <div class="w-14 h-14 rounded-full bg-red-500 text-white flex items-center justify-center text-2xl shadow-lg shadow-red-500/40 mr-5 animate-pulse"><i class="fa-solid fa-life-ring"></i></div>
                 <div>
-                    <h3 class="text-lg font-black text-red-800 leading-tight" data-id="card4_title">🆘 Сообщить о проблеме</h3>
-                    <p class="text-xs font-bold text-red-600/80 mt-1" data-id="card4_desc">Бот принесет жалобу в зубах прямо Насте.</p>
+                    <h3 class="text-xl font-black text-red-800" data-id="card4_title">🆘 Сообщить о проблеме</h3>
+                    <p class="text-sm font-bold text-red-600/80 mt-1" data-id="card4_desc">Бот принесет жалобу в зубах прямо Насте.</p>
                 </div>
             </div>
         </div>
 
-        <h2 class="text-xs font-black text-[var(--text-muted)] uppercase tracking-widest mb-3 ml-4 opacity-70 hide-for-elderly reveal-item" data-id="routine_title">Режим дня</h2>
-        <div class="glass-card mb-8 hide-for-elderly reveal-item">
-            <div class="tg-list-item">
-                <div class="font-black text-xl text-bot-orange w-16 text-center drop-shadow-sm">12:00</div>
-                <div class="ml-2">
-                    <strong class="text-base font-black block" data-id="r_1_title">Утренний опрос (Мяу!)</strong>
-                    <span class="text-xs font-bold text-[var(--text-muted)]" data-id="r_1_desc">Спрашивает: «Что завтра делаем?»</span>
+        <!-- Режим дня -->
+        <h2 class="text-xs font-black text-[var(--text-muted)] uppercase tracking-widest mb-4 ml-4 opacity-60 hide-for-elderly reveal" data-id="routine_title">Режим дня</h2>
+        <div class="glass-card mb-10 hide-for-elderly reveal p-2">
+            <div class="flex p-4 items-center border-b border-[var(--glass-border)]">
+                <div class="w-20 text-center font-black text-2xl text-bot-orange">12:00</div>
+                <div class="ml-4 border-l-2 border-orange-100 pl-4">
+                    <strong class="text-lg font-black block" data-id="r_1_title">Опрос (Мяу!)</strong>
+                    <span class="text-sm font-bold text-[var(--text-muted)]" data-id="r_1_desc">«Что завтра делаем?»</span>
                 </div>
             </div>
-            <div class="tg-list-item bg-orange-50/50">
-                <div class="font-black text-sm text-amber-600 w-16 text-center leading-tight">12:00<br><span class="text-[10px] opacity-40">▼</span><br>16:30</div>
-                <div class="ml-2">
-                    <strong class="text-base font-black text-amber-900 block" data-id="r_2_title">Время планирования</strong>
-                    <span class="text-xs font-bold text-amber-700" data-id="r_2_desc">Жмем 📝 Записать на завтра.</span>
+            <div class="flex p-4 items-center border-b border-[var(--glass-border)] bg-orange-50/50 rounded-lg m-2">
+                <div class="w-20 text-center font-black text-sm text-amber-600">12:00<br><span class="opacity-30 text-[10px]">▼</span><br>16:30</div>
+                <div class="ml-4 border-l-2 border-amber-200 pl-4">
+                    <strong class="text-lg font-black text-amber-900 block" data-id="r_2_title">Планирование</strong>
+                    <span class="text-sm font-bold text-amber-700" data-id="r_2_desc">Жмем 📝 Записать на завтра.</span>
                 </div>
             </div>
-            <div class="tg-list-item">
-                <div class="font-black text-xl text-red-500 w-16 text-center drop-shadow-sm">16:30</div>
-                <div class="ml-2">
-                    <strong class="text-base font-black block" data-id="r_3_title">Закрытие смены</strong>
-                    <span class="text-xs font-bold text-[var(--text-muted)]" data-id="r_3_desc">Отчет в Google. Бот уходит к кошечкам.</span>
-                </div>
-            </div>
-        </div>
-
-        <h2 class="text-xs font-black text-purple-600 uppercase tracking-widest mb-3 ml-4 opacity-80 hide-for-elderly reveal-item"><i class="fa-solid fa-crown mr-1"></i> Вожакам стаи</h2>
-        <div class="glass-card mb-8 hide-for-elderly p-3 grid grid-cols-2 gap-3 bg-gradient-to-br from-purple-50/50 to-transparent reveal-item">
-            <div class="bg-white p-4 rounded-xl shadow-sm border border-purple-100 active:scale-95 transition-transform" onclick="triggerHaptic('light')">
-                <div class="text-2xl mb-2">🚀</div><h4 class="font-black text-sm mb-1">Опрос</h4><p class="text-[10px] font-bold text-gray-500 leading-tight" data-id="adm_1">Разбудить всех пинком.</p>
-            </div>
-            <div class="bg-white p-4 rounded-xl shadow-sm border border-purple-100 active:scale-95 transition-transform" onclick="triggerHaptic('light')">
-                <div class="text-2xl mb-2">💾</div><h4 class="font-black text-sm mb-1">На завтра</h4><p class="text-[10px] font-bold text-gray-500 leading-tight" data-id="adm_2">Подсмотреть черновик.</p>
-            </div>
-            <div class="bg-white p-4 rounded-xl shadow-sm border border-purple-100 border-l-4 border-l-amber-500 active:scale-95 transition-transform" onclick="triggerHaptic('medium')">
-                <div class="text-2xl mb-2">💩</div><h4 class="font-black text-sm text-amber-900 mb-1">Кто не записался</h4><p class="text-[10px] font-bold text-amber-700 leading-tight" data-id="adm_3">Раздать лещи вонючкам.</p>
-            </div>
-            <div class="bg-white p-4 rounded-xl shadow-sm border border-purple-100 border-l-4 border-l-green-500 active:scale-95 transition-transform" onclick="triggerHaptic('medium')">
-                <div class="text-2xl mb-2 animate-pulse">🟢</div><h4 class="font-black text-sm text-green-900 mb-1">Live-отчет</h4><p class="text-[10px] font-bold text-green-700 leading-tight" data-id="adm_4">Онлайн-слежка ВКЛ/ВЫКЛ.</p>
-            </div>
-            <div class="bg-white p-4 rounded-xl shadow-sm border border-purple-100 col-span-2">
-                <h4 class="font-black text-sm mb-3 flex items-center"><i class="fa-solid fa-stopwatch text-bot-orange mr-2"></i> Таймер заявок</h4>
-                <div class="flex text-[11px] font-black uppercase tracking-wide gap-2">
-                    <div class="flex-1 bg-gray-100 p-2 rounded-lg text-center shadow-inner">⏲ Авто</div>
-                    <div class="flex-1 bg-green-100 text-green-800 p-2 rounded-lg text-center shadow-inner">🔓 Открыть</div>
-                    <div class="flex-1 bg-red-100 text-red-800 p-2 rounded-lg text-center shadow-inner">🔒 Закрыть</div>
+            <div class="flex p-4 items-center">
+                <div class="w-20 text-center font-black text-2xl text-red-500">16:30</div>
+                <div class="ml-4 border-l-2 border-red-100 pl-4">
+                    <strong class="text-lg font-black block" data-id="r_3_title">Смена закрыта</strong>
+                    <span class="text-sm font-bold text-[var(--text-muted)]" data-id="r_3_desc">Отчет в Google. Бот уходит к кошечкам.</span>
                 </div>
             </div>
         </div>
 
-        <h2 class="text-xs font-black text-[var(--text-muted)] uppercase tracking-widest mb-3 ml-4 opacity-70 hide-for-elderly reveal-item"><i class="fa-solid fa-table mr-1"></i> База Данных (Google)</h2>
-        <div class="glass-card mb-8 hide-for-elderly reveal-item">
-            <div class="tg-list-item"><div class="icon-box bg-blue-100 text-blue-600"><i class="fa-solid fa-users"></i></div><div><h3 class="text-sm font-black">1. Сотрудники</h3><p class="text-[11px] font-bold text-gray-500">Допущенные к боту. Уволить = удалить строку.</p></div></div>
-            <div class="tg-list-item"><div class="icon-box bg-purple-100 text-purple-600"><i class="fa-solid fa-crown"></i></div><div><h3 class="text-sm font-black">2. Админы</h3><p class="text-[11px] font-bold text-gray-500">Получают жалобы для Насти.</p></div></div>
-            <div class="tg-list-item"><div class="icon-box bg-green-100 text-green-600 animate-pulse">🟢</div><div><h3 class="text-sm font-black">3. Live</h3><p class="text-[11px] font-bold text-gray-500">Дашборд онлайн. Не трогать вручную!</p></div></div>
-            <div class="tg-list-item"><div class="icon-box bg-gray-100 text-gray-600">🏁</div><div><h3 class="text-sm font-black">4. Завершенные</h3><p class="text-[11px] font-bold text-gray-500">Архив закопанных работ.</p></div></div>
-            <div class="tg-list-item"><div class="icon-box bg-indigo-100 text-indigo-600">💾</div><div><h3 class="text-sm font-black">5. Просмотр на завтра</h3><p class="text-[11px] font-bold text-gray-500">Черновик. Обновляется каждый час.</p></div></div>
-            <div class="tg-list-item bg-orange-50/50"><div class="icon-box bg-bot-orange text-white shadow-md"><i class="fa-solid fa-star"></i></div><div><h3 class="text-sm font-black text-orange-900">6. Отчеты</h3><p class="text-[11px] font-bold text-orange-700">Главный архив. Выгружается в 16:30 вниз.</p></div></div>
-            <div class="tg-list-item bg-red-50/50"><div class="icon-box bg-red-500 text-white shadow-md"><i class="fa-solid fa-brain"></i></div><div><h3 class="text-sm font-black text-red-900">7. Память (Опасно)</h3><p class="text-[11px] font-bold text-red-700">Если бот завис, удалите строку человека здесь.</p></div></div>
-        </div>
-
-        <h2 class="text-xs font-black text-emerald-500 uppercase tracking-widest mb-3 ml-4 opacity-90 hide-for-elderly reveal-item"><i class="fa-solid fa-terminal mr-1"></i> IT-лоток (Киберпанк)</h2>
-        <div class="glass-card mb-8 hide-for-elderly bg-[#0d1117] border border-emerald-500/30 shadow-[0_0_20px_rgba(16,185,129,0.1)] text-emerald-50 reveal-item">
-            <div class="p-5 border-b border-emerald-500/20">
-                <h3 class="text-sm font-black text-emerald-400 mb-2 drop-shadow-[0_0_5px_rgba(52,211,153,0.8)]"><i class="fa-solid fa-heart-pulse mr-2"></i>Анти-Сон & Cloudflare</h3>
-                <p class="text-[11px] font-bold text-emerald-100/70 mb-2">Бот пингует себя раз в минуту. <strong class="text-emerald-300">Cloudflare</strong> шлет сигнал для авторестарта при падении.</p>
-                <code class="block bg-black/50 p-2 rounded text-[10px] text-emerald-300 font-mono mt-2 border border-emerald-500/30">status: "online", pings: 1/min</code>
+        <!-- Админка -->
+        <h2 class="text-xs font-black text-purple-600 uppercase tracking-widest mb-4 ml-4 opacity-80 hide-for-elderly reveal"><i class="fa-solid fa-crown mr-1"></i> Вожакам стаи</h2>
+        <div class="glass-card mb-10 hide-for-elderly p-4 grid grid-cols-2 gap-4 bg-gradient-to-br from-purple-50/30 to-transparent reveal">
+            <div class="bg-[var(--glass-bg)] p-5 rounded-2xl shadow-sm border border-[var(--glass-border)] active:scale-95 transition-transform" onclick="triggerHaptic('light')">
+                <div class="text-3xl mb-3">🚀</div><h4 class="font-black text-base mb-1">Опрос</h4><p class="text-xs font-bold text-gray-500" data-id="adm_1">Разбудить всех пинком.</p>
             </div>
-            <div class="p-5 border-b border-emerald-500/20 bg-emerald-900/10">
-                <h3 class="text-sm font-black text-white mb-2">Защита от сбоев в 16:30</h3>
-                <p class="text-[11px] font-bold text-emerald-100/70">Если сервер упал в 16:29, после перезапуска бот <strong>сначала выгрузит всё из памяти</strong> в Гугл, и только потом очистит телефоны. Ни одна заявка не пропадет.</p>
+            <div class="bg-[var(--glass-bg)] p-5 rounded-2xl shadow-sm border border-[var(--glass-border)] active:scale-95 transition-transform" onclick="triggerHaptic('light')">
+                <div class="text-3xl mb-3">💾</div><h4 class="font-black text-base mb-1">На завтра</h4><p class="text-xs font-bold text-gray-500" data-id="adm_2">Подсмотреть черновик.</p>
             </div>
-            <div class="p-5">
-                <h3 class="text-sm font-black text-emerald-400 mb-3">> Чек-лист поломок</h3>
-                <ul class="text-[11px] font-bold space-y-2 text-emerald-100/80 list-none pl-0">
-                    <li class="flex items-start"><span class="text-emerald-500 mr-2">1.</span> Спящий сервер: нажать Restart в облаке.</li>
-                    <li class="flex items-start"><span class="text-emerald-500 mr-2">2.</span> Google 503/429: бот сам подождет (экспоненциально).</li>
-                    <li class="flex items-start"><span class="text-emerald-500 mr-2">3.</span> Завис 1 человек: очистить его из листа 7 "Память".</li>
-                </ul>
+            <div class="bg-amber-50 p-5 rounded-2xl shadow-sm border border-amber-200 active:scale-95 transition-transform col-span-2 sm:col-span-1" onclick="triggerHaptic('medium')">
+                <div class="text-3xl mb-3">💩</div><h4 class="font-black text-base text-amber-900 mb-1">Кто не записался</h4><p class="text-xs font-bold text-amber-700" data-id="adm_3">Раздать лещи вонючкам.</p>
+            </div>
+            <div class="bg-green-50 p-5 rounded-2xl shadow-sm border border-green-200 active:scale-95 transition-transform col-span-2 sm:col-span-1" onclick="triggerHaptic('medium')">
+                <div class="text-3xl mb-3 animate-pulse">🟢</div><h4 class="font-black text-base text-green-900 mb-1">Live-отчет</h4><p class="text-xs font-bold text-green-700" data-id="adm_4">Онлайн-слежка ВКЛ/ВЫКЛ.</p>
+            </div>
+            <div class="bg-[var(--glass-bg)] p-5 rounded-2xl shadow-sm border border-[var(--glass-border)] col-span-2">
+                <h4 class="font-black text-sm mb-4 flex items-center text-gray-800"><i class="fa-solid fa-stopwatch text-bot-orange mr-2 text-lg"></i> Таймер заявок</h4>
+                <div class="flex flex-col sm:flex-row text-xs font-black uppercase tracking-wide gap-2">
+                    <div class="flex-1 bg-gray-100 p-3 rounded-xl text-center shadow-inner">⏲ Авто</div>
+                    <div class="flex-1 bg-green-100 text-green-800 p-3 rounded-xl text-center shadow-inner">🔓 Открыть</div>
+                    <div class="flex-1 bg-red-100 text-red-800 p-3 rounded-xl text-center shadow-inner">🔒 Закрыть</div>
+                </div>
             </div>
         </div>
 
-        <!-- Планшет ознакомления (3D эффект) -->
-        <div class="relative bg-[#e5e5f7] p-6 rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.1),inset_0_2px_4px_rgba(255,255,255,0.8)] border border-gray-300 mt-10 mb-8 transform rotate-1 hover:rotate-0 transition-transform duration-300 reveal-item">
-            <!-- Клипса планшета -->
-            <div class="absolute -top-3 left-1/2 -translate-x-1/2 w-20 h-6 bg-gradient-to-b from-gray-300 to-gray-400 rounded-lg shadow-md border border-gray-400"></div>
+        <!-- Таблицы -->
+        <h2 class="text-xs font-black text-[var(--text-muted)] uppercase tracking-widest mb-4 ml-4 opacity-60 hide-for-elderly reveal"><i class="fa-solid fa-table mr-1"></i> База Данных (Google)</h2>
+        <div class="glass-card mb-10 hide-for-elderly reveal p-2">
+            <div class="p-4 border-b border-[var(--glass-border)] flex items-start"><div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center shrink-0 mr-4"><i class="fa-solid fa-users"></i></div><div><h3 class="font-black text-base">1. Сотрудники</h3><p class="text-xs font-bold text-gray-500 mt-1">Допущенные к боту. Уволить = удалить строку.</p></div></div>
+            <div class="p-4 border-b border-[var(--glass-border)] flex items-start"><div class="w-10 h-10 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center shrink-0 mr-4"><i class="fa-solid fa-crown"></i></div><div><h3 class="font-black text-base">2. Админы</h3><p class="text-xs font-bold text-gray-500 mt-1">Получают жалобы для Насти.</p></div></div>
+            <div class="p-4 border-b border-[var(--glass-border)] flex items-start bg-green-50/50"><div class="w-10 h-10 rounded-xl bg-green-100 text-green-600 flex items-center justify-center shrink-0 mr-4 animate-pulse">🟢</div><div><h3 class="font-black text-base">3. Live</h3><p class="text-xs font-bold text-gray-500 mt-1">Дашборд онлайн. Не трогать вручную!</p></div></div>
+            <div class="p-4 border-b border-[var(--glass-border)] flex items-start"><div class="w-10 h-10 rounded-xl bg-gray-100 text-gray-600 flex items-center justify-center shrink-0 mr-4">🏁</div><div><h3 class="font-black text-base">4. Завершенные</h3><p class="text-xs font-bold text-gray-500 mt-1">Архив закопанных работ.</p></div></div>
+            <div class="p-4 border-b border-[var(--glass-border)] flex items-start"><div class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0 mr-4">💾</div><div><h3 class="font-black text-base">5. Просмотр на завтра</h3><p class="text-xs font-bold text-gray-500 mt-1">Черновик. Обновляется каждый час.</p></div></div>
+            <div class="p-4 border-b border-[var(--glass-border)] flex items-start bg-orange-50"><div class="w-10 h-10 rounded-xl bg-bot-orange text-white shadow-md flex items-center justify-center shrink-0 mr-4"><i class="fa-solid fa-star"></i></div><div><h3 class="font-black text-base text-orange-900">6. Отчеты</h3><p class="text-xs font-bold text-orange-700 mt-1">Главный архив. Выгружается в 16:30 вниз.</p></div></div>
+            <div class="p-4 flex items-start bg-red-50"><div class="w-10 h-10 rounded-xl bg-red-500 text-white shadow-md flex items-center justify-center shrink-0 mr-4"><i class="fa-solid fa-brain"></i></div><div><h3 class="font-black text-base text-red-900">7. Память (Опасно)</h3><p class="text-xs font-bold text-red-700 mt-1">Если бот завис, удалите строку человека здесь.</p></div></div>
+        </div>
+
+        <!-- IT-лоток -->
+        <h2 class="text-xs font-black text-emerald-500 uppercase tracking-widest mb-4 ml-4 opacity-90 hide-for-elderly reveal font-mono"><i class="fa-solid fa-terminal mr-1"></i> root@chubais:~#</h2>
+        <div class="terminal-box mb-12 hide-for-elderly text-emerald-50 reveal">
+            <div class="scanline animate-scanline"></div>
+            <!-- Mac style header -->
+            <div class="bg-zinc-900 px-4 py-2 flex items-center border-b border-zinc-800">
+                <div class="flex gap-2 mr-4">
+                    <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                    <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                    <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                </div>
+                <span class="text-xs font-mono text-zinc-500">IT-лоток (Реанимация)</span>
+            </div>
             
-            <div class="bg-white p-5 rounded border border-gray-200 shadow-sm text-center relative mt-2">
-                <h3 class="text-xl font-black uppercase text-gray-900 border-b-2 border-dashed border-gray-300 pb-3 mb-4" data-id="warn_title">Лист ознакомления</h3>
-                <p class="text-lg font-black text-red-600 mb-4 animate-pulse" data-id="warn_subtitle">ЧУБАЙС КУСАЕТСЯ!</p>
-                <div class="bg-red-50 text-red-800 text-sm font-black px-4 py-3 rounded-lg inline-block uppercase border-2 border-red-200 shadow-sm" data-id="warn_action">ЗА ШКИРКУ НЕ БРАТЬ!</div>
-                <div class="mt-6 border-t border-gray-200 pt-4 flex justify-between items-end">
-                    <span class="text-[10px] text-gray-400 font-bold uppercase">Подпись:</span>
-                    <span class="border-b border-gray-400 w-32 inline-block"></span>
+            <div class="p-6 font-mono text-sm space-y-6 relative z-20">
+                <div>
+                    <h3 class="text-emerald-400 font-bold mb-2 flex items-center"><i class="fa-solid fa-heart-pulse mr-2"></i>[System.AntiSleep] && Cloudflare</h3>
+                    <p class="text-emerald-100/70 text-xs leading-relaxed">Бот пингует себя раз в минуту. <span class="text-white bg-emerald-900/50 px-1 rounded">Cloudflare</span> шлет сигнал для авторестарта при падении.</p>
+                </div>
+                <div class="bg-emerald-950/30 p-4 rounded-lg border border-emerald-500/20">
+                    <h3 class="text-white font-bold mb-2">Safe.Crash(16:30)</h3>
+                    <p class="text-emerald-100/70 text-xs leading-relaxed">Если сервер упал в 16:29, после перезапуска бот <strong class="text-emerald-300">сначала выгрузит память в Гугл</strong>, дождется ответа (API 200 OK), и только потом очистит телефоны.</p>
+                </div>
+                <div>
+                    <h3 class="text-emerald-400 font-bold mb-3">> run diagnostic_checklist.sh</h3>
+                    <ul class="text-xs space-y-3 text-emerald-100/80 list-none pl-0">
+                        <li class="flex"><span class="text-emerald-500 mr-2">ERR_01:</span> <span>Бот молчит. Решение: Restart сервера в панели.</span></li>
+                        <li class="flex"><span class="text-emerald-500 mr-2">ERR_02:</span> <span>Google 503/429. Решение: Игнорировать. Бот подождет экспоненциально и дошлет.</span></li>
+                        <li class="flex"><span class="text-emerald-500 mr-2">ERR_03:</span> <span>Завис 1 человек. Решение: Очистить его ID из листа "Память".</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Планшет ознакомления -->
+        <div class="relative bg-gradient-to-b from-[#f8f9fa] to-[#e9ecef] p-8 rounded-[32px] shadow-[0_20px_50px_rgba(0,0,0,0.1),inset_0_2px_10px_rgba(255,255,255,1)] border border-gray-300 mt-16 mb-10 transform -rotate-2 hover:rotate-0 transition-transform duration-500 reveal">
+            <!-- Металлическая клипса -->
+            <div class="absolute -top-4 left-1/2 -translate-x-1/2 w-32 h-10 bg-gradient-to-b from-gray-200 to-gray-400 rounded-xl shadow-lg border border-gray-400 flex items-center justify-center">
+                <div class="w-20 h-2 bg-gray-500/30 rounded-full"></div>
+            </div>
+            
+            <div class="bg-white p-6 md:p-8 rounded-xl border border-gray-200 shadow-sm text-center mt-4">
+                <h3 class="text-2xl font-black uppercase text-gray-900 border-b-2 border-dashed border-gray-300 pb-4 mb-6" data-id="warn_title">Лист ознакомления</h3>
+                <p class="text-xl md:text-2xl font-black text-red-600 mb-6 animate-pulse" data-id="warn_subtitle">ЧУБАЙС КУСАЕТСЯ!</p>
+                <div class="bg-red-50 text-red-800 text-base md:text-lg font-black px-6 py-4 rounded-xl inline-block uppercase border-2 border-red-200 shadow-sm" data-id="warn_action">ЗА ШКИРКУ НЕ БРАТЬ!</div>
+                <div class="mt-8 border-t border-gray-100 pt-6 flex justify-between items-end">
+                    <span class="text-xs text-gray-400 font-bold uppercase tracking-widest">Подпись:</span>
+                    <span class="border-b-2 border-gray-400 w-40 inline-block opacity-50"></span>
                 </div>
             </div>
         </div>
@@ -403,42 +423,46 @@
 
     <!-- Жена (Мадам Эс.) - FAB -->
     <div id="wife-container">
-        <!-- Подсказка -->
-        <div class="absolute -top-16 left-2 bg-bot-text text-white text-[11px] font-black py-2 px-4 rounded-xl shadow-xl w-48 animate-bounce z-50 text-center" id="wife-alert-hint" data-id="wife_hint">
-            Запомни, что делать, если Чубайс молчит! 👇
-            <div class="absolute -bottom-1.5 left-6 w-3 h-3 bg-bot-text transform rotate-45"></div>
+        <!-- Анимированная подсказка и следы -->
+        <div class="absolute -top-24 left-4 bg-gray-900 text-white text-xs font-black py-3 px-5 rounded-2xl shadow-2xl w-56 animate-bounce z-50 text-center" id="wife-alert-hint" data-id="wife_hint">
+            Запомни, что делать, если Чубайс тебя игнорирует и молчит! 👇
+            <div class="absolute -bottom-2 left-8 w-4 h-4 bg-gray-900 transform rotate-45"></div>
         </div>
+        
+        <!-- Следы -->
+        <div class="absolute -right-12 -top-16 text-orange-400/40 text-lg rotate-45 animate-pulse"><i class="fa-solid fa-paw"></i></div>
+        <div class="absolute -right-20 -top-4 text-orange-400/40 text-lg rotate-12 animate-pulse" style="animation-delay: 0.5s"><i class="fa-solid fa-paw"></i></div>
 
-        <!-- Кнопка -->
+        <!-- Сама кнопка -->
         <div class="wife-fab cursor-pointer" onclick="toggleWife(this)">
-            <i class="fa-solid fa-cat text-2xl text-[var(--text-muted)]"></i>
-            <i class="fa-solid fa-ribbon absolute -top-1 -right-1 text-pink-500 text-xl drop-shadow-md"></i>
-            <!-- Кошачьи следы к ней -->
-            <div class="absolute -right-8 -top-10 text-orange-300/50 text-sm rotate-45 animate-pulse"><i class="fa-solid fa-paw"></i></div>
-            <div class="absolute -right-14 -top-4 text-orange-300/50 text-sm rotate-12 animate-pulse" style="animation-delay: 0.5s"><i class="fa-solid fa-paw"></i></div>
+            <i class="fa-solid fa-cat text-3xl text-pink-500 drop-shadow-md"></i>
+            <i class="fa-solid fa-crown absolute -top-2 -right-1 text-yellow-400 text-xl drop-shadow"></i>
         </div>
 
         <!-- Облачко -->
         <div class="wife-bubble text-sm font-medium" id="wife-bubble">
-            <p class="font-black text-pink-600 mb-2 text-lg border-b border-pink-100 pb-2" data-id="wife_name"><i class="fa-solid fa-crown text-yellow-400 mr-2 drop-shadow"></i> Мадам Эс. <span class="text-[10px] text-pink-400 ml-1 uppercase bg-pink-50 px-1 rounded">(Сыкуха)</span></p>
-            <p class="mb-2 text-xs font-bold text-gray-800" data-id="wife_text1">Без паники! Чубайс под валерьянкой.</p>
-            <p class="font-bold bg-pink-50 p-3 rounded-xl border border-pink-200 text-pink-900 text-[11px] leading-relaxed shadow-inner" data-id="wife_text2">Если <strong>5-6 минут не на связи</strong> — я его пинаю. У нас алименты и 14 котят, расслабляться некогда!</p>
+            <p class="font-black text-gray-900 mb-3 text-xl border-b border-gray-100 pb-3 flex items-center" data-id="wife_name">
+                <i class="fa-solid fa-heart text-pink-500 mr-2 animate-pulse"></i> Мадам Эс. <span class="text-[10px] text-pink-400 ml-2 uppercase bg-pink-50 px-2 py-1 rounded-full border border-pink-100">(Сыкуха)</span>
+            </p>
+            <p class="mb-3 text-sm font-bold text-gray-700" data-id="wife_text1">Без паники! Чубайс под валерьянкой.</p>
+            <p class="font-bold bg-gray-50 p-4 rounded-xl border border-gray-200 text-gray-800 text-xs leading-relaxed shadow-inner" data-id="wife_text2">
+                Если он <strong>5-6 минут не на связи</strong> — я его пинаю. Смена продолжается! У нас алименты и 14 котят, расслабляться некогда. Кошачья жизнь суровая.
+            </p>
         </div>
     </div>
 
     <script>
-        // Инициализация Telegram API
+        // TG Init
         const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
         
         if (tg) {
             tg.ready();
             tg.expand(); 
-            // Пытаемся применить тему ТГ, но держим наш фон для красоты
-            if(tg.setHeaderColor) tg.setHeaderColor('#f0f2f6');
-            if(tg.setBackgroundColor) tg.setBackgroundColor('#f0f2f6');
+            if(tg.setHeaderColor) tg.setHeaderColor('#f6f8fd');
+            if(tg.setBackgroundColor) tg.setBackgroundColor('#f6f8fd');
             
-            // Активируем Main Button для Молодых и Ветеранов
             tg.MainButton.setText('🚀 ЗАПУСТИТЬ ЧУБАЙСА (/START)');
+            tg.MainButton.color = '#ff6b00';
             tg.MainButton.show();
             tg.MainButton.onClick(() => {
                 copyStart();
@@ -446,7 +470,6 @@
             });
         }
 
-        // Haptic Feedback (Вибрация)
         function triggerHaptic(style = 'light') {
             if (tg && tg.HapticFeedback) {
                 switch(style) {
@@ -454,16 +477,73 @@
                     case 'medium': tg.HapticFeedback.impactOccurred('medium'); break;
                     case 'heavy': tg.HapticFeedback.impactOccurred('heavy'); break;
                     case 'success': tg.HapticFeedback.notificationOccurred('success'); break;
-                    case 'error': tg.HapticFeedback.notificationOccurred('error'); break;
                 }
             }
         }
 
-        // Словари для трех режимов
+        // Particle Physics Engine for Cat Easter Egg
+        function createExplosion(x, y) {
+            const emojis = ['🐾', '🐟', '💤', '🐈', '💨', '🔥'];
+            for(let i=0; i<20; i++) {
+                let el = document.createElement('div');
+                el.innerText = emojis[Math.floor(Math.random()*emojis.length)];
+                el.style.position = 'fixed';
+                el.style.left = x + 'px';
+                el.style.top = y + 'px';
+                el.style.fontSize = '24px';
+                el.style.pointerEvents = 'none';
+                el.style.zIndex = '9999';
+                document.body.appendChild(el);
+                
+                // Random trajectory
+                const angle = Math.random() * Math.PI * 2;
+                const velocity = 50 + Math.random() * 150;
+                const tx = Math.cos(angle) * velocity;
+                const ty = Math.sin(angle) * velocity - 100; // gravity bias
+                
+                el.animate([
+                    { transform: 'translate(-50%, -50%) scale(0.5) rotate(0deg)', opacity: 1 },
+                    { transform: `translate(calc(-50% + ${tx}px), calc(-50% + ${ty}px)) scale(1.5) rotate(${Math.random()*360}deg)`, opacity: 0 }
+                ], { 
+                    duration: 800 + Math.random()*600, 
+                    easing: 'cubic-bezier(0.25, 1, 0.5, 1)' // deceleration
+                });
+                
+                setTimeout(()=>el.remove(), 1400);
+            }
+        }
+
+        let catClicks = 0;
+        document.getElementById('cat-avatar').addEventListener('click', function(e) {
+            catClicks++;
+            triggerHaptic('medium');
+            this.style.transform = 'scale(0.8)';
+            setTimeout(() => this.style.transform = '', 150);
+            
+            if (catClicks >= 3) {
+                triggerHaptic('heavy');
+                // Calculate center of avatar
+                const rect = this.getBoundingClientRect();
+                const cx = rect.left + rect.width/2;
+                const cy = rect.top + rect.height/2;
+                createExplosion(cx, cy);
+                
+                if(tg && tg.showPopup) {
+                    tg.showPopup({
+                        title: 'МЯУ!',
+                        message: 'Хватит меня тыкать! Заявки сами себя не запишут. Иди работай!',
+                        buttons: [{id: 'ok', type: 'ok', text: 'Понял, босс'}]
+                    });
+                }
+                catClicks = 0;
+            }
+        });
+
+        // Dictionary
         const texts = {
             main_title: { 
-                normal: "Документация <br> <span class='text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-amber-500'>бота «Чубайс»</span>", 
-                retro: "Руководство <br> <span class='text-bot-orange'>ЭВМ «Чубайс»</span>",
+                normal: "Документация <br> <span class='text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-red-500'>бота «Чубайс»</span>", 
+                retro: "Руководство <br> <span class='text-bot-dark'>ЭВМ «Чубайс»</span>",
                 elderly: "Крупная памятка <br> <span class='text-blue-600'>для телефона</span>"
             },
             main_desc: { 
@@ -474,16 +554,16 @@
             menu_title: { normal: "Главное меню", retro: "Пульт управления", elderly: "Главное меню" },
             
             card1_desc: { normal: "Поймали новую мышь? Зафиксируйте её здесь.", retro: "Оформляется строго по регламенту.", elderly: "Нажимайте, когда начинаете новую работу." },
-            c1_li1: { normal: "<i class='fa-solid fa-check text-green-500 mr-2 mt-0.5'></i> Введите номер заявки.", retro: "<i class='fa-solid fa-check text-green-500 mr-2 mt-0.5'></i> Заполните путевку.", elderly: "<i class='fa-solid fa-check text-green-500 mr-2 mt-0.5'></i> Введите номер задания цифрами." },
-            c1_li2: { normal: "<i class='fa-solid fa-check text-green-500 mr-2 mt-0.5'></i> Выберите состав бригады.", retro: "<i class='fa-solid fa-check text-green-500 mr-2 mt-0.5'></i> Утвердите состав артели.", elderly: "<i class='fa-solid fa-check text-green-500 mr-2 mt-0.5'></i> Выберите фамилии коллег." },
-            c1_li3: { normal: "<i class='fa-solid fa-check text-green-500 mr-2 mt-0.5'></i> Нажмите «ПОДТВЕРДИТЬ».", retro: "<i class='fa-solid fa-check text-green-500 mr-2 mt-0.5'></i> Нажмите «ПОДТВЕРДИТЬ».", elderly: "<i class='fa-solid fa-check text-green-500 mr-2 mt-0.5'></i> Нажмите «ПОДТВЕРДИТЬ»." },
+            c1_li1: { normal: "<div class='w-5 h-5 rounded-full bg-green-100 text-green-600 flex items-center justify-center mr-3 shrink-0 mt-0.5'><i class='fa-solid fa-check text-[10px]'></i></div> Введите номер заявки.", retro: "<div class='w-5 h-5 rounded-full bg-green-100 text-green-600 flex items-center justify-center mr-3 shrink-0 mt-0.5'><i class='fa-solid fa-check text-[10px]'></i></div> Заполните путевку.", elderly: "<div class='w-5 h-5 rounded-full bg-green-100 text-green-600 flex items-center justify-center mr-3 shrink-0 mt-0.5'><i class='fa-solid fa-check text-[10px]'></i></div> Введите номер задания цифрами." },
+            c1_li2: { normal: "<div class='w-5 h-5 rounded-full bg-green-100 text-green-600 flex items-center justify-center mr-3 shrink-0 mt-0.5'><i class='fa-solid fa-check text-[10px]'></i></div> Выберите состав бригады.", retro: "<div class='w-5 h-5 rounded-full bg-green-100 text-green-600 flex items-center justify-center mr-3 shrink-0 mt-0.5'><i class='fa-solid fa-check text-[10px]'></i></div> Утвердите состав артели.", elderly: "<div class='w-5 h-5 rounded-full bg-green-100 text-green-600 flex items-center justify-center mr-3 shrink-0 mt-0.5'><i class='fa-solid fa-check text-[10px]'></i></div> Выберите фамилии коллег." },
+            c1_li3: { normal: "<div class='w-5 h-5 rounded-full bg-green-100 text-green-600 flex items-center justify-center mr-3 shrink-0 mt-0.5'><i class='fa-solid fa-check text-[10px]'></i></div> Нажмите «ПОДТВЕРДИТЬ».", retro: "<div class='w-5 h-5 rounded-full bg-green-100 text-green-600 flex items-center justify-center mr-3 shrink-0 mt-0.5'><i class='fa-solid fa-check text-[10px]'></i></div> Нажмите «ПОДТВЕРДИТЬ».", elderly: "<div class='w-5 h-5 rounded-full bg-green-100 text-green-600 flex items-center justify-center mr-3 shrink-0 mt-0.5'><i class='fa-solid fa-check text-[10px]'></i></div> Нажмите «ПОДТВЕРДИТЬ»." },
             
             card2_title: { normal: "Мои заявки (Лоток)", retro: "Мои заявки (Журнал)", elderly: "Мои заявки" },
             card2_desc: { normal: "Ваш рабочий стол.", retro: "Журнал учета рабочего времени.", elderly: "Здесь ваши текущие дела." },
             st_pause_desc: { normal: "Бросить работу и уйти спать.", retro: "Приостановить производство.", elderly: "Отложить работу на потом." },
             st_work_desc: { normal: "Снять с паузы.", retro: "Продолжить стахановское движение.", elderly: "Продолжить работу." },
             st_done_desc: { normal: "Мышь съедена. Отправить в Архив.", retro: "Работа сдана ОТК. В архив.", elderly: "Работа сделана. Спрятать дело." },
-            st_tmrw_desc: { normal: "Добавляет в план на завтра! Важно!", retro: "Внести в план следующей смены.", elderly: "Обязательно нажать в конце дня!" },
+            st_tmrw_desc: { normal: "Добавляет в план! Важно!", retro: "Внести в план следующей смены.", elderly: "Обязательно нажать в конце дня!" },
             
             card3_title: { normal: "На завтра (Миска)", retro: "На завтра (План-график)", elderly: "На завтра" },
             card3_desc: { normal: "Корзина планов. Можно нажать ❌ Убрать.", retro: "Картотека запланированных норм выработки.", elderly: "Ваш план. Можно нажать ❌ Убрать." },
@@ -497,11 +577,11 @@
             card4_desc: { normal: "Бот принесет жалобу в зубах прямо Насте.", retro: "Телеграмма товарищу Насте.", elderly: "Позвать Настю на помощь." },
 
             routine_title: { normal: "Режим дня", retro: "График сменности", elderly: "" },
-            r_1_title: { normal: "Утренний опрос (Мяу!)", retro: "Утренняя разнарядка", elderly: "" },
-            r_1_desc: { normal: "Спрашивает: «Что завтра делаем?»", retro: "Авто-выдача нарядов-заданий.", elderly: "" },
-            r_2_title: { normal: "Время планирования", retro: "Время планирования", elderly: "" },
+            r_1_title: { normal: "Опрос (Мяу!)", retro: "Утренняя разнарядка", elderly: "" },
+            r_1_desc: { normal: "«Что завтра делаем?»", retro: "Выдача нарядов-заданий.", elderly: "" },
+            r_2_title: { normal: "Планирование", retro: "Время планирования", elderly: "" },
             r_2_desc: { normal: "Жмем 📝 Записать на завтра.", retro: "Утверждение планов.", elderly: "" },
-            r_3_title: { normal: "Закрытие смены", retro: "Закрытие смены", elderly: "" },
+            r_3_title: { normal: "Смена закрыта", retro: "Закрытие смены", elderly: "" },
             r_3_desc: { normal: "Отчет в Google. Бот уходит к кошечкам.", retro: "Сдача продукции ОТК. Цех опечатывается.", elderly: "" },
 
             adm_1: { normal: "Разбудить всех пинком.", retro: "Сбор на планерку.", elderly: "" },
@@ -513,145 +593,105 @@
             warn_subtitle: { normal: "ЧУБАЙС КУСАЕТСЯ!", retro: "БЕЗ КАСКИ НЕ ВХОДИТЬ! (Штраф)", elderly: "Поставьте свою подпись" },
             warn_action: { normal: "ЗА ШКИРКУ НЕ БРАТЬ!", retro: "ЗА ШКИРКУ НЕ БРАТЬ!", elderly: "ОЗНАКОМЛЕН" },
             
-            wife_hint: { normal: "Запомни, что делать, если Чубайс молчит! 👇", retro: "Действия при отказе оборудования 👇", elderly: "Что делать, если сломалась 👇" },
-            wife_name: { normal: "<i class='fa-solid fa-crown text-yellow-400 mr-2 drop-shadow'></i> Мадам Эс. <span class='text-[10px] text-pink-400 ml-1 uppercase bg-pink-50 px-1 rounded'>(Сыкуха)</span>", retro: "<i class='fa-solid fa-crown text-yellow-400 mr-2'></i> Мадам Эс.", elderly: "Техподдержка" },
+            wife_hint: { normal: "Запомни, что делать, если Чубайс тебя игнорирует и молчит! 👇", retro: "Действия при отказе оборудования 👇", elderly: "Что делать, если сломалась 👇" },
+            wife_name: { normal: "<i class='fa-solid fa-heart text-pink-500 mr-2 animate-pulse'></i> Мадам Эс. <span class='text-[10px] text-pink-400 ml-2 uppercase bg-pink-50 px-2 py-1 rounded-full border border-pink-100'>(Сыкуха)</span>", retro: "<i class='fa-solid fa-star text-red-500 mr-2'></i> Мадам Эс.", elderly: "Техподдержка" },
             wife_text1: { normal: "Без паники! Чубайс под валерьянкой.", retro: "Валидол под язык! Супруг план перевыполняет.", elderly: "Ничего страшного! Программа обновляется." },
-            wife_text2: { normal: "Если <strong>5-6 минут не на связи</strong> — я его пинаю. У нас алименты и 14 котят, расслабляться некогда!", retro: "Если <strong>5-6 минут телеграмму не отбивает</strong> — я беру скалку.", elderly: "Если не отвечает 5-6 минут, подождите немного." }
+            wife_text2: { normal: "Если он <strong>5-6 минут не на связи</strong> — я его пинаю. Смена продолжается! У нас алименты и 14 котят, расслабляться некогда. Кошачья жизнь суровая.", retro: "Если <strong>5-6 минут телеграмму не отбивает</strong> — я беру скалку.", elderly: "Если не отвечает 5-6 минут, подождите немного." }
         };
 
         function setMode(index, btnElement) {
             triggerHaptic('medium');
             
-            // Движение ползунка
             const indicator = document.getElementById('mode-indicator');
             indicator.style.width = btnElement.offsetWidth + 'px';
-            indicator.style.transform = `translateX(${btnElement.offsetLeft - 2}px)`; // -2px из-за padding родителя
+            indicator.style.transform = `translateX(${btnElement.offsetLeft - 3}px)`;
             
-            // Обновление стилей кнопок
             document.querySelectorAll('.mode-btn').forEach((btn, i) => {
                 if (i === index) btn.classList.add('active');
                 else btn.classList.remove('active');
             });
 
-            // Смена темы Body
-            document.body.classList.remove('retro-mode', 'elderly-mode');
-            if (index === 1) document.body.classList.add('retro-mode');
-            if (index === 2) document.body.classList.add('elderly-mode');
+            // Smooth body transition
+            document.body.style.opacity = 0.8;
+            setTimeout(() => {
+                document.body.classList.remove('retro-mode', 'elderly-mode');
+                if (index === 1) document.body.classList.add('retro-mode');
+                if (index === 2) document.body.classList.add('elderly-mode');
+                document.body.style.opacity = 1;
+            }, 150);
 
-            // Показ/скрытие красного окна для пенсионеров
+            // Red warning box logic
             const startWarning = document.getElementById('elderly-start-warning');
             if (startWarning) {
                 if (index === 2) {
                     startWarning.classList.remove('hidden');
-                    if(tg && tg.MainButton) tg.MainButton.hide(); // Прячем системную кнопку, у них есть своя огромная
+                    // Recalculate observer for new element
+                    startWarning.classList.add('visible');
                 } else {
                     startWarning.classList.add('hidden');
-                    if(tg && tg.MainButton) tg.MainButton.show();
                 }
             }
 
-            // Обновление текстов с анимацией
+            // Text Update with fade
             const modeKey = index === 0 ? 'normal' : (index === 1 ? 'retro' : 'elderly');
             document.querySelectorAll('[data-id]').forEach(el => {
                 const id = el.getAttribute('data-id');
                 if (texts[id] && texts[id][modeKey] !== undefined) {
                     el.style.opacity = '0';
+                    el.style.transform = 'translateY(5px)';
                     setTimeout(() => {
                         el.innerHTML = texts[id][modeKey];
                         el.style.opacity = '1';
-                    }, 150);
+                        el.style.transform = 'translateY(0)';
+                    }, 200);
                 }
             });
             
-            // TG Theme Sync
             if(tg && tg.setHeaderColor) {
-                if(index === 0) tg.setHeaderColor('#f0f2f6');
-                if(index === 1) tg.setHeaderColor('#e8e2d2');
+                if(index === 0) tg.setHeaderColor('#f6f8fd');
+                if(index === 1) tg.setHeaderColor('#f4ecd8');
                 if(index === 2) tg.setHeaderColor('#ffffff');
             }
         }
 
-        // Логика жены
+        // FAB Logic
         function toggleWife(element) {
             triggerHaptic('heavy');
             const hint = document.getElementById('wife-alert-hint');
             const bubble = document.getElementById('wife-bubble');
             
             if (hint) {
-                hint.style.transform = 'scale(0)';
-                setTimeout(() => hint.remove(), 300); // Удаляем навсегда
+                hint.style.transform = 'scale(0) translateY(20px)';
+                hint.style.opacity = '0';
+                setTimeout(() => hint.remove(), 300);
             }
             bubble.classList.toggle('show');
+            element.classList.toggle('rotate-12');
         }
 
-        // Копирование старта + Тост
-        function copyStart() {
-            const tempInput = document.createElement("input");
-            tempInput.value = "/start";
-            document.body.appendChild(tempInput);
-            tempInput.select();
-            document.execCommand("copy");
-            document.body.removeChild(tempInput);
-            
-            showToast("Команда /start скопирована!");
-        }
-
-        function showToast(msg) {
-            const toast = document.getElementById('tma-toast');
-            document.getElementById('toast-text').innerText = msg;
-            toast.classList.add('show');
-            setTimeout(() => { toast.classList.remove('show'); }, 3000);
-        }
-
-        // Пасхалка с котом
-        let catClicks = 0;
-        document.getElementById('cat-avatar').addEventListener('click', function() {
-            catClicks++;
-            triggerHaptic('light');
-            this.classList.add('animate-shake');
-            setTimeout(() => this.classList.remove('animate-shake'), 500);
-            
-            if (catClicks === 3) {
-                triggerHaptic('heavy');
-                if(tg && tg.showPopup) {
-                    tg.showPopup({
-                        title: 'Мяу!',
-                        message: 'Хватит меня тыкать, я сплю! Заявки сами себя не запишут.',
-                        buttons: [{id: 'ok', type: 'ok', text: 'Понял, босс'}]
-                    });
-                } else {
-                    showToast('Чубайс недовольно зарычал.');
-                }
-                catClicks = 0;
-            }
-        });
-
-        // Инициализация UI (Плавное появление при скролле)
+        // Organic Reveal Observer (Scroll Animation)
         window.onload = () => {
-            // Установка ползунка
             const firstBtn = document.querySelector('.mode-btn.active');
             if (firstBtn) {
                 setTimeout(() => {
                     const indicator = document.getElementById('mode-indicator');
                     indicator.style.width = firstBtn.offsetWidth + 'px';
-                    indicator.style.transform = `translateX(${firstBtn.offsetLeft - 2}px)`;
+                    indicator.style.transform = `translateX(${firstBtn.offsetLeft - 3}px)`;
                 }, 50);
             }
 
-            // Scroll Animation Observer
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach((entry, index) => {
                     if (entry.isIntersecting) {
                         setTimeout(() => {
-                            entry.target.classList.add('animate-slide-up');
-                            entry.target.classList.remove('reveal-item');
-                        }, index * 100); // Легкий каскад
+                            entry.target.classList.add('visible');
+                        }, index * 120); // Organic stagger effect
                         observer.unobserve(entry.target);
                     }
                 });
             }, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
 
-            document.querySelectorAll('.reveal-item').forEach(el => observer.observe(el));
+            document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
         };
     </script>
 </body>
