@@ -98,8 +98,19 @@
             transform-style: preserve-3d;
             will-change: transform;
             transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.4s ease;
+            /* Spotlight border effect */
+            border: 1px solid transparent;
+            background-clip: padding-box;
         }
         
+        .apple-card::before {
+            content: ''; position: absolute; top: 0; right: 0; bottom: 0; left: 0; z-index: -1;
+            margin: -1px; border-radius: inherit;
+            background: radial-gradient(800px circle at var(--mouse-x, 50%) var(--mouse-y, -20%), rgba(255,255,255,0.8), transparent 40%);
+            pointer-events: none; opacity: 0; transition: opacity 0.4s;
+        }
+        .apple-card:hover::before { opacity: 1; }
+
         .apple-card .glare {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, -20%), rgba(255,255,255,0.9) 0%, rgba(255,255,255,0) 50%);
@@ -160,8 +171,14 @@
             box-shadow: 0 3px 8px rgba(0,0,0,0.12), 0 3px 1px rgba(0,0,0,0.04);
             transition: transform 0.5s cubic-bezier(0.32, 0.72, 0, 1), width 0.4s ease, background 0.5s; z-index: 1;
         }
-        .mode-btn { flex: 1; position: relative; z-index: 2; text-align: center; font-size: 13px; font-weight: 600; padding: 10px 0; color: var(--text-muted); transition: all 0.3s; cursor: pointer; }
-        .mode-btn.active { color: #000000; font-weight: 700; }
+        
+        .magnetic-wrap { flex: 1; position: relative; display: flex; align-items: center; justify-content: center; }
+        .mode-btn { 
+            position: relative; z-index: 2; text-align: center; font-size: 13px; font-weight: 600; padding: 10px 0; 
+            color: var(--text-muted); transition: color 0.3s, transform 0.2s cubic-bezier(0.25, 1, 0.5, 1); cursor: pointer; width: 100%;
+            will-change: transform;
+        }
+        .magnetic-wrap.active .mode-btn { color: #000000; font-weight: 700; }
 
         .reveal { opacity: 0; transform: translateY(40px) scale(0.98); transition: opacity 0.8s cubic-bezier(0.23, 1, 0.32, 1), transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); }
         .reveal.visible { opacity: 1; transform: translateY(0) scale(1); }
@@ -193,6 +210,7 @@
             transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); transform-style: preserve-3d;
         }
         .apple-fab:active { transform: scale(0.85) translateZ(-15px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .apple-fab:hover { transform: scale(1.05) translateZ(10px); }
         
         .imessage-bubble {
             position: absolute; bottom: 80px; left: 0; width: max-content; max-width: calc(100vw - 50px);
@@ -219,10 +237,11 @@
         }
         body.retro-mode #dust-canvas { opacity: 0; } 
         body.retro-mode .apple-card { border-radius: 8px; border: 2px solid #A39682; transform-style: flat;}
+        body.retro-mode .apple-card::before { display: none; }
         body.retro-mode .apple-app-icon { border-radius: 4px; background: #C4B9A3; box-shadow: 4px 4px 0 rgba(42,36,28,0.15); border: 2px solid #A39682;}
         body.retro-mode .icon-3d { color: #2A241C !important; text-shadow: 2px 2px 0px #A39682 !important; animation: none;}
         body.retro-mode .mode-indicator { background: #2A241C; border-radius: 6px;}
-        body.retro-mode .mode-btn.active { color: #DCD4C0; }
+        body.retro-mode .magnetic-wrap.active .mode-btn { color: #DCD4C0; }
         body.retro-mode .glare { display: none; }
 
         body.elderly-mode { 
@@ -233,11 +252,12 @@
         }
         body.elderly-mode #dust-canvas { opacity: 0; }
         body.elderly-mode .apple-card { border: 3px solid #000; border-radius: 16px; box-shadow: none; transform: none !important; transition: none;}
+        body.elderly-mode .apple-card::before { display: none; }
         body.elderly-mode .apple-app-icon { background: #F0F0F0; border: 3px solid #000; box-shadow: none; border-radius: 12px;}
         body.elderly-mode .icon-3d { color: #000000 !important; text-shadow: none !important; animation: none;}
         body.elderly-mode .hide-for-elderly { display: none !important; }
         body.elderly-mode .mode-indicator { background: #000000; }
-        body.elderly-mode .mode-btn.active { color: #FFFFFF; }
+        body.elderly-mode .magnetic-wrap.active .mode-btn { color: #FFFFFF; }
         body.elderly-mode .glare { display: none; }
     </style>
 </head>
@@ -249,31 +269,36 @@
         <div class="max-w-2xl mx-auto">
             <div class="segmented-control" id="mode-tabs">
                 <div id="mode-indicator" class="mode-indicator"></div>
-                <button onclick="setMode(0, this)" class="mode-btn active">Молодые спецы</button>
-                <button onclick="setMode(1, this)" class="mode-btn">Ветераны ПНР</button>
-                <button onclick="setMode(2, this)" class="mode-btn">Ветераны</button>
+                <div class="magnetic-wrap active" onmouseenter="applyMagnetic(this)" onmouseleave="removeMagnetic(this)" onclick="setMode(0, this)">
+                    <div class="mode-btn">Молодые спецы</div>
+                </div>
+                <div class="magnetic-wrap" onmouseenter="applyMagnetic(this)" onmouseleave="removeMagnetic(this)" onclick="setMode(1, this)">
+                    <div class="mode-btn">Ветераны ПНР</div>
+                </div>
+                <div class="magnetic-wrap" onmouseenter="applyMagnetic(this)" onmouseleave="removeMagnetic(this)" onclick="setMode(2, this)">
+                    <div class="mode-btn">Ветераны</div>
+                </div>
             </div>
         </div>
     </div>
 
     <div class="px-5 max-w-3xl mx-auto relative z-10">
 
-        <!-- КРАСНЫЙ БЛОК ДЛЯ ВЕТЕРАНОВ (Изначально скрыт) -->
-        <div class="apple-card mb-10 hidden border-red-500 reveal bg-red-50" id="elderly-start-warning" style="--card-bg: #fff; --card-border: #000; border-width: 4px; border-radius: 24px;">
+        <div class="apple-card mb-10 hidden border-red-500 reveal bg-red-50" id="elderly-start-warning" style="--card-bg: #fff; --card-border: #000; border-width: 4px; border-radius: 24px;" onmouseenter="playUIHover()">
             <div class="p-8 text-center content-3d">
                 <i class="fa-solid fa-triangle-exclamation text-6xl mb-4 icon-3d icon-3d-red"></i>
                 <h2 class="font-display text-3xl font-black mb-3 text-dynamic-text">ОЧЕНЬ ВАЖНО!</h2>
                 <p class="text-dynamic-text font-bold text-xl mb-6 text-morph" data-id="eld_warn1">Чтобы программа начала с вами работать, нужно отправить ей команду один раз.</p>
                 <div class="apple-inset bg-gray-100 border-2 border-gray-300">
                     <p class="text-dynamic-text font-bold mb-4 text-morph text-lg" data-id="eld_warn2">Нажмите на кнопку в самом низу вашего телефона:</p>
-                    <div class="bg-black text-white font-black py-4 px-10 rounded-2xl inline-block uppercase text-2xl shadow-xl border-4 border-black mb-2 animate-breathe">СТАРТ</div>
+                    <div class="bg-black text-white font-black py-4 px-10 rounded-2xl inline-block uppercase text-2xl shadow-xl border-4 border-black mb-2 animate-breathe" onclick="playUIClick()">СТАРТ</div>
                     <p class="text-dynamic-muted text-base mt-4 font-bold text-morph" data-id="eld_warn3">Или напишите вручную: /start</p>
                 </div>
             </div>
         </div>
 
         <div class="text-center mb-14 pt-10 reveal">
-            <div class="relative w-[150px] h-[150px] mx-auto mb-8 cursor-pointer group" id="cat-avatar">
+            <div class="relative w-[150px] h-[150px] mx-auto mb-8 cursor-pointer group" id="cat-avatar" onclick="playUIChime(); triggerHaptic('heavy')">
                 <div class="absolute inset-0 rounded-full bg-gradient-to-tr from-orange-200 to-white opacity-50 blur-xl group-hover:opacity-100 transition duration-500"></div>
                 <div class="w-full h-full rounded-full bg-gradient-to-b from-white to-gray-100 border border-white box-shadow: 0 20px 40px rgba(0,0,0,0.1), inset 0 4px 10px white; display: flex; items-center justify-center relative z-10 transform-style: preserve-3d transition-transform duration-500 group-hover:scale-105 group-active:scale-95" style="box-shadow: 0 20px 40px rgba(0,0,0,0.1), inset 0 4px 10px white; display: flex; align-items: center; justify-content: center;">
                     <i class="fa-solid fa-cat text-[65px] icon-3d icon-3d-orange"></i>
@@ -291,7 +316,7 @@
         <h2 class="text-[14px] font-bold text-dynamic-muted uppercase tracking-widest mb-4 ml-5 reveal text-morph" data-id="menu_title">Главное меню (Когтеточка)</h2>
         
         <div class="tilt-wrapper">
-            <div class="apple-card reveal tilt-card" onclick="triggerHaptic('light')">
+            <div class="apple-card reveal tilt-card" onmouseenter="playUIHover()" onclick="triggerHaptic('light'); playUIClick()">
                 <div class="glare"></div>
                 <div class="p-7">
                     <div class="flex items-center mb-5 content-3d">
@@ -309,7 +334,7 @@
         </div>
 
         <div class="tilt-wrapper">
-            <div class="apple-card reveal tilt-card" onclick="triggerHaptic('light')">
+            <div class="apple-card reveal tilt-card" onmouseenter="playUIHover()" onclick="triggerHaptic('light'); playUIClick()">
                 <div class="glare"></div>
                 <div class="p-7">
                     <div class="flex items-center mb-5 content-3d">
@@ -328,7 +353,7 @@
         </div>
 
         <div class="tilt-wrapper">
-            <div class="apple-card reveal tilt-card overflow-hidden" onclick="triggerHaptic('light')">
+            <div class="apple-card reveal tilt-card overflow-hidden" onmouseenter="playUIHover()" onclick="triggerHaptic('light'); playUIClick()">
                 <div class="glare"></div>
                 <div class="p-7">
                     <div class="flex items-center mb-5 relative z-10 content-3d">
@@ -346,21 +371,21 @@
 
         <h2 class="text-[14px] font-bold text-dynamic-muted uppercase tracking-widest mb-4 ml-5 mt-12 hide-for-elderly reveal"><i class="fa-solid fa-crown mr-2 opacity-50"></i> Вожакам стаи</h2>
         <div class="tilt-wrapper hide-for-elderly">
-            <div class="apple-card p-6 grid grid-cols-2 gap-4 reveal tilt-card">
+            <div class="apple-card p-6 grid grid-cols-2 gap-4 reveal tilt-card" onmouseenter="playUIHover()">
                 <div class="glare"></div>
-                <div class="apple-inset flex flex-col justify-between hover:bg-white/60 transition cursor-pointer" onclick="triggerHaptic('light')">
+                <div class="apple-inset flex flex-col justify-between hover:bg-white/60 transition cursor-pointer" onclick="triggerHaptic('light'); playUIClick()">
                     <div class="content-3d w-full flex justify-center mb-5 mt-2"><i class="fa-solid fa-bullhorn text-4xl icon-3d icon-3d-blue"></i></div>
                     <div class="content-3d text-center"><h4 class="font-bold text-[16px] mb-1 text-dynamic-text">Опрос</h4><p class="text-[13px] text-dynamic-muted leading-snug text-morph" data-id="adm_1">Разбудить всех пинком.</p></div>
                 </div>
-                <div class="apple-inset flex flex-col justify-between hover:bg-white/60 transition cursor-pointer" onclick="triggerHaptic('light')">
+                <div class="apple-inset flex flex-col justify-between hover:bg-white/60 transition cursor-pointer" onclick="triggerHaptic('light'); playUIClick()">
                     <div class="content-3d w-full flex justify-center mb-5 mt-2"><i class="fa-solid fa-eye text-4xl icon-3d icon-3d-purple"></i></div>
                     <div class="content-3d text-center"><h4 class="font-bold text-[16px] mb-1 text-dynamic-text">Черновик</h4><p class="text-[13px] text-dynamic-muted leading-snug text-morph" data-id="adm_2">Подсмотреть на завтра.</p></div>
                 </div>
-                <div class="apple-inset col-span-2 sm:col-span-1 hover:bg-white/60 transition cursor-pointer" onclick="triggerHaptic('medium')">
+                <div class="apple-inset col-span-2 sm:col-span-1 hover:bg-white/60 transition cursor-pointer" onclick="triggerHaptic('medium'); playUIClick()">
                     <div class="content-3d w-full flex justify-center mb-5 mt-2"><i class="fa-solid fa-users-slash text-4xl icon-3d icon-3d-amber"></i></div>
                     <div class="content-3d text-center"><h4 class="font-bold text-[16px] text-dynamic-text mb-1">Кто не записался</h4><p class="text-[13px] text-dynamic-muted leading-snug text-morph" data-id="adm_3">Раздать лещи вонючкам.</p></div>
                 </div>
-                <div class="apple-inset col-span-2 sm:col-span-1 hover:bg-white/60 transition cursor-pointer" onclick="triggerHaptic('medium')">
+                <div class="apple-inset col-span-2 sm:col-span-1 hover:bg-white/60 transition cursor-pointer" onclick="triggerHaptic('medium'); playUIClick()">
                     <div class="content-3d w-full flex justify-center mb-5 mt-2"><i class="fa-solid fa-circle-dot text-4xl icon-3d icon-3d-green animate-pulse"></i></div>
                     <div class="content-3d text-center"><h4 class="font-bold text-[16px] text-dynamic-text mb-1">Live-отчет</h4><p class="text-[13px] text-dynamic-muted leading-snug text-morph" data-id="adm_4">Онлайн-слежка ВКЛ/ВЫКЛ.</p></div>
                 </div>
@@ -369,7 +394,7 @@
 
         <h2 class="text-[14px] font-bold text-dynamic-muted uppercase tracking-widest mb-4 ml-5 mt-12 hide-for-elderly reveal"><i class="fa-solid fa-table mr-2 opacity-50"></i> База Данных (Таблицы)</h2>
         <div class="tilt-wrapper hide-for-elderly">
-            <div class="apple-card p-0 reveal tilt-card">
+            <div class="apple-card p-0 reveal tilt-card" onmouseenter="playUIHover()">
                 <div class="glare"></div>
                 <div class="p-5 border-b border-dynamic-border flex items-center content-3d stagger-item" style="transition-delay: 0.1s"><div class="apple-app-icon w-14 h-14 mr-5"><i class="fa-solid fa-users text-2xl icon-3d icon-3d-blue"></i></div><div><h3 class="font-bold text-[16px] text-dynamic-text">1. Сотрудники</h3><p class="text-[14px] text-dynamic-muted mt-1">Допущенные к боту.</p></div></div>
                 <div class="p-5 border-b border-dynamic-border flex items-center content-3d stagger-item" style="transition-delay: 0.2s"><div class="apple-app-icon w-14 h-14 mr-5"><i class="fa-solid fa-crown text-2xl icon-3d icon-3d-purple"></i></div><div><h3 class="font-bold text-[16px] text-dynamic-text">2. Админы</h3><p class="text-[14px] text-dynamic-muted mt-1">Получают жалобы.</p></div></div>
@@ -381,7 +406,7 @@
 
         <h2 class="text-[14px] font-mono text-dynamic-muted uppercase tracking-widest mb-4 ml-5 mt-12 hide-for-elderly reveal">> sys_admin</h2>
         <div class="tilt-wrapper hide-for-elderly">
-            <div class="apple-card p-0 overflow-hidden reveal tilt-card">
+            <div class="apple-card p-0 overflow-hidden reveal tilt-card" onmouseenter="playUIHover()">
                 <div class="glare"></div>
                 <div class="bg-black/5 px-5 py-3 flex items-center border-b border-dynamic-border content-3d">
                     <div class="flex gap-2 mr-5">
@@ -400,7 +425,7 @@
         </div>
 
         <div class="mt-16 mb-12 relative z-10 reveal tilt-wrapper">
-            <div class="tilt-card apple-card p-8 sm:p-10 border border-dynamic-border text-center mx-auto max-w-lg shadow-2xl relative overflow-visible bg-gradient-to-b from-[#ffffff] to-[#f5f5f7]">
+            <div class="tilt-card apple-card p-8 sm:p-10 border border-dynamic-border text-center mx-auto max-w-lg shadow-2xl relative overflow-visible bg-gradient-to-b from-[#ffffff] to-[#f5f5f7]" onmouseenter="playUIHover()">
                 <div class="glare"></div>
                 <!-- 3D Clip -->
                 <div class="absolute -top-4 left-1/2 -translate-x-1/2 w-24 h-8 bg-gradient-to-b from-gray-200 to-gray-400 rounded-lg shadow-lg border border-gray-400/50 z-20 flex justify-center items-center transform-style: preserve-3d transform: translateZ(20px);">
@@ -446,6 +471,59 @@
     <script>
         const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
         
+        // --- Web Audio API UI Sounds Engine ---
+        let audioCtx = null;
+        function initAudio() {
+            if (!audioCtx) {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if(AudioContext) audioCtx = new AudioContext();
+            }
+            if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+        }
+
+        function playSoundGen(type) {
+            if(document.body.classList.contains('retro-mode') || document.body.classList.contains('elderly-mode')) return;
+            initAudio();
+            if(!audioCtx) return;
+            const t = audioCtx.currentTime;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            
+            if (type === 'hover') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(800, t);
+                osc.frequency.exponentialRampToValueAtTime(300, t + 0.03);
+                gain.gain.setValueAtTime(0.015, t);
+                gain.gain.exponentialRampToValueAtTime(0.001, t + 0.03);
+                osc.start(t); osc.stop(t + 0.03);
+            } else if (type === 'click') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(400, t);
+                osc.frequency.exponentialRampToValueAtTime(100, t + 0.08);
+                gain.gain.setValueAtTime(0.05, t);
+                gain.gain.exponentialRampToValueAtTime(0.001, t + 0.08);
+                osc.start(t); osc.stop(t + 0.08);
+            } else if (type === 'chime') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(500, t);
+                osc.frequency.linearRampToValueAtTime(800, t + 0.1);
+                gain.gain.setValueAtTime(0, t);
+                gain.gain.linearRampToValueAtTime(0.03, t + 0.05);
+                gain.gain.linearRampToValueAtTime(0, t + 0.2);
+                osc.start(t); osc.stop(t + 0.2);
+            }
+        }
+        
+        function playUIHover() { playSoundGen('hover'); }
+        function playUIClick() { playSoundGen('click'); }
+        function playUIChime() { playSoundGen('chime'); }
+
+        // Unlocking audio context on first user interaction
+        document.body.addEventListener('click', initAudio, { once: true });
+        document.body.addEventListener('touchstart', initAudio, { once: true });
+
+        // --- Telegram Integration ---
         if (tg) {
             tg.ready(); tg.expand(); 
             if(tg.setHeaderColor) tg.setHeaderColor('#F5F5F7');
@@ -454,7 +532,7 @@
             tg.MainButton.setText('🚀 ЗАПУСТИТЬ ЧУБАЙСА (/start)');
             tg.MainButton.color = '#F97316'; tg.MainButton.textColor = '#FFFFFF';
             tg.MainButton.show();
-            tg.MainButton.onClick(() => { triggerHaptic('success'); tg.close(); });
+            tg.MainButton.onClick(() => { playUIChime(); triggerHaptic('success'); tg.close(); });
         }
 
         function triggerHaptic(style = 'light') {
@@ -468,6 +546,22 @@
             } else {
                 if(navigator.vibrate) navigator.vibrate(style === 'heavy' ? 50 : 20);
             }
+        }
+
+        // --- Magnetic UX Logic ---
+        function applyMagnetic(el) {
+            if(document.body.classList.contains('retro-mode') || document.body.classList.contains('elderly-mode')) return;
+            el.addEventListener('mousemove', function(e) {
+                const rect = el.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
+                const btn = el.querySelector('.mode-btn');
+                if(btn) btn.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`;
+            });
+        }
+        function removeMagnetic(el) {
+            const btn = el.querySelector('.mode-btn');
+            if(btn) btn.style.transform = `translate(0px, 0px)`;
         }
 
         const canvas = document.getElementById('dust-canvas');
@@ -484,22 +578,18 @@
             constructor() {
                 this.x = Math.random() * w;
                 this.y = Math.random() * h;
-                // Z-axis for Volumetric Depth of Field
                 this.z = Math.random() * 3 + 0.5; 
                 this.r = (Math.random() * 2 + 1) * this.z;
-                // Sine wave floating offsets
                 this.angle = Math.random() * Math.PI * 2;
                 this.baseVx = (Math.random() - 0.5) * 0.2;
                 this.baseVy = -(Math.random() * 0.3 + 0.1) * this.z;
                 this.alpha = Math.random() * 0.5 + 0.1;
             }
             update() {
-                // Organic floating
                 this.angle += 0.02;
                 this.x += this.baseVx + Math.sin(this.angle) * 0.2; 
                 this.y += this.baseVy;
 
-                // Mouse repel
                 let dx = mouseX - this.x; let dy = mouseY - this.y;
                 let dist = Math.sqrt(dx*dx + dy*dy);
                 if (dist < 150 && document.body.classList.contains('retro-mode') === false) {
@@ -514,7 +604,6 @@
             draw() {
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
-                // Fake Depth of Field blur simulation via alpha and size
                 let opacity = this.z > 2 ? this.alpha * 0.5 : this.alpha; 
                 ctx.fillStyle = `rgba(180, 180, 200, ${opacity})`;
                 ctx.fill();
@@ -569,15 +658,17 @@
             eld_warn3: { normal: "", retro: "", elderly: "Или напишите вручную: /start" }
         };
 
-        function setMode(index, btnElement) {
+        function setMode(index, btnWrapElement) {
+            playUIChime();
             triggerHaptic('medium');
             
+            const btnElement = btnWrapElement.querySelector('.mode-btn');
             const indicator = document.getElementById('mode-indicator');
-            indicator.style.width = btnElement.offsetWidth + 'px';
-            indicator.style.transform = `translateX(${btnElement.offsetLeft - 3}px)`;
+            indicator.style.width = btnWrapElement.offsetWidth + 'px';
+            indicator.style.transform = `translateX(${btnWrapElement.offsetLeft - 3}px)`;
             
-            document.querySelectorAll('.mode-btn').forEach((btn, i) => {
-                if (i === index) btn.classList.add('active'); else btn.classList.remove('active');
+            document.querySelectorAll('.magnetic-wrap').forEach((wrap, i) => {
+                if (i === index) wrap.classList.add('active'); else wrap.classList.remove('active');
             });
 
             document.body.classList.remove('retro-mode', 'elderly-mode');
@@ -612,6 +703,7 @@
         }
 
         function toggleWife(element) {
+            playUIClick();
             triggerHaptic('heavy');
             const hint = document.getElementById('wife-alert-hint');
             const bubble = document.getElementById('wife-bubble');
@@ -621,7 +713,7 @@
             bubble.classList.toggle('show');
         }
 
-        // Advanced 3D Lerp Engine for Desktop
+        // Advanced 3D Lerp Engine with Spotlight for Desktop
         if (window.matchMedia("(hover: hover)").matches) {
             document.querySelectorAll('.tilt-card').forEach(card => {
                 let currentX = 0, currentY = 0;
@@ -633,12 +725,21 @@
                         card.style.transform = ''; return;
                     }
                     if (isHovering || Math.abs(targetX - currentX) > 0.1 || Math.abs(targetY - currentY) > 0.1) {
-                        currentX += (targetX - currentX) * 0.15; // Increased responsiveness
+                        currentX += (targetX - currentX) * 0.15; 
                         currentY += (targetY - currentY) * 0.15;
                         card.style.transform = `rotateY(${currentX}deg) rotateX(${-currentY}deg) scale3d(1.02, 1.02, 1.02)`;
+                        
+                        // Internal parallax for icon
+                        const appIcon = card.querySelector('.apple-app-icon');
+                        if (appIcon) {
+                            appIcon.style.transform = `translateZ(35px) translate(${currentX * 0.5}px, ${currentY * 0.5}px)`;
+                        }
+                        
                         requestAnimationFrame(animateLerp);
                     } else {
                         card.style.transform = '';
+                        const appIcon = card.querySelector('.apple-app-icon');
+                        if (appIcon) appIcon.style.transform = `translateZ(35px)`;
                     }
                 }
 
@@ -648,8 +749,8 @@
                     const x = e.clientX - rect.left;
                     const y = e.clientY - rect.top;
                     
-                    card.style.setProperty('--mouse-x', `${(x / rect.width) * 100}%`);
-                    card.style.setProperty('--mouse-y', `${(y / rect.height) * 100}%`);
+                    card.style.setProperty('--mouse-x', `${x}px`);
+                    card.style.setProperty('--mouse-y', `${y}px`);
                     
                     const xc = rect.width / 2;
                     const yc = rect.height / 2;
@@ -667,12 +768,12 @@
         }
 
         window.onload = () => {
-            const firstBtn = document.querySelector('.mode-btn.active');
-            if (firstBtn) {
+            const firstWrap = document.querySelector('.magnetic-wrap.active');
+            if (firstWrap) {
                 setTimeout(() => {
                     const indicator = document.getElementById('mode-indicator');
-                    indicator.style.width = firstBtn.offsetWidth + 'px';
-                    indicator.style.transform = `translateX(${firstBtn.offsetLeft - 3}px)`;
+                    indicator.style.width = firstWrap.offsetWidth + 'px';
+                    indicator.style.transform = `translateX(${firstWrap.offsetLeft - 3}px)`;
                 }, 100);
             }
 
