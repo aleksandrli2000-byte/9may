@@ -222,6 +222,18 @@
         }
         .imessage-bubble.show { opacity: 1; transform: scale(1) translateY(0) rotate(0deg); pointer-events: auto; }
 
+        .desktop-hint-toast {
+            position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%);
+            background: var(--card-bg); backdrop-filter: blur(40px) saturate(200%); -webkit-backdrop-filter: blur(40px) saturate(200%);
+            border: 1px solid var(--card-border); padding: 16px 20px; border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.5);
+            color: var(--text-main); font-weight: 600; font-size: 14px; text-align: center;
+            z-index: 1000; width: 90%; max-width: 380px;
+            transition: bottom 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.5s; opacity: 0;
+            display: flex; align-items: center; justify-content: center; gap: 12px;
+        }
+        .desktop-hint-toast.show { bottom: calc(env(safe-area-inset-bottom) + 20px); opacity: 1; }
+
         body.retro-mode {
             --bg-color: #DCD4C0; --text-main: #2A241C; --text-muted: #5C5040; --card-bg: rgba(212, 203, 184, 0.85);
             --card-border: #A39682; --inset-bg: rgba(0,0,0,0.04);
@@ -468,6 +480,15 @@
         </div>
     </div>
 
+    <div id="desktop-hint" class="desktop-hint-toast">
+        <div class="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center flex-shrink-0 border border-orange-200">
+            <i class="fa-solid fa-desktop text-orange-500 text-lg"></i>
+        </div>
+        <div class="text-left">
+            <p class="text-[13px] leading-tight text-morph" data-id="pc_hint">Мяу! На телефоне красиво, но если откроешь с компа — я тебе такие 3D-фокусы покажу, усы отвалятся! 🐾💻</p>
+        </div>
+    </div>
+
     <script>
         const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
         
@@ -655,7 +676,8 @@
             wife_text2: { normal: "Если он <strong>5-6 минут молчит</strong> — я его пинаю. У нас алименты и 14 котят, кошачья жизнь суровая. Смена продолжается!", retro: "Если <strong>5-6 минут телеграмму не отбивает</strong> — я беру скалку. Смена продолжается!", elderly: "Если не отвечает 5-6 минут, подождите немного. Смена продолжается." },
             eld_warn1: { normal: "", retro: "", elderly: "Чтобы программа начала с вами работать, нужно отправить ей команду один раз." },
             eld_warn2: { normal: "", retro: "", elderly: "Нажмите на кнопку в самом низу вашего телефона:" },
-            eld_warn3: { normal: "", retro: "", elderly: "Или напишите вручную: /start" }
+            eld_warn3: { normal: "", retro: "", elderly: "Или напишите вручную: /start" },
+            pc_hint: { normal: "Мяу! На телефоне красиво, но если откроешь с компа — я тебе такие 3D-фокусы покажу, усы отвалятся! 🐾💻", retro: "Внимание! Рекомендуется просмотр на стационарной ЭВМ с мышью для оценки полной мощи графики.", elderly: "На компьютере этот сайт выглядит еще больше и красивее." }
         };
 
         function setMode(index, btnWrapElement) {
@@ -790,6 +812,22 @@
             }, { threshold: 0.1, rootMargin: "0px 0px -40px 0px" });
 
             document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+            
+            // Показываем подсказку только если это мобильное устройство (нет ховера или узкий экран)
+            if (window.matchMedia("(hover: none)").matches || window.innerWidth < 768) {
+                setTimeout(() => {
+                    const hint = document.getElementById('desktop-hint');
+                    if(hint) {
+                        hint.classList.add('show');
+                        playUIChime();
+                        triggerHaptic('light');
+                        // Скрываем через 6 секунд
+                        setTimeout(() => {
+                            hint.classList.remove('show');
+                        }, 6000);
+                    }
+                }, 1500); // Показываем через 1.5 секунды после загрузки
+            }
         };
     </script>
 </body>
