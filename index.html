@@ -34,6 +34,7 @@
                         'float': 'float 6s ease-in-out infinite',
                         'breathe': 'breathe 4s ease-in-out infinite',
                         'pulse-radar': 'pulseRadar 2s cubic-bezier(0, 0, 0.2, 1) infinite',
+                        'smoke-drift': 'smokeDrift 20s linear infinite',
                     },
                     keyframes: {
                         float: {
@@ -47,6 +48,10 @@
                         pulseRadar: {
                             '0%': { transform: 'scale(0.95)', opacity: '0.8' },
                             '100%': { transform: 'scale(1.5)', opacity: '0' },
+                        },
+                        smokeDrift: {
+                            '0%': { backgroundPosition: '0% 0%' },
+                            '100%': { backgroundPosition: '100% 100%' },
                         }
                     }
                 }
@@ -98,7 +103,6 @@
             transform-style: preserve-3d;
             will-change: transform;
             transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.4s ease;
-            /* Spotlight border effect */
             border: 1px solid transparent;
             background-clip: padding-box;
         }
@@ -157,7 +161,7 @@
         .content-3d { transform: translateZ(25px); transform-style: preserve-3d; }
 
         .nav-wrapper {
-            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+            position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
             padding: calc(env(safe-area-inset-top) + 16px) 16px 16px;
             background: var(--nav-bg); backdrop-filter: blur(50px) saturate(200%); -webkit-backdrop-filter: blur(50px) saturate(200%);
             border-bottom: 1px solid rgba(0,0,0,0.03); transition: background 0.8s;
@@ -196,7 +200,19 @@
         }
         @keyframes shimmer { 0% { background-position: 200% center; } 100% { background-position: -200% center; } }
 
-        #wife-container { position: fixed; bottom: calc(env(safe-area-inset-bottom) + 30px); left: 24px; z-index: 90; perspective: 1000px; }
+        /* ВЖУХ-ТУМАН */
+        .fog-container {
+            background: radial-gradient(circle at center, rgba(30,41,59,0.85) 0%, rgba(15,23,42,0.95) 100%);
+            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .fog-smoke {
+            background-image: radial-gradient(rgba(255, 255, 255, 0.1) 2px, transparent 2px), radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 60px 60px, 30px 30px;
+            animation: smokeDrift 30s linear infinite;
+        }
+
+        #wife-container { position: fixed; bottom: calc(env(safe-area-inset-bottom) + 30px); left: 24px; z-index: 900; perspective: 1000px; }
         .apple-fab-wrapper { position: relative; }
         .apple-fab-radar {
             position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: 50%;
@@ -241,7 +257,6 @@
             --nav-bg: rgba(220, 212, 192, 0.9);
             font-family: 'Russo One', sans-serif;
         }
-        /* АУТЕНТИЧНЫЙ CRT ЭФФЕКТ (Скан-линии) */
         body.retro-mode::after {
             content: ""; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.05) 50%);
@@ -296,6 +311,7 @@
 
     <div class="px-5 max-w-3xl mx-auto relative z-10">
 
+        <!-- ВАЖНОЕ ПРЕДУПРЕЖДЕНИЕ ДЛЯ ВЕТЕРАНОВ -->
         <div class="apple-card mb-10 hidden border-red-500 reveal bg-red-50" id="elderly-start-warning" style="--card-bg: #fff; --card-border: #000; border-width: 4px; border-radius: 24px;" onmouseenter="playUIHover()">
             <div class="p-8 text-center content-3d">
                 <i class="fa-solid fa-triangle-exclamation text-6xl mb-4 icon-3d icon-3d-red"></i>
@@ -328,111 +344,148 @@
         <h2 class="text-[14px] font-bold text-dynamic-muted uppercase tracking-widest mb-4 ml-5 reveal text-morph" data-id="menu_title">Главное меню (Когтеточка)</h2>
         
         <div class="tilt-wrapper">
-            <div class="apple-card reveal tilt-card" onmouseenter="playUIHover()" onclick="triggerHaptic('light'); playUIClick()">
+            <div class="apple-card reveal tilt-card" onmouseenter="playUIHover()" onclick="triggerHaptic('light')">
                 <div class="glare"></div>
                 <div class="p-7">
                     <div class="flex items-center mb-5 content-3d">
                         <div class="apple-app-icon"><i class="fa-solid fa-plus text-[28px] icon-3d icon-3d-blue"></i></div>
-                        <h3 class="font-display text-2xl font-bold ml-5 text-dynamic-text">Новая заявка</h3>
+                        <h3 class="font-display text-2xl font-bold ml-5 text-dynamic-text text-morph" data-id="card1_title">Новая заявка</h3>
                     </div>
                     <p class="text-[16px] text-dynamic-muted mb-6 leading-relaxed font-medium text-morph content-3d" data-id="card1_desc">Поймали новую мышь? Зафиксируйте её здесь.</p>
                     <div class="apple-inset space-y-4 text-[15px] font-medium text-dynamic-text">
-                        <div class="flex items-start text-morph stagger-item" style="transition-delay: 0.1s" data-id="c1_li1"><i class="fa-solid fa-check text-orange-500 mt-1 mr-4 text-base"></i> Введите номер заявки.</div>
-                        <div class="flex items-start text-morph stagger-item" style="transition-delay: 0.2s" data-id="c1_li2"><i class="fa-solid fa-check text-orange-500 mt-1 mr-4 text-base"></i> Выберите состав бригады (ваше имя уже там).</div>
-                        <div class="flex items-start text-morph stagger-item" style="transition-delay: 0.3s" data-id="c1_li3"><i class="fa-solid fa-check text-orange-500 mt-1 mr-4 text-base"></i> Нажмите «ПОДТВЕРДИТЬ СОСТАВ».</div>
+                        <div class="flex items-start text-morph stagger-item" style="transition-delay: 0.1s" data-id="c1_li1"><i class="fa-solid fa-check text-orange-500 mt-1 mr-4 text-base"></i> Нажмите кнопку и введите номер заявки (можно несколько через пробел/запятую).</div>
+                        <div class="flex items-start text-morph stagger-item" style="transition-delay: 0.2s" data-id="c1_li2"><i class="fa-solid fa-check text-orange-500 mt-1 mr-4 text-base"></i> Выберите состав бригады. Ваше имя уже там. Начните вводить фамилии коллег — бот их найдет.</div>
+                        <div class="flex items-start text-morph stagger-item" style="transition-delay: 0.3s" data-id="c1_li3"><i class="fa-solid fa-check text-orange-500 mt-1 mr-4 text-base"></i> Нажмите «ПОДТВЕРДИТЬ СОСТАВ». Заявка перейдет в работу.</div>
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="tilt-wrapper">
-            <div class="apple-card reveal tilt-card" onmouseenter="playUIHover()" onclick="triggerHaptic('light'); playUIClick()">
+            <div class="apple-card reveal tilt-card" onmouseenter="playUIHover()" onclick="triggerHaptic('light')">
                 <div class="glare"></div>
                 <div class="p-7">
                     <div class="flex items-center mb-5 content-3d">
                         <div class="apple-app-icon"><i class="fa-solid fa-list-ul text-[28px] icon-3d icon-3d-purple"></i></div>
                         <h3 class="font-display text-2xl font-bold ml-5 text-dynamic-text text-morph" data-id="card2_title">Мои заявки (Лоток)</h3>
                     </div>
-                    <p class="text-[16px] text-dynamic-muted mb-6 leading-relaxed font-medium text-morph content-3d" data-id="card2_desc">Ваш рабочий стол.</p>
+                    <p class="text-[16px] text-dynamic-muted mb-6 leading-relaxed font-medium text-morph content-3d" data-id="card2_desc">Ваш главный рабочий стол. Нажмите на заявку, чтобы открыть меню:</p>
                     <div class="space-y-5 text-[15px] content-3d">
-                        <div class="flex items-center stagger-item" style="transition-delay: 0.1s"><span class="bg-gray-200 text-gray-800 font-bold px-3 py-1 rounded-full text-xs w-24 text-center">Пауза</span><span class="ml-4 text-dynamic-text font-medium text-morph" data-id="st_pause_desc">Бросить работу (указать причину).</span></div>
-                        <div class="flex items-center stagger-item" style="transition-delay: 0.2s"><span class="bg-blue-100 text-blue-800 font-bold px-3 py-1 rounded-full text-xs w-24 text-center">В работу</span><span class="ml-4 text-dynamic-text font-medium text-morph" data-id="st_work_desc">Снять с паузы.</span></div>
-                        <div class="flex items-center stagger-item" style="transition-delay: 0.3s"><span class="bg-green-100 text-green-800 font-bold px-3 py-1 rounded-full text-xs w-24 text-center">Завершить</span><span class="ml-4 text-dynamic-text font-medium text-morph" data-id="st_done_desc">Мышь съедена. В Архив.</span></div>
-                        <div class="flex items-center mt-3 pt-4 border-t border-dynamic-border stagger-item" style="transition-delay: 0.4s"><span class="bg-orange-100 text-orange-800 font-bold px-3 py-1 rounded-full text-xs w-24 text-center border border-orange-200">На завтра</span><span class="ml-4 text-dynamic-text font-bold text-morph" data-id="st_tmrw_desc">Важно! Добавляет в план.</span></div>
+                        <div class="flex items-start stagger-item" style="transition-delay: 0.1s"><span class="bg-gray-200 text-gray-800 font-bold px-3 py-1 rounded-full text-xs w-28 text-center flex-shrink-0 mt-0.5">Пауза</span><span class="ml-4 text-dynamic-text font-medium text-morph" data-id="st_pause_desc">Если работу пришлось отложить. Бот попросит указать причину. Заявка не попадет в отчет.</span></div>
+                        <div class="flex items-start stagger-item" style="transition-delay: 0.2s"><span class="bg-blue-100 text-blue-800 font-bold px-3 py-1 rounded-full text-xs w-28 text-center flex-shrink-0 mt-0.5">В работу</span><span class="ml-4 text-dynamic-text font-medium text-morph" data-id="st_work_desc">Возвращает заявку с паузы в активный статус.</span></div>
+                        <div class="flex items-start stagger-item" style="transition-delay: 0.3s"><span class="bg-green-100 text-green-800 font-bold px-3 py-1 rounded-full text-xs w-28 text-center flex-shrink-0 mt-0.5">Завершить</span><span class="ml-4 text-dynamic-text font-medium text-morph" data-id="st_done_desc">Работа выполнена. Заявка уходит в «Архив».</span></div>
+                        <div class="flex items-start mt-3 pt-4 border-t border-dynamic-border stagger-item" style="transition-delay: 0.4s"><span class="bg-orange-100 text-orange-800 font-bold px-3 py-1 rounded-full text-xs w-28 text-center border border-orange-200 flex-shrink-0 mt-0.5">На завтра</span><span class="ml-4 text-dynamic-text font-bold text-morph" data-id="st_tmrw_desc">Самое важное действие! Добавляет заявку в план на следующий день.</span></div>
+                        <div class="flex items-start mt-3 pt-4 border-t border-dynamic-border stagger-item" style="transition-delay: 0.5s"><span class="bg-slate-100 text-slate-800 font-bold px-3 py-1 rounded-full text-xs w-28 text-center border border-slate-200 flex-shrink-0 mt-0.5">Архив</span><span class="ml-4 text-dynamic-text font-medium text-morph" data-id="st_arch_desc">Кнопка внизу списка. Хранит 40 последних заявок. Можно 🔄 Восстановить случайно закрытую.</span></div>
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="tilt-wrapper">
-            <div class="apple-card reveal tilt-card overflow-hidden" onmouseenter="playUIHover()" onclick="triggerHaptic('light'); playUIClick()">
+            <div class="apple-card reveal tilt-card overflow-hidden" onmouseenter="playUIHover()" onclick="triggerHaptic('light')">
                 <div class="glare"></div>
                 <div class="p-7">
                     <div class="flex items-center mb-5 relative z-10 content-3d">
                         <div class="apple-app-icon"><i class="fa-solid fa-calendar-day text-[28px] icon-3d icon-3d-orange"></i></div>
                         <h3 class="font-display text-2xl font-bold ml-5 text-dynamic-text text-morph" data-id="card3_title">На завтра (Миска)</h3>
                     </div>
-                    <p class="text-[16px] text-dynamic-muted mb-6 leading-relaxed font-medium relative z-10 text-morph content-3d" data-id="card3_desc">Корзина планов. Если передумали — жмите Убрать.</p>
+                    <p class="text-[16px] text-dynamic-muted mb-6 leading-relaxed font-medium relative z-10 text-morph content-3d" data-id="card3_desc">Корзина планов. Здесь отображается всё, что вы перенесли на завтра. Если передумали — жмите Убрать.</p>
                     <div class="apple-inset relative z-10 bg-orange-50/50 border-orange-200/50">
                         <p class="text-orange-600 text-[14px] font-bold uppercase tracking-widest mb-2 text-morph" data-id="card3_rule_title"><i class="fa-solid fa-bolt mr-2"></i> Железное правило</p>
-                        <p class="text-[15px] font-medium text-dynamic-text opacity-90 leading-relaxed text-morph" data-id="card3_rule">Запись строго <strong>с 12:00 до 16:30</strong>. После кормушка закрывается!</p>
+                        <p class="text-[15px] font-medium text-dynamic-text opacity-90 leading-relaxed text-morph" data-id="card3_rule">Запись строго <strong>с 12:00 до 16:30</strong>. После 16:30 бот выгрузит красивый отчет в Google Таблицу и сотрет заявки из телефонов на сегодня!</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <h2 class="text-[14px] font-bold text-dynamic-muted uppercase tracking-widest mb-4 ml-5 mt-12 hide-for-elderly reveal"><i class="fa-solid fa-crown mr-2 opacity-50"></i> Вожакам стаи</h2>
-        <div class="tilt-wrapper hide-for-elderly">
-            <div class="apple-card p-6 grid grid-cols-2 gap-4 reveal tilt-card" onmouseenter="playUIHover()">
-                <div class="glare"></div>
-                <div class="apple-inset flex flex-col justify-between hover:bg-white/60 transition cursor-pointer" onclick="triggerHaptic('light'); playUIClick()">
-                    <div class="content-3d w-full flex justify-center mb-5 mt-2"><i class="fa-solid fa-bullhorn text-4xl icon-3d icon-3d-blue"></i></div>
-                    <div class="content-3d text-center"><h4 class="font-bold text-[16px] mb-1 text-dynamic-text">Опрос</h4><p class="text-[13px] text-dynamic-muted leading-snug text-morph" data-id="adm_1">Разбудить всех пинком.</p></div>
-                </div>
-                <div class="apple-inset flex flex-col justify-between hover:bg-white/60 transition cursor-pointer" onclick="triggerHaptic('light'); playUIClick()">
-                    <div class="content-3d w-full flex justify-center mb-5 mt-2"><i class="fa-solid fa-eye text-4xl icon-3d icon-3d-purple"></i></div>
-                    <div class="content-3d text-center"><h4 class="font-bold text-[16px] mb-1 text-dynamic-text">Черновик</h4><p class="text-[13px] text-dynamic-muted leading-snug text-morph" data-id="adm_2">Подсмотреть на завтра.</p></div>
-                </div>
-                <div class="apple-inset col-span-2 sm:col-span-1 hover:bg-white/60 transition cursor-pointer" onclick="triggerHaptic('medium'); playUIClick()">
-                    <div class="content-3d w-full flex justify-center mb-5 mt-2"><i class="fa-solid fa-users-slash text-4xl icon-3d icon-3d-amber"></i></div>
-                    <div class="content-3d text-center"><h4 class="font-bold text-[16px] text-dynamic-text mb-1">Кто не записался</h4><p class="text-[13px] text-dynamic-muted leading-snug text-morph" data-id="adm_3">Раздать лещи вонючкам.</p></div>
-                </div>
-                <div class="apple-inset col-span-2 sm:col-span-1 hover:bg-white/60 transition cursor-pointer" onclick="triggerHaptic('medium'); playUIClick()">
-                    <div class="content-3d w-full flex justify-center mb-5 mt-2"><i class="fa-solid fa-circle-dot text-4xl icon-3d icon-3d-green animate-pulse"></i></div>
-                    <div class="content-3d text-center"><h4 class="font-bold text-[16px] text-dynamic-text mb-1">Live-отчет</h4><p class="text-[13px] text-dynamic-muted leading-snug text-morph" data-id="adm_4">Онлайн-слежка ВКЛ/ВЫКЛ.</p></div>
-                </div>
-            </div>
-        </div>
-
-        <h2 class="text-[14px] font-bold text-dynamic-muted uppercase tracking-widest mb-4 ml-5 mt-12 hide-for-elderly reveal"><i class="fa-solid fa-table mr-2 opacity-50"></i> База Данных (Таблицы)</h2>
-        <div class="tilt-wrapper hide-for-elderly">
-            <div class="apple-card p-0 reveal tilt-card" onmouseenter="playUIHover()">
-                <div class="glare"></div>
-                <div class="p-5 border-b border-dynamic-border flex items-center content-3d stagger-item" style="transition-delay: 0.1s"><div class="apple-app-icon w-14 h-14 mr-5"><i class="fa-solid fa-users text-2xl icon-3d icon-3d-blue"></i></div><div><h3 class="font-bold text-[16px] text-dynamic-text">1. Сотрудники</h3><p class="text-[14px] text-dynamic-muted mt-1">Допущенные к боту.</p></div></div>
-                <div class="p-5 border-b border-dynamic-border flex items-center content-3d stagger-item" style="transition-delay: 0.2s"><div class="apple-app-icon w-14 h-14 mr-5"><i class="fa-solid fa-crown text-2xl icon-3d icon-3d-purple"></i></div><div><h3 class="font-bold text-[16px] text-dynamic-text">2. Админы</h3><p class="text-[14px] text-dynamic-muted mt-1">Получают жалобы.</p></div></div>
-                <div class="p-5 border-b border-dynamic-border flex items-center content-3d stagger-item" style="transition-delay: 0.3s"><div class="apple-app-icon w-14 h-14 mr-5"><i class="fa-solid fa-bolt text-2xl icon-3d icon-3d-green"></i></div><div><h3 class="font-bold text-[16px] text-dynamic-text">3. Live</h3><p class="text-[14px] text-dynamic-muted mt-1">Дашборд онлайн. Не трогать!</p></div></div>
-                <div class="p-5 border-b border-dynamic-border flex items-center content-3d stagger-item" style="transition-delay: 0.4s"><div class="apple-app-icon w-14 h-14 mr-5"><i class="fa-solid fa-star text-2xl icon-3d icon-3d-orange"></i></div><div><h3 class="font-bold text-[16px] text-dynamic-text">6. Отчеты</h3><p class="text-[14px] text-dynamic-muted mt-1">Главный архив (выгрузка в 16:30).</p></div></div>
-                <div class="p-5 flex items-center content-3d stagger-item" style="transition-delay: 0.5s"><div class="apple-app-icon w-14 h-14 mr-5"><i class="fa-solid fa-brain text-2xl icon-3d icon-3d-red"></i></div><div><h3 class="font-bold text-[16px] text-dynamic-text">7. Память (Опасно)</h3><p class="text-[14px] text-dynamic-muted mt-1">Ремонт: удалить строку зависшего.</p></div></div>
-            </div>
-        </div>
-
-        <h2 class="text-[14px] font-mono text-dynamic-muted uppercase tracking-widest mb-4 ml-5 mt-12 hide-for-elderly reveal">> sys_admin</h2>
-        <div class="tilt-wrapper hide-for-elderly">
-            <div class="apple-card p-0 overflow-hidden reveal tilt-card" onmouseenter="playUIHover()">
-                <div class="glare"></div>
-                <div class="bg-black/5 px-5 py-3 flex items-center border-b border-dynamic-border content-3d">
-                    <div class="flex gap-2 mr-5">
-                        <div class="w-3.5 h-3.5 rounded-full bg-red-400"></div><div class="w-3.5 h-3.5 rounded-full bg-yellow-400"></div><div class="w-3.5 h-3.5 rounded-full bg-green-400"></div>
-                    </div>
-                    <span class="font-mono text-[13px] text-dynamic-muted font-bold">cloudflare_terminal</span>
-                </div>
-                <div class="p-6 font-mono text-[14px] space-y-5 text-dynamic-text opacity-90 content-3d leading-relaxed">
-                    <p>Бот пингует себя раз в минуту. Cloudflare настроен на авторестарт.</p>
-                    <div class="border-l-4 border-orange-400 pl-4 bg-orange-50/30 p-3 rounded-r-lg">
-                        <strong class="block mb-2 font-bold text-orange-600">Safe.Crash(16:30)</strong>
-                        <span>Если упали в 16:29, бот выгрузит отчет при рестарте, дождется ответа Google, потом очистит телефоны.</span>
+        <!-- СЕКРЕТНАЯ ЗОНА АДМИНОВ С ТУМАНОМ -->
+        <div id="admin-secret-zone" class="relative mt-16 rounded-3xl overflow-hidden hide-for-elderly reveal border border-gray-200/50 shadow-2xl">
+            
+            <!-- Интерактивный туман -->
+            <div id="admin-fog" class="absolute inset-0 z-50 flex flex-col items-center justify-center cursor-pointer transition-all duration-1000 fog-container group" onclick="dispelFog()">
+                <div class="absolute inset-0 opacity-40 fog-smoke mix-blend-screen pointer-events-none"></div>
+                <div class="content-3d text-center relative z-10 transform transition duration-500 group-hover:scale-105">
+                    <i class="fa-solid fa-lock text-6xl text-slate-300 mb-6 drop-shadow-xl icon-3d"></i>
+                    <h2 class="font-display text-4xl font-black text-white tracking-widest uppercase drop-shadow-2xl text-morph mb-3" data-id="fog_title">Зона для вожаков</h2>
+                    <p class="text-slate-300 text-lg font-medium text-morph" data-id="fog_subtitle">Для админов. Нажми, чтобы развеять туман.</p>
+                    <div class="mt-8 px-8 py-3 bg-white/10 border border-white/20 rounded-full text-white font-bold tracking-wide animate-breathe backdrop-blur-md shadow-[0_0_30px_rgba(255,255,255,0.1)] text-morph" data-id="fog_btn">
+                        РАЗВЕЯТЬ 💨
                     </div>
                 </div>
+            </div>
+
+            <!-- Контент под туманом -->
+            <div id="admin-content" class="bg-gray-50/50 backdrop-blur-lg pt-12 pb-8 px-4 opacity-30 blur-md pointer-events-none transition-all duration-1000">
+                
+                <h2 class="text-[14px] font-bold text-dynamic-muted uppercase tracking-widest mb-4 ml-5"><i class="fa-solid fa-crown mr-2 opacity-50"></i> Админ-панель</h2>
+                <div class="tilt-wrapper">
+                    <div class="apple-card p-6 grid grid-cols-2 gap-4 tilt-card" style="margin-bottom:0;" onmouseenter="playUIHover()">
+                        <div class="glare"></div>
+                        <div class="apple-inset flex flex-col justify-between hover:bg-white/60 transition cursor-pointer" onclick="triggerHaptic('light')">
+                            <div class="content-3d w-full flex justify-center mb-5 mt-2"><i class="fa-solid fa-bullhorn text-4xl icon-3d icon-3d-blue"></i></div>
+                            <div class="content-3d text-center"><h4 class="font-bold text-[16px] mb-1 text-dynamic-text">Опрос</h4><p class="text-[13px] text-dynamic-muted leading-snug text-morph" data-id="adm_1">Разослать всем напоминание о планировании дня.</p></div>
+                        </div>
+                        <div class="apple-inset flex flex-col justify-between hover:bg-white/60 transition cursor-pointer" onclick="triggerHaptic('light')">
+                            <div class="content-3d w-full flex justify-center mb-5 mt-2"><i class="fa-solid fa-eye text-4xl icon-3d icon-3d-purple"></i></div>
+                            <div class="content-3d text-center"><h4 class="font-bold text-[16px] mb-1 text-dynamic-text">Черновик</h4><p class="text-[13px] text-dynamic-muted leading-snug text-morph" data-id="adm_2">Сделать предварительную выгрузку на завтра.</p></div>
+                        </div>
+                        <div class="apple-inset col-span-2 sm:col-span-1 hover:bg-white/60 transition cursor-pointer" onclick="triggerHaptic('medium')">
+                            <div class="content-3d w-full flex justify-center mb-5 mt-2"><i class="fa-solid fa-users-slash text-4xl icon-3d icon-3d-amber"></i></div>
+                            <div class="content-3d text-center"><h4 class="font-bold text-[16px] text-dynamic-text mb-1">Кто не записался</h4><p class="text-[13px] text-dynamic-muted leading-snug text-morph" data-id="adm_3">Список вонючек. Можно нажать «Напомнить всем».</p></div>
+                        </div>
+                        <div class="apple-inset col-span-2 sm:col-span-1 hover:bg-white/60 transition cursor-pointer" onclick="triggerHaptic('medium')">
+                            <div class="content-3d w-full flex justify-center mb-5 mt-2"><i class="fa-solid fa-circle-dot text-4xl icon-3d icon-3d-green animate-pulse"></i></div>
+                            <div class="content-3d text-center"><h4 class="font-bold text-[16px] text-dynamic-text mb-1">Live-отчет</h4><p class="text-[13px] text-dynamic-muted leading-snug text-morph" data-id="adm_4">ВКЛ/ВЫКЛ онлайн-слежку в Google Таблицу.</p></div>
+                        </div>
+                        <div class="apple-inset col-span-2 bg-slate-50/50 border-slate-200/50">
+                            <h4 class="font-bold text-[16px] text-dynamic-text mb-2 text-center text-morph" data-id="adm_timer_title">Управление подачей заявок (Таймер)</h4>
+                            <div class="flex flex-col sm:flex-row gap-2">
+                                <div class="flex-1 text-center bg-white rounded-lg p-2 text-[13px] border border-gray-200 shadow-sm"><strong class="text-blue-600 block mb-1">Авто</strong> Стандарт 12:00-16:30.</div>
+                                <div class="flex-1 text-center bg-white rounded-lg p-2 text-[13px] border border-gray-200 shadow-sm"><strong class="text-green-600 block mb-1">Открыть</strong> Форс-мажор. Разрешить запись.</div>
+                                <div class="flex-1 text-center bg-white rounded-lg p-2 text-[13px] border border-gray-200 shadow-sm"><strong class="text-red-600 block mb-1">Закрыть</strong> Принудительно запретить запись.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <h2 class="text-[14px] font-bold text-dynamic-muted uppercase tracking-widest mb-4 ml-5 mt-10"><i class="fa-solid fa-table mr-2 opacity-50"></i> База Данных (Таблицы)</h2>
+                <div class="tilt-wrapper">
+                    <div class="apple-card p-0 tilt-card" style="margin-bottom:0;" onmouseenter="playUIHover()">
+                        <div class="glare"></div>
+                        <div class="p-5 border-b border-dynamic-border flex items-center content-3d"><div class="apple-app-icon w-14 h-14 mr-5"><i class="fa-solid fa-users text-2xl icon-3d icon-3d-blue"></i></div><div><h3 class="font-bold text-[16px] text-dynamic-text">1. Сотрудники</h3><p class="text-[14px] text-dynamic-muted mt-1 text-morph" data-id="db_1">Список допущенных (ID и ФИО). Без них бот будет игнорировать человека.</p></div></div>
+                        <div class="p-5 border-b border-dynamic-border flex items-center content-3d"><div class="apple-app-icon w-14 h-14 mr-5"><i class="fa-solid fa-crown text-2xl icon-3d icon-3d-purple"></i></div><div><h3 class="font-bold text-[16px] text-dynamic-text">2. Админы</h3><p class="text-[14px] text-dynamic-muted mt-1 text-morph" data-id="db_2">Кому приходят жалобы и у кого есть админка (только ID).</p></div></div>
+                        <div class="p-5 border-b border-dynamic-border flex items-center content-3d"><div class="apple-app-icon w-14 h-14 mr-5"><i class="fa-solid fa-bolt text-2xl icon-3d icon-3d-green"></i></div><div><h3 class="font-bold text-[16px] text-dynamic-text">3. Live и 4. Завершенные</h3><p class="text-[14px] text-dynamic-muted mt-1 text-morph" data-id="db_3">Живой дашборд и архив. Перезаписываются ботом. Не трогать вручную!</p></div></div>
+                        <div class="p-5 border-b border-dynamic-border flex items-center content-3d"><div class="apple-app-icon w-14 h-14 mr-5"><i class="fa-solid fa-eye text-2xl icon-3d icon-3d-indigo"></i></div><div><h3 class="font-bold text-[16px] text-dynamic-text">5. Просмотр на завтра</h3><p class="text-[14px] text-dynamic-muted mt-1 text-morph" data-id="db_5">Черновик планов. Обновляется раз в час. Отличный инструмент слежки в 15:00.</p></div></div>
+                        <div class="p-5 border-b border-dynamic-border flex items-center content-3d"><div class="apple-app-icon w-14 h-14 mr-5"><i class="fa-solid fa-star text-2xl icon-3d icon-3d-orange"></i></div><div><h3 class="font-bold text-[16px] text-dynamic-text">6. Отчеты</h3><p class="text-[14px] text-dynamic-muted mt-1 text-morph" data-id="db_6">Главный архив. Выгрузка в 16:30. Данные добавляются вниз (append).</p></div></div>
+                        <div class="p-5 flex items-center content-3d bg-red-50/30"><div class="apple-app-icon w-14 h-14 mr-5 border-red-200"><i class="fa-solid fa-brain text-2xl icon-3d icon-3d-red"></i></div><div><h3 class="font-bold text-[16px] text-red-700">7. Память (Опасно)</h3><p class="text-[14px] text-red-800/80 mt-1 font-medium text-morph" data-id="db_7">Мозги бота (JSON). Ремонт: удалить строку зависшего юзера, чтобы сбросить его меню.</p></div></div>
+                    </div>
+                </div>
+
+                <h2 class="text-[14px] font-mono text-dynamic-muted uppercase tracking-widest mb-4 ml-5 mt-10">> sys_admin</h2>
+                <div class="tilt-wrapper">
+                    <div class="apple-card p-0 overflow-hidden tilt-card" style="margin-bottom:0;" onmouseenter="playUIHover()">
+                        <div class="glare"></div>
+                        <div class="bg-black/80 px-5 py-3 flex items-center border-b border-gray-800 content-3d">
+                            <div class="flex gap-2 mr-5">
+                                <div class="w-3 h-3 rounded-full bg-red-500"></div><div class="w-3 h-3 rounded-full bg-yellow-500"></div><div class="w-3 h-3 rounded-full bg-green-500"></div>
+                            </div>
+                            <span class="font-mono text-[13px] text-emerald-400 font-bold tracking-wider">cloudflare_terminal</span>
+                        </div>
+                        <div class="p-6 font-mono text-[13px] sm:text-[14px] space-y-5 bg-slate-900 text-emerald-300 content-3d leading-relaxed shadow-inner">
+                            <p class="text-morph" data-id="sys_1">Бот общается с Telegram через прокси Cloudflare. Включен авторестарт и "пинг" раз в минуту.</p>
+                            <div class="border-l-4 border-orange-500 pl-4 bg-orange-500/10 p-3 rounded-r-lg">
+                                <strong class="block mb-2 font-bold text-orange-400">Safe.Crash(16:30)</strong>
+                                <span class="text-morph" data-id="sys_2">Если сервер упал в 16:29, бот запомнит это. При рестарте он СНАЧАЛА выгрузит отчет, дождется ответа Google, и только потом очистит телефоны. Ни одна заявка не пропадет!</span>
+                            </div>
+                            <div class="border-l-4 border-red-500 pl-4 bg-red-500/10 p-3 rounded-r-lg">
+                                <strong class="block mb-2 font-bold text-red-400">Error 429 (Google Limits)</strong>
+                                <span class="text-morph" data-id="sys_3">Защита от лимитов API. Бот умеет ждать 2с ➔ 4с ➔ 8с (до 5 раз), если Google тормозит. Отчет будет доставлен.</span>
+                            </div>
+                            <p class="text-slate-400 italic mt-4 text-morph" data-id="sys_4">// Если бот молчит — 99% поможет кнопка Restart на облачном сервере.</p>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
 
@@ -458,11 +511,11 @@
 
     <div id="wife-container">
         <div class="absolute -top-24 left-2 apple-inset backdrop-blur-2xl border border-white/90 bg-white/90 text-dynamic-text text-[14px] font-bold py-4 px-5 w-64 animate-float z-50 text-center shadow-2xl rounded-3xl" id="wife-alert-hint" data-id="wife_hint">
-            Запомни, что делать, если Чубайс молчит! 👇
+            Запомни, что делать, если Чубайс тебя игнорирует и молчит! 👇
             <div class="absolute -bottom-2 left-8 w-4 h-4 bg-white border-r border-b border-white/90 transform rotate-45 shadow-sm"></div>
         </div>
         
-        <div class="apple-fab-wrapper" onclick="toggleWife(this)">
+        <div class="apple-fab-wrapper" onclick="toggleWife(this)" onmouseenter="playUIHover()">
             <div class="apple-fab-radar"></div>
             <div class="apple-fab cursor-pointer hover:scale-105">
                 <i class="fa-solid fa-cat text-[30px] icon-3d icon-3d-orange" style="transform: translateZ(15px)"></i>
@@ -540,7 +593,6 @@
         function playUIClick() { playSoundGen('click'); }
         function playUIChime() { playSoundGen('chime'); }
 
-        // Unlocking audio context on first user interaction
         document.body.addEventListener('click', initAudio, { once: true });
         document.body.addEventListener('touchstart', initAudio, { once: true });
 
@@ -585,6 +637,24 @@
             if(btn) btn.style.transform = `translate(0px, 0px)`;
         }
 
+        // --- Dispel Fog Logic ---
+        function dispelFog() {
+            playUIChime();
+            triggerHaptic('heavy');
+            const fog = document.getElementById('admin-fog');
+            const content = document.getElementById('admin-content');
+            fog.style.opacity = '0';
+            fog.style.transform = 'scale(1.1) translateY(-20px)';
+            fog.style.pointerEvents = 'none';
+            
+            content.style.opacity = '1';
+            content.style.filter = 'blur(0px)';
+            content.style.pointerEvents = 'auto';
+            
+            setTimeout(() => fog.style.display = 'none', 1000);
+        }
+
+        // --- Particle Engine ---
         const canvas = document.getElementById('dust-canvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
@@ -644,33 +714,50 @@
         }
         initParticles(); animateCanvas();
 
+        // --- Text Dictionaries for 3 Modes ---
         const texts = {
             main_title: { normal: "Чубайс <span class='text-hologram-gradient block mt-1 text-4xl'>Pro (2026)</span>", retro: "ЭВМ «Чубайс» <span class='block mt-1 opacity-80 text-2xl'>Ветеран ПНР</span>", elderly: "Крупная памятка <span class='block mt-1 font-normal text-2xl'>для телефона</span>" },
             main_desc: { normal: "Интеллектуальный помощник. Собирает отчеты, пока спит на сервере. Подчиняется исключительно Насте.", retro: "Комплекс учета выработки. Одобрено парткомом. Старший мастер - т. Настя.", elderly: "Прочитайте простые правила. Одобрено Настей." },
             menu_title: { normal: "Главное меню (Когтеточка)", retro: "Пульт управления", elderly: "Главное меню" },
+            card1_title: { normal: "Новая заявка", retro: "Новая путевка", elderly: "Новая заявка" },
             card1_desc: { normal: "Поймали новую мышь? Зафиксируйте её здесь.", retro: "Оформляется строго по ГОСТу.", elderly: "Нажимайте, когда начинаете новую работу." },
-            c1_li1: { normal: "<i class='fa-solid fa-check text-orange-500 mt-1 mr-4 text-base'></i> Введите номер заявки.", retro: "<i class='fa-solid fa-check text-orange-500 mt-1 mr-4 text-base'></i> Заполните путевку.", elderly: "<i class='fa-solid fa-check text-orange-500 mt-1 mr-4 text-base'></i> Введите номер задания цифрами." },
-            c1_li2: { normal: "<i class='fa-solid fa-check text-orange-500 mt-1 mr-4 text-base'></i> Выберите состав бригады.", retro: "<i class='fa-solid fa-check text-orange-500 mt-1 mr-4 text-base'></i> Утвердите состав артели.", elderly: "<i class='fa-solid fa-check text-orange-500 mt-1 mr-4 text-base'></i> Выберите фамилии коллег." },
-            c1_li3: { normal: "<i class='fa-solid fa-check text-orange-500 mt-1 mr-4 text-base'></i> Нажмите «ПОДТВЕРДИТЬ СОСТАВ».", retro: "<i class='fa-solid fa-check text-orange-500 mt-1 mr-4 text-base'></i> Нажмите «ПОДТВЕРДИТЬ СОСТАВ».", elderly: "<i class='fa-solid fa-check text-orange-500 mt-1 mr-4 text-base'></i> Нажмите «ПОДТВЕРДИТЬ СОСТАВ»." },
+            c1_li1: { normal: "<i class='fa-solid fa-check text-orange-500 mt-1 mr-4 text-base'></i> Нажмите кнопку и введите номер заявки (можно несколько через пробел/запятую).", retro: "<i class='fa-solid fa-check text-orange-500 mt-1 mr-4 text-base'></i> Заполните номер путевки по форме.", elderly: "<i class='fa-solid fa-check text-orange-500 mt-1 mr-4 text-base'></i> Нажмите кнопку и введите номер задания цифрами." },
+            c1_li2: { normal: "<i class='fa-solid fa-check text-orange-500 mt-1 mr-4 text-base'></i> Выберите состав бригады. Ваше имя уже там. Начните вводить фамилии коллег — бот их найдет.", retro: "<i class='fa-solid fa-check text-orange-500 mt-1 mr-4 text-base'></i> Утвердите состав артели стахановцев.", elderly: "<i class='fa-solid fa-check text-orange-500 mt-1 mr-4 text-base'></i> Выберите фамилии коллег, кто работает с вами." },
+            c1_li3: { normal: "<i class='fa-solid fa-check text-orange-500 mt-1 mr-4 text-base'></i> Нажмите «ПОДТВЕРДИТЬ СОСТАВ». Заявка перейдет в работу.", retro: "<i class='fa-solid fa-check text-orange-500 mt-1 mr-4 text-base'></i> Нажмите «ПОДТВЕРДИТЬ СОСТАВ». Цех начинает работу.", elderly: "<i class='fa-solid fa-check text-orange-500 mt-1 mr-4 text-base'></i> Нажмите «ПОДТВЕРДИТЬ СОСТАВ»." },
             card2_title: { normal: "Мои заявки (Лоток)", retro: "Мои заявки (Журнал)", elderly: "Мои заявки" },
-            card2_desc: { normal: "Ваш рабочий стол.", retro: "Журнал учета рабочего времени.", elderly: "Здесь ваши текущие дела." },
-            st_pause_desc: { normal: "Бросить работу (указать причину).", retro: "Приостановить производство.", elderly: "Отложить работу на потом." },
-            st_work_desc: { normal: "Снять с паузы.", retro: "Продолжить стахановское движение.", elderly: "Продолжить работу." },
-            st_done_desc: { normal: "Мышь съедена. В Архив.", retro: "Сдано ОТК. В архив.", elderly: "Работа сделана. Спрятать дело." },
-            st_tmrw_desc: { normal: "Важно! Добавляет в план.", retro: "Внести в план следующей смены.", elderly: "Обязательно нажать в конце дня!" },
+            card2_desc: { normal: "Ваш главный рабочий стол. Нажмите на заявку, чтобы открыть меню:", retro: "Журнал учета рабочего времени. Управление процессом:", elderly: "Здесь ваши текущие дела. Нажмите на дело, чтобы:" },
+            st_pause_desc: { normal: "Если работу пришлось отложить. Бот попросит указать причину. Заявка не попадет в отчет.", retro: "Приостановить производство. Указать причину простоя для ОТК.", elderly: "Отложить работу на потом. Программа спросит причину." },
+            st_work_desc: { normal: "Возвращает заявку с паузы в активный статус.", retro: "Продолжить стахановское движение. Снять простой.", elderly: "Продолжить работу над отложенным делом." },
+            st_done_desc: { normal: "Работа выполнена. Заявка уходит в «Архив».", retro: "Сдано ОТК. Запись уходит в Архив предприятия.", elderly: "Работа сделана. Спрятать дело." },
+            st_tmrw_desc: { normal: "Самое важное действие! Добавляет заявку в план на следующий день.", retro: "Внести в план следующей смены. Пятилетка за три года!", elderly: "Обязательно нажать перед уходом домой!" },
+            st_arch_desc: { normal: "Кнопка внизу списка. Хранит 40 последних заявок. Можно 🔄 Восстановить случайно закрытую.", retro: "Хранит 40 старых записей. Можно восстановить при утере.", elderly: "Хранит старые дела. Если закрыли случайно - можно вернуть." },
             card3_title: { normal: "На завтра (Миска)", retro: "На завтра (План-график)", elderly: "На завтра" },
-            card3_desc: { normal: "Корзина планов. Если передумали — жмите Убрать.", retro: "Картотека норм выработки.", elderly: "Ваш план. Можно нажать Убрать." },
+            card3_desc: { normal: "Корзина планов. Здесь отображается всё, что вы перенесли на завтра. Если передумали — жмите Убрать.", retro: "Картотека норм выработки на следующую смену.", elderly: "Ваш план на следующий день. Можно нажать Убрать." },
             card3_rule_title: { normal: "<i class='fa-solid fa-bolt mr-2'></i> Железное правило", retro: "<i class='fa-solid fa-bolt mr-2'></i> Приказ по цеху", elderly: "<i class='fa-solid fa-clock mr-2'></i> Важное время" },
-            card3_rule: { normal: "Запись строго <strong>с 12:00 до 16:30</strong>. После кормушка закрывается!", retro: "Оформление строго <strong>с 12:00 до 16:30</strong>. После 16:30 цех закрыт!", elderly: "Ровно в 12:00 программа сама пришлет вам вопрос. Нужно добавиться до 16:30!" },
-            adm_1: { normal: "Разбудить всех пинком.", retro: "Сбор на планерку.", elderly: "" },
-            adm_2: { normal: "Подсмотреть на завтра.", retro: "Ревизия до звонка.", elderly: "" },
-            adm_3: { normal: "Раздать лещи вонючкам.", retro: "Путевки на картошку тунеядцами.", elderly: "" },
-            adm_4: { normal: "Онлайн-слежка ВКЛ/ВЫКЛ.", retro: "Радар учета стахановцев.", elderly: "" },
+            card3_rule: { normal: "Запись строго <strong>с 12:00 до 16:30</strong>. После 16:30 бот выгрузит красивый отчет в Google Таблицу и сотрет заявки из телефонов на сегодня!", retro: "Оформление строго <strong>с 12:00 до 16:30</strong>. После 16:30 цех закрывается на ключ!", elderly: "Ровно в 12:00 программа сама пришлет вам вопрос. Вам нужно обязательно нажать кнопку и добавиться до 16:30!" },
+            fog_title: { normal: "Зона для вожаков", retro: "Партком", elderly: "Для начальства" },
+            fog_subtitle: { normal: "Для админов. Нажми, чтобы развеять туман.", retro: "Совершенно секретно. Нажать для допуска.", elderly: "Скрытый раздел. Нажать." },
+            fog_btn: { normal: "РАЗВЕЯТЬ 💨", retro: "ДОПУСК", elderly: "ОТКРЫТЬ" },
+            adm_1: { normal: "Разослать всем напоминание о планировании дня.", retro: "Сбор на планерку. Разбудить гудком.", elderly: "" },
+            adm_2: { normal: "Сделать предварительную выгрузку на завтра.", retro: "Ревизия до звонка.", elderly: "" },
+            adm_3: { normal: "Список вонючек. Можно нажать «Напомнить всем».", retro: "Списки тунеядцев на картошку.", elderly: "" },
+            adm_4: { normal: "ВКЛ/ВЫКЛ онлайн-слежку в Google Таблицу.", retro: "Радар учета стахановцев.", elderly: "" },
+            adm_timer_title: { normal: "Управление подачей заявок (Таймер)", retro: "Реле времени подачи", elderly: "" },
+            db_1: { normal: "Список допущенных (ID и ФИО). Без них бот будет игнорировать человека.", retro: "Штатное расписание по ГОСТу.", elderly: "" },
+            db_2: { normal: "Кому приходят жалобы и у кого есть админка (только ID).", retro: "Список парторгов.", elderly: "" },
+            db_3: { normal: "Живой дашборд и архив. Перезаписываются ботом. Не трогать вручную!", retro: "Автоматические картотеки.", elderly: "" },
+            db_5: { normal: "Черновик планов. Обновляется раз в час. Отличный инструмент слежки в 15:00.", retro: "Черновики нормировщика.", elderly: "" },
+            db_6: { normal: "Главный архив. Выгрузка в 16:30. Данные добавляются вниз (append).", retro: "Главная книга учета смен.", elderly: "" },
+            db_7: { normal: "Мозги бота (JSON). Ремонт: удалить строку зависшего юзера, чтобы сбросить его меню.", retro: "Перфокарты. Ремонт - выкинуть карту тунеядца.", elderly: "" },
+            sys_1: { normal: "Бот общается с Telegram через прокси Cloudflare. Включен авторестарт и 'пинг' раз в минуту.", retro: "Связь через радиоточку Cloudflare. Антенна настроена.", elderly: "" },
+            sys_2: { normal: "Если сервер упал в 16:29, бот запомнит это. При рестарте он СНАЧАЛА выгрузит отчет, дождется ответа Google, и только потом очистит телефоны. Ни одна заявка не пропадет!", retro: "При отключении света ЭВМ сохраняет путевки. Отчеты дойдут.", elderly: "" },
+            sys_3: { normal: "Защита от лимитов API. Бот умеет ждать 2с ➔ 4с ➔ 8с (до 5 раз), если Google тормозит. Отчет будет доставлен.", retro: "Если коммутатор занят, машина дозванивается сама.", elderly: "" },
+            sys_4: { normal: "// Если бот молчит — 99% поможет кнопка Restart на облачном сервере.", retro: "// При поломках бить кувалдой по рубильнику Restart.", elderly: "" },
             warn_title: { normal: "Лист ознакомления", retro: "ЖУРНАЛ ПО ТБ", elderly: "Журнал ознакомления" },
             warn_subtitle: { normal: "ЧУБАЙС КУСАЕТСЯ!", retro: "БЕЗ КАСКИ НЕ ВХОДИТЬ!", elderly: "ОЗНАКОМЛЕН" },
             warn_action: { normal: "ЗА ШКИРКУ НЕ БРАТЬ!", retro: "ШТРАФ ЛИШЕНИЕ ПРЕМИИ!", elderly: "РАСПИШИТЕСЬ ЗДЕСЬ" },
             warn_sign: { normal: "Подпись Насти:", retro: "Виза Насти:", elderly: "Подпись Насти:" },
-            wife_hint: { normal: "Запомни, что делать, если Чубайс молчит! 👇", retro: "Действия при отказе оборудования 👇", elderly: "Что делать, если программа сломалась 👇" },
+            wife_hint: { normal: "Запомни, что делать, если Чубайс тебя игнорирует и молчит! 👇", retro: "Действия при отказе оборудования 👇", elderly: "Что делать, если программа сломалась 👇" },
             wife_name: { normal: "<i class='fa-solid fa-user-circle text-orange-500 mr-2 text-xl'></i> Мадам Эс. <span class='text-[11px] text-gray-500 ml-2 border border-gray-300 px-2 py-0.5 rounded-md uppercase tracking-wider bg-gray-50/50'>(Сыкуха)</span>", retro: "<i class='fa-solid fa-user-circle text-orange-500 mr-2 text-xl'></i> Дежурный механик", elderly: "<i class='fa-solid fa-user-circle text-orange-500 mr-2 text-xl'></i> Справка" },
             wife_text1: { normal: "Без паники! Он под валерьянкой.", retro: "Валидол под язык! Супруг план перевыполняет.", elderly: "Ничего страшного! Программа обновляется." },
             wife_text2: { normal: "Если он <strong>5-6 минут молчит</strong> — я его пинаю. У нас алименты и 14 котят, кошачья жизнь суровая. Смена продолжается!", retro: "Если <strong>5-6 минут телеграмму не отбивает</strong> — я беру скалку. Смена продолжается!", elderly: "Если не отвечает 5-6 минут, подождите немного. Смена продолжается." },
@@ -705,7 +792,6 @@
 
             const modeKey = index === 0 ? 'normal' : (index === 1 ? 'retro' : 'elderly');
             
-            // Text Morphing with Blur
             document.querySelectorAll('.text-morph').forEach(el => {
                 const id = el.getAttribute('data-id');
                 if (texts[id] && texts[id][modeKey] !== undefined) {
@@ -751,7 +837,6 @@
                         currentY += (targetY - currentY) * 0.15;
                         card.style.transform = `rotateY(${currentX}deg) rotateX(${-currentY}deg) scale3d(1.02, 1.02, 1.02)`;
                         
-                        // Internal parallax for icon
                         const appIcon = card.querySelector('.apple-app-icon');
                         if (appIcon) {
                             appIcon.style.transform = `translateZ(35px) translate(${currentX * 0.5}px, ${currentY * 0.5}px)`;
@@ -799,13 +884,12 @@
                 }, 100);
             }
 
-            // Intersection Observer for Cascade Animation
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach((entry, index) => {
                     if (entry.isIntersecting) {
                         setTimeout(() => {
                             entry.target.classList.add('visible');
-                        }, index * 100); // Stagger cards
+                        }, index * 100); 
                         observer.unobserve(entry.target);
                     }
                 });
@@ -813,7 +897,6 @@
 
             document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
             
-            // Показываем подсказку только если это мобильное устройство (нет ховера или узкий экран)
             if (window.matchMedia("(hover: none)").matches || window.innerWidth < 768) {
                 setTimeout(() => {
                     const hint = document.getElementById('desktop-hint');
@@ -821,12 +904,9 @@
                         hint.classList.add('show');
                         playUIChime();
                         triggerHaptic('light');
-                        // Скрываем через 6 секунд
-                        setTimeout(() => {
-                            hint.classList.remove('show');
-                        }, 6000);
+                        setTimeout(() => { hint.classList.remove('show'); }, 6000);
                     }
-                }, 1500); // Показываем через 1.5 секунды после загрузки
+                }, 1500); 
             }
         };
     </script>
