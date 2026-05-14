@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Инструкция к боту «Чубайс»</title>
+    <title>Инструкция к боту «Чубайс» Pro</title>
     
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@500;700;800&family=Russo+One&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Manrope:wght@500;700;800&family=Russo+One&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <script>
@@ -21,27 +21,34 @@
                         mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
                     },
                     colors: {
-                        bot: { orange: '#FF512F', light: '#F09819', dark: '#DD2476' }
+                        dynamic: {
+                            text: 'var(--text-main)',
+                            muted: 'var(--text-muted)',
+                            card: 'var(--card-bg)',
+                            border: 'var(--card-border)',
+                            inset: 'var(--inset-bg)',
+                            highlight: 'var(--highlight)'
+                        }
                     },
                     animation: {
-                        'blob': 'blob 10s infinite alternate cubic-bezier(0.4, 0, 0.2, 1)',
-                        'blob-reverse': 'blob-reverse 12s infinite alternate cubic-bezier(0.4, 0, 0.2, 1)',
+                        'blob': 'blob 15s infinite alternate cubic-bezier(0.4, 0, 0.2, 1)',
+                        'blob-reverse': 'blob-reverse 18s infinite alternate cubic-bezier(0.4, 0, 0.2, 1)',
                         'float': 'float 6s ease-in-out infinite',
-                        'pulse-glow': 'pulse-glow 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'pulse-glow': 'pulse-glow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
                         'shimmer': 'shimmer 4s linear infinite',
                         'breathe': 'breathe 4s ease-in-out infinite',
                     },
                     keyframes: {
                         blob: {
                             '0%': { transform: 'translate(0px, 0px) scale(1) rotate(0deg)' },
-                            '33%': { transform: 'translate(30px, -50px) scale(1.1) rotate(10deg)' },
-                            '66%': { transform: 'translate(-20px, 20px) scale(0.9) rotate(-10deg)' },
+                            '33%': { transform: 'translate(40vw, -20vh) scale(1.2) rotate(45deg)' },
+                            '66%': { transform: 'translate(-20vw, 20vh) scale(0.8) rotate(-45deg)' },
                             '100%': { transform: 'translate(0px, 0px) scale(1) rotate(0deg)' },
                         },
                         'blob-reverse': {
                             '0%': { transform: 'translate(0px, 0px) scale(1) rotate(0deg)' },
-                            '33%': { transform: 'translate(-30px, 50px) scale(1.2) rotate(-15deg)' },
-                            '66%': { transform: 'translate(20px, -20px) scale(0.8) rotate(15deg)' },
+                            '33%': { transform: 'translate(-30vw, 30vh) scale(1.3) rotate(-30deg)' },
+                            '66%': { transform: 'translate(30vw, -10vh) scale(0.7) rotate(30deg)' },
                             '100%': { transform: 'translate(0px, 0px) scale(1) rotate(0deg)' },
                         },
                         float: {
@@ -50,7 +57,7 @@
                         },
                         'pulse-glow': {
                             '0%, 100%': { opacity: 1, filter: 'brightness(1)' },
-                            '50%': { opacity: .7, filter: 'brightness(1.2)' },
+                            '50%': { opacity: .6, filter: 'brightness(1.5)' },
                         },
                         shimmer: {
                             '0%': { backgroundPosition: '200% center' },
@@ -58,7 +65,7 @@
                         },
                         breathe: {
                             '0%, 100%': { transform: 'scale(1)' },
-                            '50%': { transform: 'scale(1.04)' },
+                            '50%': { transform: 'scale(1.05)' },
                         }
                     }
                 }
@@ -68,145 +75,197 @@
 
     <style>
         :root {
-            --bg-color: #F2F2F7; 
-            --text-main: #1C1C1E; 
-            --glass-bg: rgba(255, 255, 255, 0.65);
+            /* APPLE PRO DARK (По умолчанию) */
+            --bg-color: #000000; 
+            --text-main: #F5F5F7; 
+            --text-muted: #86868B;
+            --card-bg: rgba(28, 28, 30, 0.4);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --inset-bg: rgba(255, 255, 255, 0.03);
+            --highlight: rgba(255, 255, 255, 1);
+            --glass-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+            --nav-bg: rgba(0, 0, 0, 0.6);
         }
 
         body {
             background-color: var(--bg-color); color: var(--text-main);
-            transition: background-color 0.6s cubic-bezier(0.32, 0.72, 0, 1);
+            transition: background-color 0.8s cubic-bezier(0.32, 0.72, 0, 1), color 0.8s ease;
             -webkit-tap-highlight-color: transparent; overscroll-behavior-y: none;
             padding-top: calc(env(safe-area-inset-top) + 80px);
             padding-bottom: calc(env(safe-area-inset-bottom) + 140px);
             overflow-x: hidden;
         }
 
+        /* Эффект шума (зерна) для кинематографичности */
         .noise-overlay {
-            position: fixed; inset: 0; pointer-events: none; z-index: 9999; opacity: 0.03;
+            position: fixed; inset: 0; pointer-events: none; z-index: 9998; opacity: 0.04;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            mix-blend-mode: screen;
         }
 
-        .apple-card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(40px) saturate(180%); -webkit-backdrop-filter: blur(40px) saturate(180%);
-            border-radius: 28px; border: 1px solid rgba(255, 255, 255, 0.5);
-            box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.05), inset 0 1.5px 0 rgba(255, 255, 255, 0.9);
-            transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1), box-shadow 0.4s ease;
-            position: relative; overflow: hidden; margin-bottom: 24px;
+        /* Контейнер для жидких сфер с SVG фильтром */
+        .gooey-container {
+            position: fixed; inset: 0; overflow: visible; pointer-events: none; z-index: -1;
+            filter: url(#goo); /* Магия жидкого перетекания */
+            transition: opacity 0.8s;
         }
+
+        /* 3D Карточки Apple */
+        .apple-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(40px) saturate(150%); -webkit-backdrop-filter: blur(40px) saturate(150%);
+            border-radius: 32px; border: 1px solid var(--card-border);
+            box-shadow: var(--glass-shadow);
+            transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1), box-shadow 0.4s ease, border 0.4s ease;
+            position: relative; overflow: hidden; margin-bottom: 24px;
+            transform-style: preserve-3d; /* Для 3D Tilt */
+        }
+        .apple-card::before {
+            content: ''; position: absolute; inset: 0;
+            background: radial-gradient(800px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255,255,255,0.06), transparent 40%);
+            opacity: 0; transition: opacity 0.3s; z-index: 1; pointer-events: none;
+        }
+        .apple-card:hover::before { opacity: 1; }
+        
         .apple-card:active {
-            transform: scale(0.95) translateY(2px);
-            box-shadow: 0 5px 20px -5px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+            transform: scale(0.97) translateZ(-10px) !important;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05);
         }
 
         .apple-inset {
-            background: rgba(255, 255, 255, 0.5); border-radius: 20px; padding: 16px;
-            box-shadow: inset 0 1px 3px rgba(0,0,0,0.03); border: 1px solid rgba(255, 255, 255, 0.6);
+            background: var(--inset-bg); border-radius: 20px; padding: 16px;
+            border: 1px solid var(--card-border); position: relative; z-index: 2;
         }
 
         .nav-wrapper {
             position: fixed; top: 0; left: 0; right: 0; z-index: 100;
             padding: calc(env(safe-area-inset-top) + 12px) 16px 12px;
-            background: rgba(242, 242, 247, 0.7); backdrop-filter: blur(30px) saturate(200%); -webkit-backdrop-filter: blur(30px) saturate(200%);
+            background: var(--nav-bg); backdrop-filter: blur(40px) saturate(200%); -webkit-backdrop-filter: blur(40px) saturate(200%);
+            border-bottom: 1px solid var(--card-border); transition: background 0.8s;
         }
         .segmented-control {
-            display: flex; position: relative; background: rgba(118, 118, 128, 0.12); border-radius: 14px; padding: 3px; 
+            display: flex; position: relative; background: rgba(118, 118, 128, 0.24); border-radius: 14px; padding: 3px; 
         }
         .mode-indicator {
-            position: absolute; top: 3px; bottom: 3px; background: #fff; border-radius: 12px;
-            box-shadow: 0 3px 8px rgba(0,0,0,0.12), 0 3px 1px rgba(0,0,0,0.04);
-            transition: transform 0.5s cubic-bezier(0.32, 0.72, 0, 1), width 0.4s ease; z-index: 1;
+            position: absolute; top: 3px; bottom: 3px; background: var(--highlight); border-radius: 12px;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+            transition: transform 0.5s cubic-bezier(0.32, 0.72, 0, 1), width 0.4s ease, background 0.5s; z-index: 1;
         }
         .mode-btn {
-            flex: 1; position: relative; z-index: 2; text-align: center; font-size: 13px; font-weight: 500; padding: 10px 0; color: #3C3C43; transition: all 0.3s;
+            flex: 1; position: relative; z-index: 2; text-align: center; font-size: 13px; font-weight: 500; padding: 10px 0; color: var(--text-muted); transition: all 0.3s; cursor: pointer;
         }
-        .mode-btn.active { color: #000; font-weight: 600; }
+        .mode-btn.active { color: var(--bg-color); font-weight: 700; }
 
-        .reveal { opacity: 0; transform: translateY(40px) scale(0.96); transition: all 0.9s cubic-bezier(0.32, 0.72, 0, 1); }
+        .reveal { opacity: 0; transform: translateY(40px) scale(0.98); transition: all 1s cubic-bezier(0.16, 1, 0.3, 1); }
         .reveal.visible { opacity: 1; transform: translateY(0) scale(1); }
 
         .text-morph {
             display: inline-block;
-            transition: filter 0.3s ease, opacity 0.3s ease, transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+            transition: filter 0.4s ease, opacity 0.4s ease, transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
         }
-        .text-morph.blur-out { filter: blur(6px); opacity: 0; transform: scale(0.95); }
+        .text-morph.blur-out { filter: blur(8px); opacity: 0; transform: scale(0.95); }
 
-        #wife-container { position: fixed; bottom: calc(env(safe-area-inset-bottom) + 24px); left: 20px; z-index: 90; }
+        #wife-container { position: fixed; bottom: calc(env(safe-area-inset-bottom) + 24px); left: 20px; z-index: 90; perspective: 1000px; }
         .apple-fab {
             width: 60px; height: 60px; border-radius: 30px;
-            background: rgba(255,255,255,0.85); backdrop-filter: blur(20px);
-            box-shadow: 0 10px 30px rgba(236, 72, 153, 0.25), inset 0 1px 0 rgba(255,255,255,1), 0 0 0 0.5px rgba(0,0,0,0.05);
+            background: rgba(40,40,45,0.8); backdrop-filter: blur(20px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.2), 0 0 0 1px rgba(255,255,255,0.1);
             display: flex; align-items: center; justify-content: center; position: relative;
-            transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+            transition: transform 0.5s cubic-bezier(0.32, 0.72, 0, 1); transform-style: preserve-3d;
         }
-        .apple-fab:active { transform: scale(0.8) rotate(-10deg); }
+        .apple-fab:active { transform: scale(0.8) translateZ(-20px) rotate(-15deg); }
         .apple-fab::after {
             content: ''; position: absolute; inset: -4px; border-radius: 40px;
-            background: linear-gradient(135deg, #fbcfe8, #f43f5e); z-index: -1;
-            opacity: 0.4; filter: blur(12px); animation: pulse-glow 3s infinite;
+            background: linear-gradient(135deg, #FF512F, #DD2476); z-index: -1;
+            opacity: 0.5; filter: blur(12px); animation: pulse-glow 3s infinite;
         }
         .imessage-bubble {
             position: absolute; bottom: 80px; left: 0; width: max-content; max-width: calc(100vw - 40px);
-            background: rgba(242, 242, 247, 0.95); backdrop-filter: blur(30px);
-            border: 0.5px solid rgba(0,0,0,0.1); padding: 16px 20px; border-radius: 24px 24px 24px 8px;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+            background: var(--card-bg); backdrop-filter: blur(30px) saturate(200%);
+            border: 1px solid var(--card-border); padding: 16px 20px; border-radius: 24px 24px 24px 8px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5); color: var(--text-main);
             opacity: 0; transform: scale(0.8) translateY(20px) rotate(-5deg); transform-origin: bottom left;
-            pointer-events: none; transition: all 0.5s cubic-bezier(0.32, 0.72, 0, 1);
+            pointer-events: none; transition: all 0.6s cubic-bezier(0.32, 0.72, 0, 1);
         }
         .imessage-bubble.show { opacity: 1; transform: scale(1) translateY(0) rotate(0deg); pointer-events: auto; }
 
         body.retro-mode {
-            --bg-color: #EFE9D9; --text-main: #3E3222; --glass-bg: #EAE3D2; font-family: 'Russo One', sans-serif;
-            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100' height='100' fill='transparent' filter='url(%23n)' opacity='0.15'/%3E%3C/svg%3E");
+            --bg-color: #EFE9D9; --text-main: #3E3222; --text-muted: #6B5A42; --card-bg: rgba(234, 227, 210, 0.8);
+            --card-border: #C8BCA7; --inset-bg: rgba(0,0,0,0.03); --highlight: #3E3222;
+            --glass-shadow: 4px 4px 0 rgba(62, 50, 34, 0.15); --nav-bg: rgba(239, 233, 217, 0.8);
+            font-family: 'Russo One', sans-serif;
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100' height='100' fill='transparent' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E");
         }
-        body.retro-mode .ambient-glow { opacity: 0; transition: opacity 0.5s; } 
-        body.retro-mode .apple-card { border-radius: 4px; border: 2px solid #3E3222; box-shadow: 4px 4px 0 rgba(62, 50, 34, 0.3); backdrop-filter: none; background: #F5F0E6; transform: none; }
-        body.retro-mode .apple-card:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 rgba(62, 50, 34, 0.3); }
+        body.retro-mode .gooey-container { opacity: 0; } 
+        body.retro-mode .apple-card { border-radius: 8px; backdrop-filter: blur(10px); }
+        body.retro-mode .mode-btn.active { color: #EFE9D9; }
+        body.retro-mode .apple-fab { background: #EAE3D2; box-shadow: 4px 4px 0 rgba(62, 50, 34, 0.2); border: 2px solid #3E3222; }
 
-        body.elderly-mode { --bg-color: #FFFFFF; --text-main: #000000; --glass-bg: #FFFFFF; font-family: -apple-system, sans-serif; }
-        body.elderly-mode .ambient-glow { opacity: 0; }
-        body.elderly-mode .apple-card { border: 3px solid #000; border-radius: 16px; box-shadow: none; background: #fff;}
+        body.elderly-mode { 
+            --bg-color: #FFFFFF; --text-main: #000000; --text-muted: #333333; --card-bg: #FFFFFF;
+            --card-border: #000000; --inset-bg: #F5F5F5; --highlight: #000000;
+            --glass-shadow: 0 8px 0 #000000; --nav-bg: rgba(255, 255, 255, 0.95);
+            font-family: -apple-system, sans-serif; 
+        }
+        body.elderly-mode .gooey-container { opacity: 0; }
+        body.elderly-mode .apple-card { border: 3px solid #000; border-radius: 16px; box-shadow: var(--glass-shadow); transform: none !important; }
+        body.elderly-mode .apple-card:active { transform: translateY(4px) !important; box-shadow: 0 4px 0 #000; }
         body.elderly-mode .hide-for-elderly { display: none !important; }
+        body.elderly-mode .mode-btn.active { color: #FFFFFF; }
 
         .profile-avatar {
-            width: 120px; height: 120px; margin: 0 auto 20px; border-radius: 60px; background: #fff;
-            box-shadow: 0 20px 40px rgba(255, 81, 47, 0.2), inset 0 0 0 1px rgba(0,0,0,0.05);
+            width: 140px; height: 140px; margin: 0 auto 20px; border-radius: 70px; background: #000;
+            box-shadow: 0 20px 50px rgba(255, 81, 47, 0.4), inset 0 1px 0 rgba(255,255,255,0.2);
             display: flex; align-items: center; justify-content: center; position: relative; z-index: 10;
         }
         .avatar-ring {
-            position: absolute; inset: -6px; border-radius: 66px;
-            background: conic-gradient(from 0deg, #FF512F, #F09819, #DD2476, #FF512F);
-            animation: spin 4s linear infinite; z-index: 1; opacity: 0.8;
+            position: absolute; inset: -4px; border-radius: 74px;
+            background: conic-gradient(from 0deg, #FF512F, #DD2476, #FF512F);
+            animation: spin 3s linear infinite; z-index: 1; opacity: 0.8;
             mask-image: linear-gradient(#fff, #fff), linear-gradient(#fff, #fff);
-            mask-clip: content-box, border-box; mask-composite: exclude; padding: 3px;
+            mask-clip: content-box, border-box; mask-composite: exclude; padding: 2px;
         }
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
         .ios-icon {
-            width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 24px;
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.4), 0 4px 10px rgba(0,0,0,0.1); color: white; flex-shrink: 0;
+            width: 56px; height: 56px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 26px;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.4), 0 10px 20px rgba(0,0,0,0.5); color: white; flex-shrink: 0;
+            position: relative; overflow: hidden;
         }
-        .bg-gradient-blue { background: linear-gradient(180deg, #5AC8FA 0%, #007AFF 100%); }
-        .bg-gradient-purple { background: linear-gradient(180deg, #C644FC 0%, #5856D6 100%); }
-        .bg-gradient-orange { background: linear-gradient(180deg, #FFD60A 0%, #FF9500 100%); }
-        .bg-gradient-red { background: linear-gradient(180deg, #FF3B30 0%, #C41A16 100%); }
+        .ios-icon::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(255,255,255,0.2) 0%, transparent 50%); }
+        .bg-gradient-blue { background: linear-gradient(135deg, #5AC8FA 0%, #007AFF 100%); }
+        .bg-gradient-purple { background: linear-gradient(135deg, #C644FC 0%, #5856D6 100%); }
+        .bg-gradient-orange { background: linear-gradient(135deg, #FFD60A 0%, #FF9500 100%); }
+        .bg-gradient-red { background: linear-gradient(135deg, #FF3B30 0%, #C41A16 100%); }
 
         .text-liquid-gradient {
-            background: linear-gradient(to right, #FF512F, #DD2476, #FF512F);
+            background: linear-gradient(to right, #ffffff, #a1a1aa, #ffffff);
             background-size: 200% auto;
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             animation: shimmer 4s linear infinite;
         }
+        body:not(.elderly-mode):not(.retro-mode) .accent-gradient {
+            background: linear-gradient(to right, #FF512F, #DD2476); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
     </style>
 </head>
 <body class="antialiased">
+    <!-- SVG Фильтр для жидкого стекла (Gooey effect) -->
+    <svg class="hidden" width="0" height="0">
+        <filter id="goo">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="30" result="blur" />
+            <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 40 -20" result="goo" />
+            <feComposite in="SourceGraphic" in2="goo" operator="atop"/>
+        </filter>
+    </svg>
+
     <div class="noise-overlay"></div>
 
-    <div id="ambient-bg" class="ambient-glow fixed inset-0 overflow-visible pointer-events-none transition-opacity duration-700 z-[-1]">
-        <div class="parallax-blob absolute bg-[#FF512F] w-[50vw] h-[50vw] rounded-full filter blur-[100px] opacity-20 top-0 left-0 animate-blob" data-speed="0.15"></div>
-        <div class="parallax-blob absolute bg-[#F09819] w-[40vw] h-[40vw] rounded-full filter blur-[90px] opacity-20 top-40 right-10 animate-blob-reverse" data-speed="0.25" style="animation-delay: 2s"></div>
-        <div class="parallax-blob absolute bg-[#DD2476] w-[45vw] h-[45vw] rounded-full filter blur-[100px] opacity-15 bottom-10 left-20 animate-blob" data-speed="0.1" style="animation-delay: 4s"></div>
+    <!-- Жидкий фон (Apple Event Style) -->
+    <div class="gooey-container" id="ambient-bg">
+        <div class="parallax-blob absolute bg-[#FF512F] w-[60vw] h-[60vw] rounded-full opacity-60 top-0 left-[-10vw] animate-blob" data-speed="0.15"></div>
+        <div class="parallax-blob absolute bg-[#DD2476] w-[50vw] h-[50vw] rounded-full opacity-50 top-[30vh] right-[-10vw] animate-blob-reverse" data-speed="0.25" style="animation-delay: -5s"></div>
+        <div class="parallax-blob absolute bg-[#5856D6] w-[55vw] h-[55vw] rounded-full opacity-40 bottom-[-10vh] left-[20vw] animate-blob" data-speed="0.1" style="animation-delay: -10s"></div>
     </div>
 
     <div class="nav-wrapper" id="top-nav">
@@ -220,208 +279,185 @@
         </div>
     </div>
 
-    <div class="px-4 max-w-2xl mx-auto relative z-10">
+    <div class="px-4 max-w-3xl mx-auto relative z-10">
 
-        <!-- Warning Block for Elderly -->
-        <div class="apple-card mb-8 hidden border-red-200 reveal bg-red-50/90" id="elderly-start-warning">
+        <!-- Блок для ветеранов (Показывается только в 3 режиме) -->
+        <div class="apple-card mb-10 hidden border-red-500 reveal bg-red-50/90" id="elderly-start-warning" style="--card-bg: #fff; --card-border: #ef4444; border-width: 4px;">
             <div class="p-8 text-center">
-                <i class="fa-solid fa-triangle-exclamation text-6xl text-red-500 mb-4 animate-pulse"></i>
-                <h2 class="font-display text-3xl font-bold text-red-700 mb-2">ВАЖНО!</h2>
-                <p class="text-gray-900 font-semibold text-lg mb-6 text-morph" data-id="eld_warn1">Чтобы программа заработала, нужно нажать кнопку один раз.</p>
-                <div class="apple-inset bg-white">
-                    <p class="text-gray-800 font-medium mb-3 text-morph" data-id="eld_warn2">Нажмите на большую кнопку в самом низу экрана:</p>
-                    <div class="bg-blue-600 text-white font-bold py-3 px-8 rounded-xl inline-block uppercase text-xl shadow-md">СТАРТ</div>
-                    <p class="text-gray-500 text-sm mt-3 text-morph" data-id="eld_warn3">Или напишите вручную: /start</p>
+                <i class="fa-solid fa-triangle-exclamation text-6xl text-red-600 mb-4 animate-pulse"></i>
+                <h2 class="font-display text-3xl font-black text-red-700 mb-2">ОЧЕНЬ ВАЖНО!</h2>
+                <p class="text-dynamic-text font-bold text-xl mb-6 text-morph" data-id="eld_warn1">Чтобы программа начала с вами работать, нужно отправить ей команду один раз.</p>
+                <div class="apple-inset bg-gray-100 border-gray-300">
+                    <p class="text-dynamic-text font-bold mb-4 text-morph" data-id="eld_warn2">Нажмите на большую синюю кнопку в самом низу вашего телефона:</p>
+                    <div class="bg-blue-600 text-white font-black py-4 px-10 rounded-xl inline-block uppercase text-2xl shadow-lg border-b-4 border-blue-800">СТАРТ</div>
+                    <p class="text-dynamic-muted text-base mt-4 font-bold text-morph" data-id="eld_warn3">Или напишите вручную английскими буквами: /start</p>
                 </div>
             </div>
         </div>
 
-        <div class="text-center mb-10 pt-4 reveal">
-            <div class="relative w-[130px] h-[130px] mx-auto mb-4 cursor-pointer animate-breathe" id="cat-avatar">
+        <div class="text-center mb-14 pt-8 reveal">
+            <div class="relative w-[150px] h-[150px] mx-auto mb-6 cursor-pointer animate-breathe group" id="cat-avatar">
                 <div class="avatar-ring"></div>
-                <div class="profile-avatar absolute inset-1 bg-gradient-to-b from-white to-orange-50 transition-transform">
-                    <i class="fa-solid fa-cat text-[65px] text-[#FF512F] drop-shadow-sm"></i>
+                <div class="profile-avatar absolute inset-1 transition-transform duration-500 group-hover:scale-95 group-active:scale-90">
+                    <i class="fa-solid fa-cat text-[75px] text-[#FF512F] drop-shadow-[0_0_15px_rgba(255,81,47,0.8)]"></i>
                 </div>
             </div>
             
-            <h1 class="font-display text-4xl sm:text-5xl font-bold tracking-tight mb-3 text-gray-900 text-morph" data-id="main_title">
-                Документация <br> <span class="text-liquid-gradient">бота «Чубайс»</span>
+            <h1 class="font-display text-5xl sm:text-6xl font-black tracking-tighter mb-4 text-dynamic-text text-morph" data-id="main_title">
+                Чубайс <br> <span class="text-liquid-gradient">Pro (2026)</span>
             </h1>
-            <p class="text-[17px] text-gray-500 leading-relaxed px-4 font-medium text-morph" data-id="main_desc">
-                Ваш карманный помощник. Собирает отчеты, пока спит на батарее. Подчиняется исключительно Насте. (Версия 2026)
+            <p class="text-[19px] text-dynamic-muted leading-relaxed px-4 font-medium text-morph max-w-xl mx-auto" data-id="main_desc">
+                Интеллектуальный помощник. Собирает отчеты, пока спит на сервере. Подчиняется исключительно Насте.
             </p>
         </div>
 
-        <h2 class="text-[13px] font-semibold text-gray-400 uppercase tracking-wider mb-3 ml-4 reveal text-morph" data-id="menu_title">Главное меню</h2>
+        <h2 class="text-[14px] font-bold text-dynamic-muted uppercase tracking-widest mb-4 ml-4 reveal text-morph" data-id="menu_title">Главное меню (Когтеточка)</h2>
         
-        <!-- Card 1 -->
-        <div class="apple-card reveal" onclick="triggerHaptic('light')">
-            <div class="p-6">
-                <div class="flex items-center mb-4">
+        <!-- Карточка 1 -->
+        <div class="apple-card reveal tilt-card" onclick="triggerHaptic('light')">
+            <div class="p-8">
+                <div class="flex items-center mb-5">
                     <div class="ios-icon bg-gradient-blue"><i class="fa-solid fa-plus"></i></div>
-                    <h3 class="font-display text-2xl font-bold ml-4">Новая заявка</h3>
+                    <h3 class="font-display text-2xl sm:text-3xl font-bold ml-5 text-dynamic-text">Новая заявка</h3>
                 </div>
-                <p class="text-[15px] text-gray-600 mb-5 leading-relaxed font-medium text-morph" data-id="card1_desc">Поймали новую мышь? Зафиксируйте её здесь.</p>
-                <div class="apple-inset space-y-3 text-[14px] font-medium text-gray-700">
-                    <div class="flex items-start text-morph" data-id="c1_li1"><i class="fa-solid fa-check-circle text-green-500 mt-1 mr-3 text-lg"></i> Введите номер заявки.</div>
-                    <div class="flex items-start text-morph" data-id="c1_li2"><i class="fa-solid fa-check-circle text-green-500 mt-1 mr-3 text-lg"></i> Выберите состав бригады (ваше имя уже там).</div>
-                    <div class="flex items-start text-morph" data-id="c1_li3"><i class="fa-solid fa-check-circle text-green-500 mt-1 mr-3 text-lg"></i> Нажмите «✅ ПОДТВЕРДИТЬ СОСТАВ».</div>
+                <p class="text-[16px] text-dynamic-muted mb-6 leading-relaxed font-medium text-morph" data-id="card1_desc">Поймали новую мышь? Зафиксируйте её здесь.</p>
+                <div class="apple-inset space-y-4 text-[15px] font-medium text-dynamic-text">
+                    <div class="flex items-start text-morph" data-id="c1_li1"><i class="fa-solid fa-check-circle text-blue-500 mt-1 mr-4 text-xl shadow-blue-500/50 drop-shadow"></i> Введите номер заявки.</div>
+                    <div class="flex items-start text-morph" data-id="c1_li2"><i class="fa-solid fa-check-circle text-blue-500 mt-1 mr-4 text-xl shadow-blue-500/50 drop-shadow"></i> Выберите состав бригады (ваше имя уже там).</div>
+                    <div class="flex items-start text-morph" data-id="c1_li3"><i class="fa-solid fa-check-circle text-blue-500 mt-1 mr-4 text-xl shadow-blue-500/50 drop-shadow"></i> Нажмите «✅ ПОДТВЕРДИТЬ СОСТАВ».</div>
                 </div>
             </div>
         </div>
 
-        <!-- Card 2 -->
-        <div class="apple-card reveal" onclick="triggerHaptic('light')">
-            <div class="p-6">
-                <div class="flex items-center mb-4">
+        <!-- Карточка 2 -->
+        <div class="apple-card reveal tilt-card" onclick="triggerHaptic('light')">
+            <div class="p-8">
+                <div class="flex items-center mb-5">
                     <div class="ios-icon bg-gradient-purple"><i class="fa-solid fa-list-ul"></i></div>
-                    <h3 class="font-display text-2xl font-bold ml-4 text-morph" data-id="card2_title">Мои заявки (Лоток)</h3>
+                    <h3 class="font-display text-2xl sm:text-3xl font-bold ml-5 text-dynamic-text text-morph" data-id="card2_title">Мои заявки (Лоток)</h3>
                 </div>
-                <p class="text-[15px] text-gray-600 mb-5 leading-relaxed font-medium text-morph" data-id="card2_desc">Ваш рабочий стол.</p>
-                <div class="space-y-4 text-[15px]">
-                    <div class="flex items-center"><span class="bg-gray-100 text-gray-800 font-semibold px-3 py-1.5 rounded-lg w-28 text-center text-[13px]">⏸ Пауза</span><span class="ml-4 text-gray-700 font-medium text-morph" data-id="st_pause_desc">Бросить работу (нужно указать причину).</span></div>
-                    <div class="flex items-center"><span class="bg-blue-50 text-blue-600 font-semibold px-3 py-1.5 rounded-lg w-28 text-center text-[13px]">▶️ В работу</span><span class="ml-4 text-gray-700 font-medium text-morph" data-id="st_work_desc">Снять с паузы.</span></div>
-                    <div class="flex items-center"><span class="bg-green-50 text-green-600 font-semibold px-3 py-1.5 rounded-lg w-28 text-center text-[13px]">✅ Завершить</span><span class="ml-4 text-gray-700 font-medium text-morph" data-id="st_done_desc">Мышь съедена. В Архив.</span></div>
-                    <div class="flex items-center mt-2 pt-3 border-t border-gray-100"><span class="bg-purple-100 text-purple-700 font-bold px-3 py-1.5 rounded-lg w-28 text-center text-[13px]">📝 На завтра</span><span class="ml-4 text-purple-700 font-semibold text-morph" data-id="st_tmrw_desc">Важно! Добавляет в план.</span></div>
+                <p class="text-[16px] text-dynamic-muted mb-6 leading-relaxed font-medium text-morph" data-id="card2_desc">Ваш рабочий стол.</p>
+                <div class="space-y-5 text-[15px]">
+                    <div class="flex items-center"><span class="bg-gray-800 text-gray-200 border border-gray-600 font-bold px-3 py-1.5 rounded-lg w-32 text-center text-[13px] shadow-sm">⏸ Пауза</span><span class="ml-4 text-dynamic-text font-medium text-morph" data-id="st_pause_desc">Бросить работу (указать причину).</span></div>
+                    <div class="flex items-center"><span class="bg-blue-900 text-blue-200 border border-blue-700 font-bold px-3 py-1.5 rounded-lg w-32 text-center text-[13px] shadow-sm">▶️ В работу</span><span class="ml-4 text-dynamic-text font-medium text-morph" data-id="st_work_desc">Снять с паузы.</span></div>
+                    <div class="flex items-center"><span class="bg-green-900 text-green-200 border border-green-700 font-bold px-3 py-1.5 rounded-lg w-32 text-center text-[13px] shadow-sm">✅ Завершить</span><span class="ml-4 text-dynamic-text font-medium text-morph" data-id="st_done_desc">Мышь съедена. В Архив.</span></div>
+                    <div class="flex items-center mt-3 pt-4 border-t border-dynamic-border"><span class="bg-purple-900 text-purple-200 border border-purple-600 font-bold px-3 py-1.5 rounded-lg w-32 text-center text-[13px] shadow-sm">📝 На завтра</span><span class="ml-4 accent-gradient font-bold text-morph" data-id="st_tmrw_desc">Важно! Добавляет в план.</span></div>
                 </div>
             </div>
         </div>
 
-        <!-- Card 3 -->
-        <div class="apple-card reveal overflow-visible" onclick="triggerHaptic('light')">
-            <div class="p-6">
-                <div class="absolute -right-6 -top-6 text-orange-500/10 text-9xl pointer-events-none"><i class="fa-solid fa-moon"></i></div>
-                <div class="flex items-center mb-4 relative z-10">
+        <!-- Карточка 3 -->
+        <div class="apple-card reveal tilt-card overflow-hidden" onclick="triggerHaptic('light')">
+            <div class="p-8">
+                <div class="absolute -right-8 -top-8 text-orange-500/20 text-[150px] pointer-events-none drop-shadow-2xl"><i class="fa-solid fa-moon"></i></div>
+                <div class="flex items-center mb-5 relative z-10">
                     <div class="ios-icon bg-gradient-orange"><i class="fa-solid fa-calendar-day"></i></div>
-                    <h3 class="font-display text-2xl font-bold ml-4 text-morph" data-id="card3_title">На завтра (Миска)</h3>
+                    <h3 class="font-display text-2xl sm:text-3xl font-bold ml-5 text-dynamic-text text-morph" data-id="card3_title">На завтра (Миска)</h3>
                 </div>
-                <p class="text-[15px] text-gray-600 mb-5 leading-relaxed font-medium relative z-10 text-morph" data-id="card3_desc">Корзина планов. Если передумали — жмите ❌ Убрать.</p>
-                <div class="bg-orange-50/80 p-5 rounded-2xl border border-orange-100 relative z-10 backdrop-blur-md">
-                    <p class="text-orange-600 text-[13px] font-bold uppercase tracking-wide mb-2"><i class="fa-solid fa-bolt mr-1"></i> Железное правило</p>
-                    <p class="text-[15px] font-medium text-orange-900 leading-snug text-morph" data-id="card3_rule">Запись строго <strong>с 12:00 до 16:30</strong>. После кормушка закрывается, кот уходит налево!</p>
+                <p class="text-[16px] text-dynamic-muted mb-6 leading-relaxed font-medium relative z-10 text-morph" data-id="card3_desc">Корзина планов. Если передумали — жмите ❌ Убрать.</p>
+                <div class="apple-inset relative z-10 backdrop-blur-md" style="background: rgba(255, 149, 0, 0.1); border-color: rgba(255, 149, 0, 0.3);">
+                    <p class="text-orange-500 text-[14px] font-bold uppercase tracking-widest mb-2"><i class="fa-solid fa-bolt mr-2"></i> Железное правило</p>
+                    <p class="text-[16px] font-medium text-dynamic-text leading-relaxed text-morph" data-id="card3_rule">Запись строго <strong>с 12:00 до 16:30</strong>. После кормушка закрывается, кот уходит налево!</p>
                 </div>
             </div>
         </div>
 
-        <!-- Card 4 -->
-        <div class="apple-card reveal bg-gradient-to-r from-red-50/50 to-transparent" onclick="triggerHaptic('heavy')">
-            <div class="p-6 flex items-center">
-                <div class="ios-icon bg-gradient-red mr-4 animate-pulse-glow"><i class="fa-solid fa-life-ring"></i></div>
+        <!-- Карточка 4 -->
+        <div class="apple-card reveal tilt-card" onclick="triggerHaptic('heavy')" style="background: linear-gradient(135deg, rgba(255,59,48,0.1) 0%, var(--card-bg) 100%);">
+            <div class="p-8 flex items-center">
+                <div class="ios-icon bg-gradient-red mr-5 animate-pulse-glow"><i class="fa-solid fa-life-ring"></i></div>
                 <div>
-                    <h3 class="font-display text-xl font-bold text-red-600 text-morph" data-id="card4_title">🆘 Сообщить о проблеме</h3>
-                    <p class="text-[14px] font-medium text-red-500/80 mt-1 text-morph" data-id="card4_desc">Бот принесет жалобу в зубах Насте.</p>
+                    <h3 class="font-display text-2xl font-bold text-red-500 text-morph" data-id="card4_title">🆘 Сообщить о проблеме</h3>
+                    <p class="text-[15px] font-medium text-dynamic-muted mt-2 text-morph" data-id="card4_desc">Бот тайно принесет жалобу в зубах прямо Насте.</p>
                 </div>
             </div>
         </div>
 
-        <h2 class="text-[13px] font-semibold text-gray-400 uppercase tracking-wider mb-3 ml-4 mt-8 hide-for-elderly reveal text-morph" data-id="routine_title">Режим дня</h2>
-        <div class="apple-card hide-for-elderly reveal">
-            <div class="p-2">
-                <div class="flex p-4 items-start border-b border-gray-100/50">
-                    <div class="w-16 font-display font-bold text-xl text-orange-500 pt-1 text-right pr-4">12:00</div>
-                    <div class="border-l-2 border-orange-200 pl-4">
-                        <strong class="text-[16px] font-semibold text-gray-900 text-morph" data-id="r_1_title">Опрос (Мяу!)</strong>
-                        <p class="text-[14px] text-gray-500 mt-1 font-medium text-morph" data-id="r_1_desc">Бот присылает вопрос: «Что завтра делаем?»</p>
+        <h2 class="text-[14px] font-bold text-purple-400 uppercase tracking-widest mb-4 ml-4 mt-12 hide-for-elderly reveal"><i class="fa-solid fa-crown mr-2"></i> Вожакам стаи</h2>
+        <div class="apple-card hide-for-elderly p-6 grid grid-cols-2 gap-4 reveal tilt-card">
+            <div class="apple-inset flex flex-col justify-between hover:bg-white/5 transition cursor-pointer" onclick="triggerHaptic('light')">
+                <i class="fa-solid fa-bullhorn text-3xl text-blue-400 mb-4 drop-shadow-[0_0_10px_rgba(90,200,250,0.5)]"></i>
+                <div><h4 class="font-bold text-[16px] mb-1 text-dynamic-text">Опрос</h4><p class="text-[14px] text-dynamic-muted leading-snug text-morph" data-id="adm_1">Разбудить всех пинком.</p></div>
+            </div>
+            <div class="apple-inset flex flex-col justify-between hover:bg-white/5 transition cursor-pointer" onclick="triggerHaptic('light')">
+                <i class="fa-solid fa-eye text-3xl text-indigo-400 mb-4 drop-shadow-[0_0_10px_rgba(88,86,214,0.5)]"></i>
+                <div><h4 class="font-bold text-[16px] mb-1 text-dynamic-text">Черновик</h4><p class="text-[14px] text-dynamic-muted leading-snug text-morph" data-id="adm_2">Подсмотреть на завтра.</p></div>
+            </div>
+            <div class="apple-inset col-span-2 sm:col-span-1 hover:bg-white/5 transition cursor-pointer" style="border-color: rgba(255,149,0,0.3);" onclick="triggerHaptic('medium')">
+                <i class="fa-solid fa-poop text-3xl text-amber-500 mb-4"></i>
+                <h4 class="font-bold text-[16px] text-dynamic-text mb-1">Кто не записался</h4><p class="text-[14px] text-dynamic-muted leading-snug text-morph" data-id="adm_3">Раздать лещи вонючкам.</p>
+            </div>
+            <div class="apple-inset col-span-2 sm:col-span-1 hover:bg-white/5 transition cursor-pointer" style="border-color: rgba(52,199,89,0.3);" onclick="triggerHaptic('medium')">
+                <i class="fa-solid fa-circle-dot text-3xl text-green-400 mb-4 animate-pulse drop-shadow-[0_0_10px_rgba(52,199,89,0.8)]"></i>
+                <h4 class="font-bold text-[16px] text-dynamic-text mb-1">Live-отчет</h4><p class="text-[14px] text-dynamic-muted leading-snug text-morph" data-id="adm_4">Онлайн-слежка ВКЛ/ВЫКЛ.</p>
+            </div>
+        </div>
+
+        <h2 class="text-[14px] font-bold text-dynamic-muted uppercase tracking-widest mb-4 ml-4 mt-12 hide-for-elderly reveal"><i class="fa-solid fa-table mr-2"></i> База Данных</h2>
+        <div class="apple-card hide-for-elderly p-2 reveal tilt-card">
+            <div class="p-5 border-b border-dynamic-border flex items-center"><div class="w-12 h-12 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center shrink-0 mr-5 text-xl"><i class="fa-solid fa-users"></i></div><div><h3 class="font-bold text-[17px] text-dynamic-text">1. Сотрудники</h3><p class="text-[14px] text-dynamic-muted mt-1">Допущенные к боту.</p></div></div>
+            <div class="p-5 border-b border-dynamic-border flex items-center"><div class="w-12 h-12 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center shrink-0 mr-5 text-xl"><i class="fa-solid fa-crown"></i></div><div><h3 class="font-bold text-[17px] text-dynamic-text">2. Админы</h3><p class="text-[14px] text-dynamic-muted mt-1">Получают жалобы.</p></div></div>
+            <div class="p-5 border-b border-dynamic-border flex items-center" style="background: rgba(52,199,89,0.05);"><div class="w-12 h-12 rounded-xl bg-green-500/20 text-green-400 flex items-center justify-center shrink-0 mr-5 text-xl">🟢</div><div><h3 class="font-bold text-[17px] text-dynamic-text">3. Live</h3><p class="text-[14px] text-dynamic-muted mt-1">Дашборд онлайн. Не трогать!</p></div></div>
+            <div class="p-5 border-b border-dynamic-border flex items-center" style="background: rgba(255,149,0,0.05);"><div class="w-12 h-12 rounded-xl bg-orange-500 text-white flex items-center justify-center shrink-0 mr-5 text-xl shadow-[0_0_15px_rgba(255,149,0,0.5)]"><i class="fa-solid fa-star"></i></div><div><h3 class="font-bold text-[17px] text-orange-400">6. Отчеты</h3><p class="text-[14px] text-dynamic-muted mt-1">Главный архив (выгрузка в 16:30).</p></div></div>
+            <div class="p-5 flex items-center" style="background: rgba(255,59,48,0.05);"><div class="w-12 h-12 rounded-xl bg-red-500 text-white flex items-center justify-center shrink-0 mr-5 text-xl shadow-[0_0_15px_rgba(255,59,48,0.5)]"><i class="fa-solid fa-brain"></i></div><div><h3 class="font-bold text-[17px] text-red-400">7. Память (Опасно)</h3><p class="text-[14px] text-dynamic-muted mt-1">Ремонт: удалить строку зависшего.</p></div></div>
+        </div>
+
+        <h2 class="text-[14px] font-mono text-emerald-400 uppercase tracking-widest mb-4 ml-4 mt-12 hide-for-elderly reveal">> root_it</h2>
+        <div class="apple-card hide-for-elderly p-0 overflow-hidden reveal tilt-card" style="background: #000; border-color: #333; box-shadow: 0 30px 60px rgba(0,255,100,0.05);">
+            <div class="bg-[#111] px-5 py-3 flex items-center border-b border-[#333]">
+                <div class="flex gap-2 mr-5">
+                    <div class="w-3.5 h-3.5 rounded-full bg-red-500 shadow-[0_0_8px_#ef4444]"></div><div class="w-3.5 h-3.5 rounded-full bg-yellow-500 shadow-[0_0_8px_#eab308]"></div><div class="w-3.5 h-3.5 rounded-full bg-green-500 shadow-[0_0_8px_#22c55e]"></div>
+                </div>
+                <span class="font-mono text-[13px] text-slate-400">cloudflare_terminal</span>
+            </div>
+            <div class="p-6 font-mono text-[14px] space-y-6 text-emerald-400/90 relative">
+                <div class="absolute inset-0 pointer-events-none opacity-10 bg-[linear-gradient(transparent_50%,rgba(0,0,0,1)_50%)] bg-[length:100%_4px] z-10"></div>
+                <p>Бот пингует себя раз в минуту. <span class="bg-emerald-900/50 text-emerald-300 px-2 py-0.5 rounded border border-emerald-500/30">Cloudflare</span> настроен на авторестарт.</p>
+                <div class="border-l-2 border-emerald-500/50 pl-4 relative z-20">
+                    <strong class="text-white block mb-2 font-black text-lg drop-shadow-[0_0_5px_rgba(255,255,255,0.5)]">Safe.Crash(16:30)</strong>
+                    <span class="text-emerald-500">Если упали в 16:29, бот сначала выгрузит отчет при рестарте, дождется ответа Google, потом очистит телефоны.</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-16 mb-12 relative z-10 reveal tilt-card">
+            <div class="bg-[#EAEAEA] p-6 sm:p-10 rounded-[40px] shadow-[0_30px_60px_rgba(0,0,0,0.8),inset_0_2px_10px_rgba(255,255,255,0.5)] border border-gray-400 transform rotate-[-1deg] mx-auto max-w-lg">
+                <div class="absolute -top-5 left-1/2 -translate-x-1/2 w-40 h-10 bg-gradient-to-b from-gray-200 to-gray-400 rounded-xl shadow-[0_10px_20px_rgba(0,0,0,0.5)] border border-gray-400 flex justify-center items-center"><div class="w-20 h-3 bg-gray-500/30 rounded-full shadow-inner"></div></div>
+                <div class="bg-white p-8 sm:p-10 rounded-3xl shadow-[inset_0_5px_20px_rgba(0,0,0,0.1)] text-center mt-3 border border-gray-200 relative overflow-hidden">
+                    <i class="fa-solid fa-file-signature absolute inset-0 m-auto text-[180px] text-gray-50 opacity-[0.4] mix-blend-multiply"></i>
+                    <h3 class="text-3xl font-black uppercase text-gray-800 border-b-4 border-gray-200 pb-5 mb-8 tracking-widest text-morph relative z-10" data-id="warn_title">Лист ознакомления</h3>
+                    <p class="text-2xl sm:text-3xl font-black text-red-600 mb-8 text-morph relative z-10 drop-shadow-sm" data-id="warn_subtitle">ЧУБАЙС КУСАЕТСЯ!</p>
+                    <div class="bg-red-50 text-red-700 font-bold px-8 py-4 rounded-2xl inline-block border-2 border-red-200 text-lg sm:text-xl uppercase text-morph relative z-10 shadow-sm" data-id="warn_action">ЗА ШКИРКУ НЕ БРАТЬ!</div>
+                    <div class="mt-12 border-t-2 border-gray-200 pt-8 flex justify-between items-end relative z-10">
+                        <span class="text-[13px] sm:text-[15px] text-gray-500 font-bold uppercase tracking-widest">Подпись Насти:</span>
+                        <span class="border-b-4 border-gray-400 w-32 sm:w-48 inline-block opacity-40"></span>
                     </div>
-                </div>
-                <div class="flex p-4 items-start border-b border-gray-100/50 bg-orange-50/30 rounded-lg mx-2 my-1">
-                    <div class="w-16 font-display font-semibold text-[13px] text-orange-400 text-right pr-4 leading-tight pt-1">12:00<br><span class="text-[10px] opacity-50 block my-0.5">▼</span>16:30</div>
-                    <div class="border-l-2 border-orange-400 pl-4">
-                        <strong class="text-[16px] font-semibold text-orange-800 text-morph" data-id="r_2_title">Планирование</strong>
-                        <p class="text-[14px] text-orange-700/80 mt-1 font-medium text-morph" data-id="r_2_desc">Жмем 📝 Записать на завтра в своих заявках.</p>
-                    </div>
-                </div>
-                <div class="flex p-4 items-start">
-                    <div class="w-16 font-display font-bold text-xl text-red-500 pt-1 text-right pr-4">16:30</div>
-                    <div class="border-l-2 border-red-200 pl-4">
-                        <strong class="text-[16px] font-semibold text-gray-900 text-morph" data-id="r_3_title">Смена закрыта</strong>
-                        <p class="text-[14px] text-gray-500 mt-1 font-medium text-morph" data-id="r_3_desc">Отчет в Гугл. Бот уходит к кошечкам.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <h2 class="text-[13px] font-semibold text-purple-500 uppercase tracking-wider mb-3 ml-4 mt-8 hide-for-elderly reveal"><i class="fa-solid fa-crown mr-1"></i> Вожакам стаи</h2>
-        <div class="apple-card hide-for-elderly p-5 grid grid-cols-2 gap-4 reveal">
-            <div class="apple-inset flex flex-col justify-between" onclick="triggerHaptic('light')">
-                <i class="fa-solid fa-bullhorn text-2xl text-blue-500 mb-3"></i>
-                <div><h4 class="font-bold text-[15px] mb-1">Опрос</h4><p class="text-[13px] text-gray-500 leading-snug text-morph" data-id="adm_1">Разбудить всех пинком.</p></div>
-            </div>
-            <div class="apple-inset flex flex-col justify-between" onclick="triggerHaptic('light')">
-                <i class="fa-solid fa-eye text-2xl text-indigo-500 mb-3"></i>
-                <div><h4 class="font-bold text-[15px] mb-1">Черновик</h4><p class="text-[13px] text-gray-500 leading-snug text-morph" data-id="adm_2">Подсмотреть на завтра.</p></div>
-            </div>
-            <div class="apple-inset bg-amber-50/50 border-amber-200/50 col-span-2 sm:col-span-1" onclick="triggerHaptic('medium')">
-                <i class="fa-solid fa-poop text-2xl text-amber-600 mb-3"></i>
-                <h4 class="font-bold text-[15px] text-amber-900 mb-1">Кто не записался</h4><p class="text-[13px] text-amber-700/80 leading-snug text-morph" data-id="adm_3">Раздать лещи вонючкам.</p>
-            </div>
-            <div class="apple-inset bg-green-50/50 border-green-200/50 col-span-2 sm:col-span-1" onclick="triggerHaptic('medium')">
-                <i class="fa-solid fa-circle-dot text-2xl text-green-500 mb-3 animate-pulse"></i>
-                <h4 class="font-bold text-[15px] text-green-900 mb-1">Live-отчет</h4><p class="text-[13px] text-green-700/80 leading-snug text-morph" data-id="adm_4">Онлайн-слежка ВКЛ/ВЫКЛ.</p>
-            </div>
-        </div>
-
-        <h2 class="text-[13px] font-semibold text-gray-400 uppercase tracking-wider mb-3 ml-4 mt-8 hide-for-elderly reveal"><i class="fa-solid fa-table mr-1"></i> База Данных</h2>
-        <div class="apple-card hide-for-elderly p-2 reveal">
-            <div class="p-4 border-b border-gray-100/50 flex"><div class="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center shrink-0 mr-4"><i class="fa-solid fa-users"></i></div><div><h3 class="font-semibold text-[16px]">1. Сотрудники</h3><p class="text-[13px] text-gray-500 mt-0.5">Допущенные к боту.</p></div></div>
-            <div class="p-4 border-b border-gray-100/50 flex"><div class="w-10 h-10 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center shrink-0 mr-4"><i class="fa-solid fa-crown"></i></div><div><h3 class="font-semibold text-[16px]">2. Админы</h3><p class="text-[13px] text-gray-500 mt-0.5">Получают жалобы.</p></div></div>
-            <div class="p-4 border-b border-gray-100/50 flex bg-green-50/30"><div class="w-10 h-10 rounded-full bg-green-100 text-green-600 flex items-center justify-center shrink-0 mr-4">🟢</div><div><h3 class="font-semibold text-[16px]">3. Live</h3><p class="text-[13px] text-gray-500 mt-0.5">Дашборд онлайн. Не трогать!</p></div></div>
-            <div class="p-4 border-b border-gray-100/50 flex bg-orange-50/50"><div class="w-10 h-10 rounded-full bg-orange-500 text-white shadow-sm flex items-center justify-center shrink-0 mr-4"><i class="fa-solid fa-star"></i></div><div><h3 class="font-semibold text-[16px] text-orange-900">6. Отчеты</h3><p class="text-[13px] text-orange-700 mt-0.5">Главный архив (выгрузка в 16:30).</p></div></div>
-            <div class="p-4 flex bg-red-50/50"><div class="w-10 h-10 rounded-full bg-red-500 text-white shadow-sm flex items-center justify-center shrink-0 mr-4"><i class="fa-solid fa-brain"></i></div><div><h3 class="font-semibold text-[16px] text-red-900">7. Память (Опасно)</h3><p class="text-[13px] text-red-700 mt-0.5">Ремонт: удалить строку зависшего.</p></div></div>
-        </div>
-
-        <h2 class="text-[13px] font-mono text-emerald-600 uppercase tracking-wider mb-3 ml-4 mt-8 hide-for-elderly reveal">> root_it</h2>
-        <div class="apple-card bg-slate-900 border-slate-700 hide-for-elderly p-0 overflow-hidden reveal">
-            <div class="bg-slate-950 px-4 py-2.5 flex items-center border-b border-slate-800">
-                <div class="flex gap-1.5 mr-4">
-                    <div class="w-3 h-3 rounded-full bg-red-500"></div><div class="w-3 h-3 rounded-full bg-yellow-500"></div><div class="w-3 h-3 rounded-full bg-green-500"></div>
-                </div>
-                <span class="font-mono text-[11px] text-slate-500">cloud_terminal</span>
-            </div>
-            <div class="p-5 font-mono text-[13px] space-y-5 text-emerald-400/90">
-                <p>Бот пингует себя раз в минуту. <span class="bg-emerald-900/50 text-emerald-300 px-1 rounded">Cloudflare</span> настроен на авторестарт при падении.</p>
-                <div class="border-l-2 border-emerald-500/50 pl-3">
-                    <strong class="text-white block mb-1">Safe.Crash(16:30)</strong>
-                    <span class="text-slate-400">Если упали в 16:29, бот сначала выгрузит отчет при рестарте, дождется ответа Google, потом очистит телефоны.</span>
-                </div>
-            </div>
-        </div>
-
-        <div class="mt-12 mb-8 bg-[#EAEAEA] p-6 sm:p-8 rounded-[36px] shadow-[0_20px_40px_rgba(0,0,0,0.1),inset_0_2px_10px_rgba(255,255,255,1)] border border-gray-300 transform rotate-[-1deg] reveal relative z-10">
-            <div class="absolute -top-4 left-1/2 -translate-x-1/2 w-32 h-8 bg-gradient-to-b from-gray-200 to-gray-400 rounded-lg shadow-md border border-gray-400 flex justify-center items-center"><div class="w-16 h-2 bg-gray-500/30 rounded-full"></div></div>
-            <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-inner text-center mt-2 border border-gray-100 relative overflow-hidden">
-                <i class="fa-solid fa-cat absolute inset-0 m-auto text-[150px] text-gray-50 opacity-[0.03]"></i>
-                <h3 class="text-2xl font-black uppercase text-gray-800 border-b-2 border-gray-200 pb-4 mb-6 tracking-wider text-morph" data-id="warn_title">Лист ознакомления</h3>
-                <p class="text-xl sm:text-2xl font-black text-red-500 mb-6 text-morph" data-id="warn_subtitle">ЧУБАЙС КУСАЕТСЯ!</p>
-                <div class="bg-red-50 text-red-700 font-bold px-6 py-3 rounded-xl inline-block border-2 border-red-200 text-sm sm:text-base uppercase text-morph" data-id="warn_action">ЗА ШКИРКУ НЕ БРАТЬ!</div>
-                <div class="mt-10 border-t border-gray-200 pt-6 flex justify-between items-end">
-                    <span class="text-[11px] sm:text-[13px] text-gray-500 font-bold uppercase tracking-widest">Подпись Насти:</span>
-                    <span class="border-b-2 border-gray-400 w-32 sm:w-48 inline-block opacity-50"></span>
                 </div>
             </div>
         </div>
     </div>
 
     <div id="wife-container">
-        <div class="absolute -top-20 left-2 bg-black/80 text-white text-[13px] font-medium py-3 px-4 rounded-xl shadow-xl w-56 animate-float z-50 text-center backdrop-blur-md" id="wife-alert-hint" data-id="wife_hint">
-            Запомни, что делать, если Чубайс игнорирует! 👇
-            <div class="absolute -bottom-1.5 left-8 w-3 h-3 bg-black/80 transform rotate-45"></div>
+        <div class="absolute -top-24 left-4 bg-white/10 backdrop-blur-xl border border-white/20 text-white text-[14px] font-bold py-4 px-5 rounded-2xl shadow-[0_20px_40px_rgba(0,0,0,0.5)] w-64 animate-float z-50 text-center" id="wife-alert-hint" data-id="wife_hint">
+            Запомни, что делать, если Чубайс тебя игнорирует и молчит! 👇
+            <div class="absolute -bottom-2 left-10 w-4 h-4 bg-white/10 backdrop-blur-xl border-r border-b border-white/20 transform rotate-45"></div>
         </div>
         
-        <div class="absolute -right-12 -top-16 text-orange-500/30 text-xl rotate-45 animate-pulse"><i class="fa-solid fa-paw"></i></div>
+        <div class="absolute -right-16 -top-20 text-orange-500/20 text-3xl rotate-45 animate-pulse"><i class="fa-solid fa-paw drop-shadow-[0_0_10px_rgba(255,149,0,0.5)]"></i></div>
+        <div class="absolute -right-8 -top-10 text-orange-500/20 text-2xl rotate-45 animate-pulse" style="animation-delay: 0.5s"><i class="fa-solid fa-paw drop-shadow-[0_0_10px_rgba(255,149,0,0.5)]"></i></div>
         
         <div class="apple-fab cursor-pointer" onclick="toggleWife(this)">
-            <i class="fa-solid fa-cat text-[28px] text-pink-500"></i>
-            <i class="fa-solid fa-crown absolute -top-1 -right-1 text-yellow-400 text-lg drop-shadow"></i>
+            <i class="fa-solid fa-cat text-[32px] text-pink-500 drop-shadow-[0_0_8px_rgba(236,72,153,0.8)]"></i>
+            <i class="fa-solid fa-crown absolute -top-2 -right-2 text-yellow-400 text-xl drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]"></i>
         </div>
 
         <div class="imessage-bubble" id="wife-bubble">
-            <p class="font-semibold text-gray-900 mb-2 flex items-center text-[15px]" data-id="wife_name">
-                <i class="fa-solid fa-heart text-pink-500 mr-2 text-sm"></i> Мадам Эс. <span class="text-[10px] text-pink-600 ml-2 bg-pink-50 px-2 py-0.5 rounded-md font-bold uppercase">(Сыкуха)</span>
+            <p class="font-bold mb-3 flex items-center text-[16px]" data-id="wife_name">
+                <i class="fa-solid fa-heart text-pink-500 mr-3 text-lg drop-shadow-[0_0_5px_rgba(236,72,153,0.8)]"></i> Мадам Эс. <span class="text-[11px] text-pink-600 ml-3 bg-pink-500/20 border border-pink-500/30 px-2 py-1 rounded-md font-black uppercase tracking-wider">(Сыкуха)</span>
             </p>
-            <p class="mb-2 text-[14px] text-gray-700 text-morph" data-id="wife_text1">Без паники! Он под валерьянкой.</p>
-            <p class="bg-white/50 p-3 rounded-xl border border-gray-200 text-gray-600 text-[13px] leading-relaxed text-morph" data-id="wife_text2">
-                Если он <strong>5-6 минут молчит</strong> — я его пинаю. У нас алименты и 14 котят, кошачья жизнь суровая.
+            <p class="mb-3 text-[15px] text-dynamic-text text-morph font-medium" data-id="wife_text1">Без паники! Он под валерьянкой.</p>
+            <p class="bg-white/5 p-4 rounded-xl border border-white/10 text-dynamic-muted text-[14px] leading-relaxed text-morph font-medium" data-id="wife_text2">
+                Если он <strong>5-6 минут молчит</strong> — я его пинаю. У нас алименты и 14 котят, кошачья жизнь суровая. Смена продолжается!
             </p>
         </div>
     </div>
@@ -431,8 +467,8 @@
         
         if (tg) {
             tg.ready(); tg.expand();
-            if(tg.setHeaderColor) tg.setHeaderColor('#F2F2F7');
-            if(tg.setBackgroundColor) tg.setBackgroundColor('#F2F2F7');
+            if(tg.setHeaderColor) tg.setHeaderColor('#000000');
+            if(tg.setBackgroundColor) tg.setBackgroundColor('#000000');
             
             tg.MainButton.setText('🚀 ЗАПУСТИТЬ ЧУБАЙСА (/start)');
             tg.MainButton.color = '#FF512F'; tg.MainButton.textColor = '#ffffff';
@@ -448,10 +484,12 @@
                     case 'heavy': tg.HapticFeedback.impactOccurred('heavy'); break;
                     case 'success': tg.HapticFeedback.notificationOccurred('success'); break;
                 }
+            } else {
+                if(navigator.vibrate) navigator.vibrate(style === 'heavy' ? 50 : 20);
             }
         }
 
-        // Parallax Effect for Ambient Glow
+        // Параллакс для фоновых сфер (Apple Glass depth)
         let ticking = false;
         window.addEventListener('scroll', () => {
             if (!ticking) {
@@ -467,73 +505,69 @@
             }
         });
 
+        // Взрыв частиц из кота
         function createExplosion(x, y) {
-            const emojis = ['🐾', '💤', '🐈', '💨', '⚡️'];
-            for(let i=0; i<15; i++) {
+            const emojis = ['🐾', '🐈', '✨', '💨', '🐟'];
+            for(let i=0; i<20; i++) {
                 let el = document.createElement('div');
                 el.innerText = emojis[Math.floor(Math.random()*emojis.length)];
                 el.style.position = 'fixed'; el.style.left = x + 'px'; el.style.top = y + 'px';
-                el.style.fontSize = '24px'; el.style.pointerEvents = 'none'; el.style.zIndex = '99999';
+                el.style.fontSize = '28px'; el.style.pointerEvents = 'none'; el.style.zIndex = '99999';
+                el.style.filter = 'drop-shadow(0 5px 10px rgba(0,0,0,0.5))';
                 document.body.appendChild(el);
-                const angle = Math.random() * Math.PI * 2; const velocity = 60 + Math.random() * 150;
-                const tx = Math.cos(angle) * velocity; const ty = Math.sin(angle) * velocity - 100; 
+                const angle = Math.random() * Math.PI * 2; const velocity = 80 + Math.random() * 200;
+                const tx = Math.cos(angle) * velocity; const ty = Math.sin(angle) * velocity - 150; 
                 el.animate([
                     { transform: 'translate(-50%, -50%) scale(0.5) rotate(0deg)', opacity: 1 },
-                    { transform: `translate(calc(-50% + ${tx}px), calc(-50% + ${ty}px)) scale(1.5) rotate(${Math.random()*360}deg)`, opacity: 0 }
-                ], { duration: 800 + Math.random()*500, easing: 'cubic-bezier(0.25, 1, 0.5, 1)' });
-                setTimeout(()=>el.remove(), 1300);
+                    { transform: `translate(calc(-50% + ${tx}px), calc(-50% + ${ty}px)) scale(1.8) rotate(${Math.random()*720}deg)`, opacity: 0 }
+                ], { duration: 1000 + Math.random()*800, easing: 'cubic-bezier(0.25, 1, 0.5, 1)' });
+                setTimeout(()=>el.remove(), 1800);
             }
         }
 
         let catClicks = 0;
         document.getElementById('cat-avatar').addEventListener('click', function(e) {
             catClicks++; triggerHaptic('medium');
-            this.style.transform = 'scale(0.9)'; setTimeout(() => this.style.transform = 'scale(1)', 150);
             if (catClicks >= 3) {
                 triggerHaptic('heavy');
                 const rect = this.getBoundingClientRect();
                 createExplosion(rect.left + rect.width/2, rect.top + rect.height/2);
-                if(tg && tg.showPopup) tg.showPopup({ title: 'МЯУ!', message: 'Хватит меня тыкать! Заявки сами себя не запишут.', buttons: [{id: 'ok', type: 'ok', text: 'Понял'}] });
+                if(tg && tg.showPopup) tg.showPopup({ title: 'МЯУ!', message: 'Хватит меня чесать! Я провода перегрызу.', buttons: [{id: 'ok', type: 'ok', text: 'Понял, извини'}] });
                 catClicks = 0;
             }
         });
 
+        // Тексты для трех поколений
         const texts = {
-            main_title: { normal: "Документация <br> <span class='text-liquid-gradient'>бота «Чубайс»</span>", retro: "Руководство <br> <span class='text-[#3E3222]'>ЭВМ «Чубайс»</span>", elderly: "Крупная памятка <br> <span class='text-blue-600'>для телефона</span>" },
-            main_desc: { normal: "Ваш карманный помощник. Собирает отчеты, пока спит на батарее. Подчиняется исключительно Насте. (Версия 2026)", retro: "Комплекс учета выработки. Одобрено парткомом. Старший мастер - т. Настя. (1984г)", elderly: "Прочитайте простые правила, куда нажимать на экране телефона. Одобрено Настей." },
-            menu_title: { normal: "Главное меню", retro: "Пульт управления", elderly: "Главное меню" },
+            main_title: { normal: "Чубайс <br> <span class='text-liquid-gradient'>Pro (2026)</span>", retro: "ЭВМ «Чубайс» <br> <span class='text-[#3E3222]'>Ветеран ПНР</span>", elderly: "Крупная памятка <br> <span class='text-blue-600'>для телефона</span>" },
+            main_desc: { normal: "Интеллектуальный помощник. Собирает отчеты, пока спит на сервере. Подчиняется исключительно Насте.", retro: "Комплекс учета выработки. Одобрено парткомом. Старший мастер - т. Настя.", elderly: "Прочитайте простые правила. Одобрено Настей." },
+            menu_title: { normal: "Главное меню (Когтеточка)", retro: "Пульт управления", elderly: "Главное меню" },
             card1_desc: { normal: "Поймали новую мышь? Зафиксируйте её здесь.", retro: "Оформляется строго по ГОСТу.", elderly: "Нажимайте, когда начинаете новую работу." },
-            c1_li1: { normal: "<i class='fa-solid fa-check-circle text-green-500 mt-1 mr-3 text-lg'></i> Введите номер заявки.", retro: "<i class='fa-solid fa-check-circle text-green-600 mt-1 mr-3 text-lg'></i> Заполните путевку.", elderly: "<i class='fa-solid fa-check-circle text-green-600 mt-1 mr-3 text-lg'></i> Введите номер задания цифрами." },
-            c1_li2: { normal: "<i class='fa-solid fa-check-circle text-green-500 mt-1 mr-3 text-lg'></i> Выберите состав бригады (ваше имя уже там).", retro: "<i class='fa-solid fa-check-circle text-green-600 mt-1 mr-3 text-lg'></i> Утвердите состав артели.", elderly: "<i class='fa-solid fa-check-circle text-green-600 mt-1 mr-3 text-lg'></i> Выберите фамилии коллег." },
-            c1_li3: { normal: "<i class='fa-solid fa-check-circle text-green-500 mt-1 mr-3 text-lg'></i> Нажмите «✅ ПОДТВЕРДИТЬ СОСТАВ».", retro: "<i class='fa-solid fa-check-circle text-green-600 mt-1 mr-3 text-lg'></i> Нажмите «✅ ПОДТВЕРДИТЬ СОСТАВ».", elderly: "<i class='fa-solid fa-check-circle text-green-600 mt-1 mr-3 text-lg'></i> Нажмите «✅ ПОДТВЕРДИТЬ СОСТАВ»." },
+            c1_li1: { normal: "<i class='fa-solid fa-check-circle text-blue-500 mt-1 mr-4 text-xl drop-shadow'></i> Введите номер заявки.", retro: "<i class='fa-solid fa-check-circle text-blue-600 mt-1 mr-4 text-xl'></i> Заполните путевку.", elderly: "<i class='fa-solid fa-check-circle text-blue-600 mt-1 mr-4 text-xl'></i> Введите номер задания цифрами." },
+            c1_li2: { normal: "<i class='fa-solid fa-check-circle text-blue-500 mt-1 mr-4 text-xl drop-shadow'></i> Выберите состав бригады (ваше имя уже там).", retro: "<i class='fa-solid fa-check-circle text-blue-600 mt-1 mr-4 text-xl'></i> Утвердите состав артели.", elderly: "<i class='fa-solid fa-check-circle text-blue-600 mt-1 mr-4 text-xl'></i> Выберите фамилии коллег." },
+            c1_li3: { normal: "<i class='fa-solid fa-check-circle text-blue-500 mt-1 mr-4 text-xl drop-shadow'></i> Нажмите «✅ ПОДТВЕРДИТЬ СОСТАВ».", retro: "<i class='fa-solid fa-check-circle text-blue-600 mt-1 mr-4 text-xl'></i> Нажмите «✅ ПОДТВЕРДИТЬ СОСТАВ».", elderly: "<i class='fa-solid fa-check-circle text-blue-600 mt-1 mr-4 text-xl'></i> Нажмите «✅ ПОДТВЕРДИТЬ СОСТАВ»." },
             card2_title: { normal: "Мои заявки (Лоток)", retro: "Мои заявки (Журнал)", elderly: "Мои заявки" },
             card2_desc: { normal: "Ваш рабочий стол.", retro: "Журнал учета рабочего времени.", elderly: "Здесь ваши текущие дела." },
-            st_pause_desc: { normal: "Бросить работу (нужно указать причину).", retro: "Приостановить производство.", elderly: "Отложить работу на потом." },
+            st_pause_desc: { normal: "Бросить работу (указать причину).", retro: "Приостановить производство.", elderly: "Отложить работу на потом." },
             st_work_desc: { normal: "Снять с паузы.", retro: "Продолжить стахановское движение.", elderly: "Продолжить работу." },
             st_done_desc: { normal: "Мышь съедена. В Архив.", retro: "Сдано ОТК. В архив.", elderly: "Работа сделана. Спрятать дело." },
             st_tmrw_desc: { normal: "Важно! Добавляет в план.", retro: "Внести в план следующей смены.", elderly: "Обязательно нажать в конце дня!" },
             card3_title: { normal: "На завтра (Миска)", retro: "На завтра (План-график)", elderly: "На завтра" },
             card3_desc: { normal: "Корзина планов. Если передумали — жмите ❌ Убрать.", retro: "Картотека норм выработки.", elderly: "Ваш план. Можно нажать ❌ Убрать." },
-            card3_rule: { normal: "Запись строго <strong>с 12:00 до 16:30</strong>. После кормушка закрывается, кот уходит налево!", retro: "Оформление строго <strong>с 12:00 до 16:30</strong>. После 16:30 цех закрыт!", elderly: "Ровно в 12:00 придет вопрос. Запишитесь обязательно до 16:30!" },
+            card3_rule: { normal: "Запись строго <strong>с 12:00 до 16:30</strong>. После кормушка закрывается, кот уходит налево!", retro: "Оформление строго <strong>с 12:00 до 16:30</strong>. После 16:30 цех закрыт!", elderly: "Ровно в 12:00 программа сама пришлет вам вопрос. Вам нужно обязательно нажать кнопку и добавиться до 16:30!" },
             card4_title: { normal: "🆘 Сообщить о проблеме", retro: "🆘 Сообщить о проблеме", elderly: "Сообщить о проблеме" },
-            card4_desc: { normal: "Бот принесет жалобу в зубах Насте.", retro: "Телеграмма товарищу Насте.", elderly: "Позвать Настю на помощь." },
-            routine_title: { normal: "Режим дня", retro: "График сменности", elderly: "" },
-            r_1_title: { normal: "Опрос (Мяу!)", retro: "Утренняя разнарядка", elderly: "" },
-            r_1_desc: { normal: "Бот присылает вопрос: «Что завтра делаем?»", retro: "Выдача нарядов-заданий.", elderly: "" },
-            r_2_title: { normal: "Планирование", retro: "Время планирования", elderly: "" },
-            r_2_desc: { normal: "Жмем 📝 Записать на завтра в своих заявках.", retro: "Утверждение планов.", elderly: "" },
-            r_3_title: { normal: "Смена закрыта", retro: "Закрытие смены", elderly: "" },
-            r_3_desc: { normal: "Отчет в Гугл. Бот уходит к кошечкам.", retro: "Сдача продукции ОТК.", elderly: "" },
+            card4_desc: { normal: "Бот тайно принесет жалобу в зубах прямо Насте.", retro: "Телеграмма товарищу Насте.", elderly: "Позвать Настю на помощь." },
             adm_1: { normal: "Разбудить всех пинком.", retro: "Сбор на планерку.", elderly: "" },
             adm_2: { normal: "Подсмотреть на завтра.", retro: "Ревизия до звонка.", elderly: "" },
             adm_3: { normal: "Раздать лещи вонючкам.", retro: "Путевки на картошку тунеядцами.", elderly: "" },
             adm_4: { normal: "Онлайн-слежка ВКЛ/ВЫКЛ.", retro: "Радар учета стахановцев.", elderly: "" },
             warn_title: { normal: "Лист ознакомления", retro: "ЖУРНАЛ ПО ТБ", elderly: "Журнал ознакомления" },
-            warn_subtitle: { normal: "ЧУБАЙС КУСАЕТСЯ!", retro: "БЕЗ КАСКИ НЕ ВХОДИТЬ!", elderly: "ОЗНАКОМЛЕН" },
+            warn_subtitle: { normal: "ЧУБАЙС КУСАЕТСЯ!", retro: "БЕЗ КАСКИ НЕ ВХОДИТЬ! (Штраф)", elderly: "ОЗНАКОМЛЕН" },
             warn_action: { normal: "ЗА ШКИРКУ НЕ БРАТЬ!", retro: "ЗА ШКИРКУ НЕ БРАТЬ!", elderly: "РАСПИШИТЕСЬ ЗДЕСЬ" },
-            wife_hint: { normal: "Запомни, что делать, если Чубайс игнорирует! 👇", retro: "Действия при отказе оборудования 👇", elderly: "Что делать, если сломалась 👇" },
+            wife_hint: { normal: "Запомни, что делать, если Чубайс тебя игнорирует и молчит! 👇", retro: "Действия при отказе оборудования 👇", elderly: "Что делать, если сломалась 👇" },
+            wife_name: { normal: "<i class='fa-solid fa-heart text-pink-500 mr-3 text-lg drop-shadow'></i> Мадам Эс. <span class='text-[11px] text-pink-600 ml-3 bg-pink-500/20 border border-pink-500/30 px-2 py-1 rounded-md font-black uppercase tracking-wider'>(Сыкуха)</span>", retro: "<i class='fa-solid fa-wrench text-gray-500 mr-3 text-lg'></i> Дежурный механик", elderly: "<i class='fa-solid fa-info-circle text-blue-500 mr-3 text-lg'></i> Справка" },
             wife_text1: { normal: "Без паники! Он под валерьянкой.", retro: "Валидол под язык! Супруг план перевыполняет.", elderly: "Ничего страшного! Программа обновляется." },
-            wife_text2: { normal: "Если он <strong>5-6 минут молчит</strong> — я его пинаю. У нас алименты и 14 котят, кошачья жизнь суровая.", retro: "Если <strong>5-6 минут телеграмму не отбивает</strong> — я беру скалку.", elderly: "Если не отвечает 5-6 минут, подождите немного." }
+            wife_text2: { normal: "Если он <strong>5-6 минут молчит</strong> — я его пинаю. У нас алименты и 14 котят, кошачья жизнь суровая. Смена продолжается!", retro: "Если <strong>5-6 минут телеграмму не отбивает</strong> — я беру скалку.", elderly: "Если не отвечает 5-6 минут, подождите немного. Смена продолжается." }
         };
 
         function setMode(index, btnElement) {
@@ -547,7 +581,7 @@
                 if (i === index) btn.classList.add('active'); else btn.classList.remove('active');
             });
 
-            // Cinematic Mode Change
+            // Кинематографичная смена темы
             document.body.classList.remove('retro-mode', 'elderly-mode');
             if (index === 1) document.body.classList.add('retro-mode');
             if (index === 2) document.body.classList.add('elderly-mode');
@@ -555,12 +589,12 @@
             const startWarning = document.getElementById('elderly-start-warning');
             if (startWarning) {
                 if (index === 2) { startWarning.classList.remove('hidden'); setTimeout(() => startWarning.classList.add('visible'), 50); }
-                else { startWarning.classList.remove('visible'); setTimeout(() => startWarning.classList.add('hidden'), 300); }
+                else { startWarning.classList.remove('visible'); setTimeout(() => startWarning.classList.add('hidden'), 500); }
             }
 
             const modeKey = index === 0 ? 'normal' : (index === 1 ? 'retro' : 'elderly');
             
-            // Text Blur Morph
+            // Blur Morph Эффект
             document.querySelectorAll('.text-morph').forEach(el => {
                 const id = el.getAttribute('data-id');
                 if (texts[id] && texts[id][modeKey] !== undefined) {
@@ -568,14 +602,14 @@
                     setTimeout(() => {
                         el.innerHTML = texts[id][modeKey];
                         el.classList.remove('blur-out');
-                    }, 300); // Wait for blur, then swap and unblur
+                    }, 400); 
                 }
             });
             
             if(tg && tg.setHeaderColor) {
-                if(index === 0) tg.setHeaderColor('#F2F2F7');
-                if(index === 1) tg.setHeaderColor('#EFE9D9');
-                if(index === 2) tg.setHeaderColor('#FFFFFF');
+                if(index === 0) { tg.setHeaderColor('#000000'); tg.setBackgroundColor('#000000'); }
+                if(index === 1) { tg.setHeaderColor('#EFE9D9'); tg.setBackgroundColor('#EFE9D9'); }
+                if(index === 2) { tg.setHeaderColor('#FFFFFF'); tg.setBackgroundColor('#FFFFFF'); }
             }
         }
 
@@ -583,8 +617,33 @@
             triggerHaptic('heavy');
             const hint = document.getElementById('wife-alert-hint');
             const bubble = document.getElementById('wife-bubble');
-            if (hint) { hint.style.opacity = '0'; setTimeout(() => hint.remove(), 300); }
+            if (hint) { hint.style.opacity = '0'; setTimeout(() => hint.remove(), 400); }
             bubble.classList.toggle('show');
+        }
+
+        // 3D Tilt эффект для мыши (Apple TV Effect)
+        if (window.matchMedia("(hover: hover)").matches) {
+            document.querySelectorAll('.tilt-card').forEach(card => {
+                card.addEventListener('mousemove', e => {
+                    if(document.body.classList.contains('elderly-mode')) return;
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    card.style.setProperty('--mouse-x', `${x}px`);
+                    card.style.setProperty('--mouse-y', `${y}px`);
+                    
+                    const xc = rect.width / 2;
+                    const yc = rect.height / 2;
+                    const dx = x - xc;
+                    const dy = y - yc;
+                    card.style.transform = `perspective(1000px) rotateY(${dx / 30}deg) rotateX(${-dy / 30}deg) scale3d(1.02, 1.02, 1.02)`;
+                });
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = '';
+                    card.style.setProperty('--mouse-x', `50%`);
+                    card.style.setProperty('--mouse-y', `50%`);
+                });
+            });
         }
 
         // Staggered Reveal
@@ -601,11 +660,11 @@
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach((entry, index) => {
                     if (entry.isIntersecting) {
-                        setTimeout(() => entry.target.classList.add('visible'), index * 80); 
+                        setTimeout(() => entry.target.classList.add('visible'), index * 120); 
                         observer.unobserve(entry.target);
                     }
                 });
-            }, { threshold: 0.1, rootMargin: "0px 0px -20px 0px" });
+            }, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
 
             document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
         };
