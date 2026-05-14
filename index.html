@@ -33,6 +33,7 @@
                     animation: {
                         'float': 'float 6s ease-in-out infinite',
                         'breathe': 'breathe 4s ease-in-out infinite',
+                        'levitate': 'levitate 3s ease-in-out infinite',
                     },
                     keyframes: {
                         float: {
@@ -42,6 +43,10 @@
                         breathe: {
                             '0%, 100%': { transform: 'scale(1)' },
                             '50%': { transform: 'scale(1.03)' },
+                        },
+                        levitate: {
+                            '0%, 100%': { transform: 'translateZ(25px) translateY(0)' },
+                            '50%': { transform: 'translateZ(25px) translateY(-5px)' },
                         }
                     }
                 }
@@ -51,22 +56,25 @@
 
     <style>
         :root {
-            /* APPLE SILVER/WHITE 3D STYLE */
-            --bg-color: #F2F2F7;
+            --bg-color: #F5F5F7;
             --text-main: #1D1D1F; 
             --text-muted: #86868B;
             
-            --card-bg: rgba(255, 255, 255, 0.65);
+            --card-bg: rgba(255, 255, 255, 0.5);
             --card-border: rgba(255, 255, 255, 0.8);
-            --inset-bg: rgba(0, 0, 0, 0.03);
+            --inset-bg: rgba(0, 0, 0, 0.02);
             --highlight: rgba(0, 0, 0, 0.85);
             
+            /* VisionOS Style Multi-layered Shadows */
             --glass-shadow: 
-                0 20px 40px rgba(0, 0, 0, 0.06), 
-                0 1px 3px rgba(0,0,0,0.05),
-                inset 0 1px 1px rgba(255, 255, 255, 1);
+                0 30px 60px rgba(0, 0, 0, 0.04), 
+                0 10px 20px rgba(0,0,0,0.02),
+                inset 0 1px 0 rgba(255, 255, 255, 1),
+                inset 0 -1px 0 rgba(255, 255, 255, 0.3),
+                inset 1px 0 0 rgba(255, 255, 255, 0.5),
+                inset -1px 0 0 rgba(255, 255, 255, 0.5);
             
-            --nav-bg: rgba(242, 242, 247, 0.75);
+            --nav-bg: rgba(245, 245, 247, 0.8);
             --accent-glow: rgba(255, 149, 0, 0.4); 
         }
 
@@ -74,194 +82,183 @@
             background-color: var(--bg-color); color: var(--text-main);
             transition: background-color 0.8s cubic-bezier(0.32, 0.72, 0, 1), color 0.8s ease;
             -webkit-tap-highlight-color: transparent; overscroll-behavior-y: none;
-            padding-top: calc(env(safe-area-inset-top) + 80px);
+            padding-top: calc(env(safe-area-inset-top) + 90px);
             padding-bottom: calc(env(safe-area-inset-bottom) + 140px);
             overflow-x: hidden;
+            background-image: radial-gradient(circle at 50% 0%, #FFFFFF 0%, transparent 70%);
         }
 
         #dust-canvas {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            pointer-events: none; z-index: -1; opacity: 0.7;
+            pointer-events: none; z-index: -1; opacity: 0.9;
             transition: opacity 1s ease;
         }
 
         .apple-card {
             background: var(--card-bg);
-            backdrop-filter: blur(30px) saturate(150%); -webkit-backdrop-filter: blur(30px) saturate(150%);
-            border-radius: 28px; border: 1px solid var(--card-border);
+            backdrop-filter: blur(40px) saturate(200%); -webkit-backdrop-filter: blur(40px) saturate(200%);
+            border-radius: 32px; 
             box-shadow: var(--glass-shadow);
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1), box-shadow 0.4s ease;
-            position: relative; overflow: hidden; margin-bottom: 20px;
+            position: relative; overflow: hidden; margin-bottom: 24px;
             transform-style: preserve-3d;
-            perspective: 1000px;
+            will-change: transform;
+            /* Lerp handled by JS, base transition for hover out */
+            transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.4s ease;
         }
         
-        .apple-card::before {
-            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-            background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255,255,255,0.8) 0%, transparent 40%);
-            opacity: 0; transition: opacity 0.3s; z-index: 1; pointer-events: none; mix-blend-mode: overlay;
+        /* Dynamic Light Glare */
+        .apple-card .glare {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, -20%), rgba(255,255,255,0.9) 0%, rgba(255,255,255,0) 50%);
+            opacity: 0; transition: opacity 0.4s cubic-bezier(0.23, 1, 0.32, 1); 
+            z-index: 1; pointer-events: none; mix-blend-mode: overlay;
         }
-        .apple-card:hover::before { opacity: 1; }
+        .apple-card:hover .glare { opacity: 1; }
+        
         .apple-card:active {
-            transform: scale(0.96) translateZ(-10px) !important;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05), inset 0 2px 5px rgba(0,0,0,0.05);
+            transform: scale(0.97) translateZ(-15px) !important;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05), inset 0 2px 10px rgba(0,0,0,0.05);
         }
 
         .apple-inset {
-            background: var(--inset-bg); border-radius: 18px; padding: 16px;
-            border: 1px solid rgba(255,255,255,0.4); position: relative; z-index: 2;
-            box-shadow: inset 0 2px 8px rgba(0,0,0,0.04);
-            transform: translateZ(10px);
+            background: var(--inset-bg); border-radius: 20px; padding: 18px;
+            position: relative; z-index: 2;
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.03), 0 1px 0 rgba(255,255,255,0.8);
+            transform: translateZ(15px);
             transform-style: preserve-3d;
+            border: 1px solid rgba(255,255,255,0.3);
         }
 
         .apple-app-icon {
-            width: 56px; height: 56px; border-radius: 16px; flex-shrink: 0;
-            background: linear-gradient(145deg, #ffffff 0%, #e6e6ea 100%);
-            border: 1px solid rgba(255,255,255,0.6);
+            width: 60px; height: 60px; border-radius: 18px; flex-shrink: 0;
+            background: linear-gradient(135deg, #ffffff 0%, #f0f0f5 100%);
+            border: 1px solid rgba(255,255,255,0.9);
             box-shadow: 
-                6px 6px 15px rgba(0,0,0,0.12), 
-                -6px -6px 15px rgba(255,255,255,0.9),
+                8px 8px 16px rgba(0,0,0,0.08), 
+                -8px -8px 16px rgba(255,255,255,0.8),
                 inset 2px 2px 4px rgba(255,255,255,1),
-                inset -2px -2px 4px rgba(0,0,0,0.05);
+                inset -2px -2px 4px rgba(0,0,0,0.02);
             display: flex; align-items: center; justify-content: center;
-            position: relative; overflow: visible; /* Changed from hidden for 3D pop */
-            transition: transform 0.3s ease;
+            position: relative; overflow: visible; 
             transform-style: preserve-3d;
-            transform: translateZ(30px); 
+            transform: translateZ(35px); 
         }
         .apple-app-icon::after {
             content: ''; position: absolute; top: 0; left: 0; right: 0; height: 50%;
-            background: linear-gradient(180deg, rgba(255,255,255,0.8) 0%, transparent 100%);
-            border-radius: 16px 16px 0 0;
-            pointer-events: none;
+            background: linear-gradient(180deg, rgba(255,255,255,0.9) 0%, transparent 100%);
+            border-radius: 18px 18px 0 0; pointer-events: none;
         }
 
         .icon-3d {
-            transition: transform 0.3s ease, text-shadow 0.3s ease;
-            transform: translateZ(25px); /* Icon pops out of the wrapper */
             display: inline-block;
+            animation: levitate 4s ease-in-out infinite;
         }
         
-        .icon-3d-orange { color: #F97316; text-shadow: 0 1px 0 #d85c0b, 0 2px 0 #c25108, 0 3px 0 #a64405, 0 4px 0 #8b3703, 0 8px 10px rgba(249,115,22,0.4), 0 12px 20px rgba(0,0,0,0.15); }
-        .icon-3d-blue { color: #3b82f6; text-shadow: 0 1px 0 #2563eb, 0 2px 0 #1d4ed8, 0 3px 0 #1e40af, 0 4px 0 #1e3a8a, 0 8px 10px rgba(59,130,246,0.4), 0 12px 20px rgba(0,0,0,0.15); }
-        .icon-3d-purple { color: #a855f7; text-shadow: 0 1px 0 #9333ea, 0 2px 0 #7e22ce, 0 3px 0 #6b21a8, 0 4px 0 #581c87, 0 8px 10px rgba(168,85,247,0.4), 0 12px 20px rgba(0,0,0,0.15); }
-        .icon-3d-red { color: #ef4444; text-shadow: 0 1px 0 #dc2626, 0 2px 0 #b91c1c, 0 3px 0 #991b1b, 0 4px 0 #7f1d1d, 0 8px 10px rgba(239,68,68,0.4), 0 12px 20px rgba(0,0,0,0.15); }
-        .icon-3d-green { color: #22c55e; text-shadow: 0 1px 0 #16a34a, 0 2px 0 #15803d, 0 3px 0 #166534, 0 4px 0 #14532d, 0 8px 10px rgba(34,197,94,0.4), 0 12px 20px rgba(0,0,0,0.15); }
-        .icon-3d-gray { color: #64748b; text-shadow: 0 1px 0 #475569, 0 2px 0 #334155, 0 3px 0 #1e293b, 0 4px 0 #0f172a, 0 8px 10px rgba(100,116,139,0.4), 0 12px 20px rgba(0,0,0,0.15); }
-        .icon-3d-amber { color: #f59e0b; text-shadow: 0 1px 0 #d97706, 0 2px 0 #b45309, 0 3px 0 #92400e, 0 4px 0 #78350f, 0 8px 10px rgba(245,158,11,0.4), 0 12px 20px rgba(0,0,0,0.15); }
+        /* Deep Extrusion Shadows for true 3D feel */
+        .icon-3d-orange { color: #F97316; text-shadow: 0 1px 0 #ea580c, 0 2px 0 #c2410c, 0 3px 0 #9a3412, 0 4px 0 #7c2d12, 0 10px 15px rgba(249,115,22,0.5), 0 15px 25px rgba(0,0,0,0.15); }
+        .icon-3d-blue { color: #3b82f6; text-shadow: 0 1px 0 #2563eb, 0 2px 0 #1d4ed8, 0 3px 0 #1e40af, 0 4px 0 #1e3a8a, 0 10px 15px rgba(59,130,246,0.5), 0 15px 25px rgba(0,0,0,0.15); }
+        .icon-3d-purple { color: #a855f7; text-shadow: 0 1px 0 #9333ea, 0 2px 0 #7e22ce, 0 3px 0 #6b21a8, 0 4px 0 #581c87, 0 10px 15px rgba(168,85,247,0.5), 0 15px 25px rgba(0,0,0,0.15); }
+        .icon-3d-red { color: #ef4444; text-shadow: 0 1px 0 #dc2626, 0 2px 0 #b91c1c, 0 3px 0 #991b1b, 0 4px 0 #7f1d1d, 0 10px 15px rgba(239,68,68,0.5), 0 15px 25px rgba(0,0,0,0.15); }
+        .icon-3d-green { color: #22c55e; text-shadow: 0 1px 0 #16a34a, 0 2px 0 #15803d, 0 3px 0 #166534, 0 4px 0 #14532d, 0 10px 15px rgba(34,197,94,0.5), 0 15px 25px rgba(0,0,0,0.15); }
+        .icon-3d-gray { color: #64748b; text-shadow: 0 1px 0 #475569, 0 2px 0 #334155, 0 3px 0 #1e293b, 0 4px 0 #0f172a, 0 10px 15px rgba(100,116,139,0.5), 0 15px 25px rgba(0,0,0,0.15); }
+        .icon-3d-amber { color: #f59e0b; text-shadow: 0 1px 0 #d97706, 0 2px 0 #b45309, 0 3px 0 #92400e, 0 4px 0 #78350f, 0 10px 15px rgba(245,158,11,0.5), 0 15px 25px rgba(0,0,0,0.15); }
 
         .content-3d {
-            transform: translateZ(20px); transition: transform 0.3s ease; transform-style: preserve-3d;
+            transform: translateZ(25px); transform-style: preserve-3d;
         }
 
         .ios-pill {
             background: linear-gradient(180deg, #ffffff 0%, #f2f2f7 100%); 
-            border: 1px solid rgba(0,0,0,0.05);
-            color: var(--text-main); font-weight: 600; padding: 4px 10px; border-radius: 20px;
+            border: 1px solid rgba(0,0,0,0.03);
+            color: var(--text-main); font-weight: 600; padding: 5px 12px; border-radius: 20px;
             font-size: 13px; text-align: center; 
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05), inset 0 1px 2px #fff;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04), inset 0 1px 2px #fff;
             flex-shrink: 0;
         }
 
         .nav-wrapper {
             position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-            padding: calc(env(safe-area-inset-top) + 12px) 16px 12px;
-            background: var(--nav-bg); backdrop-filter: blur(40px) saturate(200%); -webkit-backdrop-filter: blur(40px) saturate(200%);
-            border-bottom: 1px solid rgba(0,0,0,0.05); transition: background 0.8s;
+            padding: calc(env(safe-area-inset-top) + 16px) 16px 16px;
+            background: var(--nav-bg); backdrop-filter: blur(50px) saturate(200%); -webkit-backdrop-filter: blur(50px) saturate(200%);
+            border-bottom: 1px solid rgba(0,0,0,0.03); transition: background 0.8s;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.02);
         }
         .segmented-control {
-            display: flex; position: relative; background: rgba(118, 118, 128, 0.12); border-radius: 12px; padding: 2px; 
-            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+            display: flex; position: relative; background: rgba(118, 118, 128, 0.12); border-radius: 14px; padding: 3px; 
+            box-shadow: inset 0 1px 4px rgba(0,0,0,0.06), 0 1px 0 rgba(255,255,255,0.5);
         }
         .mode-indicator {
-            position: absolute; top: 2px; bottom: 2px; background: #ffffff; border-radius: 10px;
+            position: absolute; top: 3px; bottom: 3px; background: #ffffff; border-radius: 11px;
             box-shadow: 0 3px 8px rgba(0,0,0,0.12), 0 3px 1px rgba(0,0,0,0.04);
             transition: transform 0.5s cubic-bezier(0.32, 0.72, 0, 1), width 0.4s ease, background 0.5s; z-index: 1;
         }
         .mode-btn {
-            flex: 1; position: relative; z-index: 2; text-align: center; font-size: 13px; font-weight: 500; padding: 8px 0; color: var(--text-muted); transition: all 0.3s; cursor: pointer;
+            flex: 1; position: relative; z-index: 2; text-align: center; font-size: 13px; font-weight: 600; padding: 10px 0; color: var(--text-muted); transition: all 0.3s; cursor: pointer;
         }
         .mode-btn.active { color: #000000; font-weight: 700; }
 
-        .reveal { opacity: 0; transform: translateY(30px) scale(0.95); transition: all 1s cubic-bezier(0.16, 1, 0.3, 1); }
+        .reveal { opacity: 0; transform: translateY(40px) scale(0.98); transition: opacity 0.8s cubic-bezier(0.23, 1, 0.32, 1), transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); }
         .reveal.visible { opacity: 1; transform: translateY(0) scale(1); }
-        .text-morph { display: inline-block; transition: filter 0.4s ease, opacity 0.4s ease, transform 0.4s ease; }
-        .text-morph.blur-out { filter: blur(8px); opacity: 0; transform: scale(0.95); }
+        
+        /* Blur Morphing */
+        .text-morph { display: inline-block; transition: filter 0.5s cubic-bezier(0.32, 0.72, 0, 1), opacity 0.5s ease, transform 0.5s ease; }
+        .text-morph.blur-out { filter: blur(12px); opacity: 0; transform: scale(0.95); }
 
-        #wife-container { position: fixed; bottom: calc(env(safe-area-inset-bottom) + 24px); left: 20px; z-index: 90; perspective: 1000px; }
+        #wife-container { position: fixed; bottom: calc(env(safe-area-inset-bottom) + 30px); left: 24px; z-index: 90; perspective: 1000px; }
         .apple-fab {
-            width: 56px; height: 56px; border-radius: 28px;
-            background: linear-gradient(145deg, #ffffff, #e6e6ea); border: 1px solid rgba(255,255,255,0.8);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.15), inset 0 2px 2px rgba(255,255,255,1);
+            width: 60px; height: 60px; border-radius: 30px;
+            background: linear-gradient(145deg, #ffffff, #f0f0f5); border: 1px solid rgba(255,255,255,0.9);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.12), inset 0 2px 4px rgba(255,255,255,1);
             display: flex; align-items: center; justify-content: center; position: relative;
-            transition: transform 0.5s cubic-bezier(0.32, 0.72, 0, 1); transform-style: preserve-3d;
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); transform-style: preserve-3d;
         }
-        .apple-fab:active { transform: scale(0.85) translateZ(-10px); }
+        .apple-fab:active { transform: scale(0.85) translateZ(-15px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
         
         .imessage-bubble {
-            position: absolute; bottom: 70px; left: 0; width: max-content; max-width: calc(100vw - 40px);
-            background: var(--card-bg); backdrop-filter: blur(30px) saturate(200%);
-            border: 1px solid var(--card-border); padding: 16px 20px; border-radius: 24px 24px 24px 8px;
+            position: absolute; bottom: 80px; left: 0; width: max-content; max-width: calc(100vw - 50px);
+            background: var(--card-bg); backdrop-filter: blur(40px) saturate(200%);
+            border: 1px solid var(--card-border); padding: 18px 22px; border-radius: 28px 28px 28px 8px;
             box-shadow: var(--glass-shadow); color: var(--text-main);
-            opacity: 0; transform: scale(0.8) translateY(20px) rotate(-5deg); transform-origin: bottom left;
-            pointer-events: none; transition: all 0.5s cubic-bezier(0.32, 0.72, 0, 1);
+            opacity: 0; transform: scale(0.5) translateY(40px) rotate(-10deg); transform-origin: bottom left;
+            pointer-events: none; transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
         .imessage-bubble.show { opacity: 1; transform: scale(1) translateY(0) rotate(0deg); pointer-events: auto; }
 
-        .profile-avatar {
-            width: 140px; height: 140px; margin: 0 auto 20px; border-radius: 70px;
-            background: linear-gradient(145deg, #ffffff, #d1d1d6);
-            border: 4px solid #ffffff;
-            box-shadow: 
-                15px 15px 30px rgba(0,0,0,0.12), 
-                -15px -15px 30px rgba(255,255,255,0.9),
-                inset 5px 5px 10px rgba(255,255,255,1),
-                inset -5px -5px 10px rgba(0,0,0,0.05);
-            display: flex; align-items: center; justify-content: center; position: relative; z-index: 10;
-            transform-style: preserve-3d;
-        }
-        .profile-avatar::after {
-            content: ''; position: absolute; inset: -8px; border-radius: 80px;
-            background: conic-gradient(from 0deg, transparent, var(--accent-glow), transparent);
-            animation: spin 4s linear infinite; z-index: -1; opacity: 0.8;
-        }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-
         body.retro-mode {
-            --bg-color: #EFE9D9; --text-main: #3E3222; --text-muted: #6B5A42; --card-bg: rgba(234, 227, 210, 0.85);
-            --card-border: #C8BCA7; --inset-bg: rgba(0,0,0,0.03); --highlight: #3E3222;
-            --glass-shadow: 6px 6px 0 rgba(62, 50, 34, 0.15); --nav-bg: rgba(239, 233, 217, 0.85);
+            --bg-color: #EAE3D2; --text-main: #3E3222; --text-muted: #6B5A42; --card-bg: rgba(228, 220, 203, 0.85);
+            --card-border: #C8BCA7; --inset-bg: rgba(0,0,0,0.04); --highlight: #3E3222;
+            --glass-shadow: 8px 8px 0 rgba(62, 50, 34, 0.15), inset 2px 2px 0 rgba(255,255,255,0.5); 
+            --nav-bg: rgba(234, 227, 210, 0.9);
             font-family: 'Russo One', sans-serif;
-            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100' height='100' fill='transparent' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100' height='100' fill='transparent' filter='url(%23n)' opacity='0.15'/%3E%3C/svg%3E");
         }
         body.retro-mode #dust-canvas { opacity: 0; } 
-        body.retro-mode .apple-card { border-radius: 12px; backdrop-filter: blur(10px); transform-style: flat; }
-        body.retro-mode .apple-app-icon { border-radius: 8px; background: #EAE3D2; box-shadow: 4px 4px 0 rgba(62,50,34,0.15); border: 2px solid #C8BCA7; transform: none;}
-        body.retro-mode .icon-3d { color: #3E3222 !important; text-shadow: 2px 2px 0px #C8BCA7, 4px 4px 0px rgba(62,50,34,0.2) !important; transform: none; }
-        body.retro-mode .mode-indicator { background: #3E3222; }
-        body.retro-mode .mode-btn.active { color: #EFE9D9; }
-        body.retro-mode .ios-pill { background: #D9D0B8; color: #3E3222; border-color: #C8BCA7; border-radius: 6px; box-shadow: 2px 2px 0 rgba(62,50,34,0.1); }
-        body.retro-mode .profile-avatar { border-radius: 12px; background: #EAE3D2; box-shadow: 6px 6px 0 rgba(62,50,34,0.15); border: 3px solid #3E3222; }
+        body.retro-mode .apple-card { border-radius: 8px; backdrop-filter: blur(10px); transform-style: flat; border: 2px solid #C8BCA7; transition: transform 0.2s;}
+        body.retro-mode .apple-app-icon { border-radius: 4px; background: #D9D0B8; box-shadow: 4px 4px 0 rgba(62,50,34,0.15); border: 2px solid #C8BCA7; transform: none; animation: none;}
+        body.retro-mode .icon-3d { color: #3E3222 !important; text-shadow: 2px 2px 0px #C8BCA7, 4px 4px 0px rgba(62,50,34,0.2) !important; transform: none; animation: none;}
+        body.retro-mode .mode-indicator { background: #3E3222; border-radius: 8px;}
+        body.retro-mode .mode-btn.active { color: #EAE3D2; }
+        body.retro-mode .ios-pill { background: #C8BCA7; color: #3E3222; border: 2px solid #3E3222; border-radius: 0; box-shadow: 2px 2px 0 rgba(62,50,34,0.2); }
+        body.retro-mode .glare { display: none; }
 
         body.elderly-mode { 
-            --bg-color: #FFFFFF; --text-main: #000000; --text-muted: #333333; --card-bg: #FFFFFF;
+            --bg-color: #FFFFFF; --text-main: #000000; --text-muted: #222222; --card-bg: #FFFFFF;
             --card-border: #000000; --inset-bg: #F5F5F5; --highlight: #000000;
-            --glass-shadow: 0 4px 12px rgba(0,0,0,0.05); --nav-bg: rgba(255, 255, 255, 0.95);
-            font-family: -apple-system, sans-serif; 
+            --glass-shadow: 0 4px 12px rgba(0,0,0,0.1); --nav-bg: rgba(255, 255, 255, 0.98);
+            font-family: -apple-system, sans-serif; background-image: none;
         }
         body.elderly-mode #dust-canvas { opacity: 0; }
-        body.elderly-mode .apple-card { border: 2px solid #000; border-radius: 16px; box-shadow: none; transform: none !important; }
-        body.elderly-mode .apple-app-icon { background: #F5F5F5; box-shadow: none; border: 2px solid #000; border-radius: 12px; transform: none;}
-        body.elderly-mode .icon-3d { color: #000000 !important; text-shadow: none !important; transform: none; }
+        body.elderly-mode .apple-card { border: 3px solid #000; border-radius: 16px; box-shadow: none; transform: none !important; transition: none;}
+        body.elderly-mode .apple-app-icon { background: #F0F0F0; box-shadow: none; border: 3px solid #000; border-radius: 12px; transform: none; animation: none;}
+        body.elderly-mode .icon-3d { color: #000000 !important; text-shadow: none !important; transform: none; animation: none;}
         body.elderly-mode .hide-for-elderly { display: none !important; }
         body.elderly-mode .mode-indicator { background: #000000; }
         body.elderly-mode .mode-btn.active { color: #FFFFFF; }
-        body.elderly-mode .ios-pill { background: #E5E5E5; color: #000; border-color: #000; box-shadow: none; }
-        body.elderly-mode .profile-avatar { background: #fff; box-shadow: none; border: 4px solid #000; border-radius: 70px; }
+        body.elderly-mode .ios-pill { background: #E5E5E5; color: #000; border: 2px solid #000; box-shadow: none; }
+        body.elderly-mode .glare { display: none; }
 
         .text-liquid-gradient {
-            background: linear-gradient(to right, #F97316, #FFB347, #F97316);
+            background: linear-gradient(to right, #1D1D1F, #86868B, #1D1D1F);
             background-size: 200% auto;
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             animation: shimmer 4s linear infinite;
@@ -287,178 +284,183 @@
         </div>
     </div>
 
-    <div class="px-4 max-w-3xl mx-auto relative z-10">
+    <div class="px-5 max-w-3xl mx-auto relative z-10">
 
-        <!-- Красный блок предупреждения (Только для Ветеранов) -->
-        <div class="apple-card mb-8 hidden border-red-500 reveal bg-red-50/90" id="elderly-start-warning" style="--card-bg: #fff; --card-border: #000; border-width: 3px;">
-            <div class="p-6 text-center content-3d">
-                <i class="fa-solid fa-triangle-exclamation text-5xl mb-3 icon-3d icon-3d-red"></i>
-                <h2 class="font-display text-2xl font-black mb-2 text-dynamic-text">ОЧЕНЬ ВАЖНО!</h2>
-                <p class="text-dynamic-text font-bold text-lg mb-4 text-morph" data-id="eld_warn1">Чтобы программа начала с вами работать, нужно отправить ей команду один раз.</p>
-                <div class="apple-inset">
-                    <p class="text-dynamic-text font-bold mb-3 text-morph" data-id="eld_warn2">Нажмите на кнопку в самом низу вашего телефона:</p>
-                    <div class="bg-black text-white font-black py-3 px-8 rounded-xl inline-block uppercase text-xl shadow-lg border-2 border-black">СТАРТ</div>
-                    <p class="text-dynamic-muted text-sm mt-3 font-bold text-morph" data-id="eld_warn3">Или напишите вручную: /start</p>
+        <div class="apple-card mb-10 hidden border-red-500 reveal bg-red-50" id="elderly-start-warning" style="--card-bg: #fff; --card-border: #000; border-width: 4px; border-radius: 24px;">
+            <div class="p-8 text-center content-3d">
+                <i class="fa-solid fa-triangle-exclamation text-6xl mb-4 icon-3d icon-3d-red"></i>
+                <h2 class="font-display text-3xl font-black mb-3 text-dynamic-text">ОЧЕНЬ ВАЖНО!</h2>
+                <p class="text-dynamic-text font-bold text-xl mb-6 text-morph" data-id="eld_warn1">Чтобы программа начала с вами работать, нужно отправить ей команду один раз.</p>
+                <div class="apple-inset bg-gray-100 border-2 border-gray-300">
+                    <p class="text-dynamic-text font-bold mb-4 text-morph text-lg" data-id="eld_warn2">Нажмите на кнопку в самом низу вашего телефона:</p>
+                    <div class="bg-black text-white font-black py-4 px-10 rounded-2xl inline-block uppercase text-2xl shadow-xl border-4 border-black mb-2 animate-breathe">СТАРТ</div>
+                    <p class="text-dynamic-muted text-base mt-4 font-bold text-morph" data-id="eld_warn3">Или напишите вручную: /start</p>
                 </div>
             </div>
         </div>
 
-        <!-- Заголовок и Аватар -->
-        <div class="text-center mb-12 pt-8 reveal">
-            <div class="relative w-[140px] h-[140px] mx-auto mb-6 cursor-pointer animate-breathe group" id="cat-avatar">
-                <div class="profile-avatar transition-transform duration-500 group-hover:scale-95 group-active:scale-90">
-                    <i class="fa-solid fa-cat text-[60px] icon-3d icon-3d-orange"></i>
+        <div class="text-center mb-14 pt-10 reveal">
+            <div class="relative w-[150px] h-[150px] mx-auto mb-8 cursor-pointer group" id="cat-avatar">
+                <div class="absolute inset-0 rounded-full bg-gradient-to-tr from-orange-200 to-white opacity-50 blur-xl group-hover:opacity-100 transition duration-500"></div>
+                <div class="w-full h-full rounded-full bg-gradient-to-b from-white to-gray-100 border border-white box-shadow: 0 20px 40px rgba(0,0,0,0.1), inset 0 4px 10px white; display: flex; items-center justify-center relative z-10 transform-style: preserve-3d transition-transform duration-500 group-hover:scale-105 group-active:scale-95" style="box-shadow: 0 20px 40px rgba(0,0,0,0.1), inset 0 4px 10px white; display: flex; align-items: center; justify-content: center;">
+                    <i class="fa-solid fa-cat text-[65px] icon-3d icon-3d-orange"></i>
                 </div>
             </div>
             
-            <h1 class="font-display text-4xl sm:text-5xl font-black tracking-tight mb-3 text-dynamic-text text-morph content-3d" data-id="main_title">
+            <h1 class="font-display text-5xl sm:text-6xl font-black tracking-tight mb-4 text-dynamic-text text-morph content-3d" data-id="main_title">
                 Чубайс <span class="text-liquid-gradient block mt-1">Pro (2026)</span>
             </h1>
-            <p class="text-[17px] text-dynamic-muted leading-relaxed px-4 font-medium text-morph max-w-lg mx-auto content-3d" data-id="main_desc">
+            <p class="text-[18px] text-dynamic-muted leading-relaxed px-2 font-medium text-morph max-w-xl mx-auto content-3d" data-id="main_desc">
                 Интеллектуальный помощник. Собирает отчеты, пока спит на сервере. Подчиняется исключительно Насте.
             </p>
         </div>
 
-        <h2 class="text-[13px] font-bold text-dynamic-muted uppercase tracking-widest mb-3 ml-4 reveal text-morph" data-id="menu_title">Главное меню (Когтеточка)</h2>
+        <h2 class="text-[14px] font-bold text-dynamic-muted uppercase tracking-widest mb-4 ml-5 reveal text-morph" data-id="menu_title">Главное меню (Когтеточка)</h2>
         
-        <!-- Карточка 1 -->
         <div class="apple-card reveal tilt-card" onclick="triggerHaptic('light')">
-            <div class="p-6">
-                <div class="flex items-center mb-4 content-3d">
-                    <div class="apple-app-icon"><i class="fa-solid fa-plus text-2xl icon-3d icon-3d-blue"></i></div>
-                    <h3 class="font-display text-2xl font-bold ml-4 text-dynamic-text">Новая заявка</h3>
+            <div class="glare"></div>
+            <div class="p-7">
+                <div class="flex items-center mb-5 content-3d">
+                    <div class="apple-app-icon"><i class="fa-solid fa-plus text-[28px] icon-3d icon-3d-blue"></i></div>
+                    <h3 class="font-display text-2xl font-bold ml-5 text-dynamic-text">Новая заявка</h3>
                 </div>
-                <p class="text-[15px] text-dynamic-muted mb-5 leading-relaxed font-medium text-morph content-3d" data-id="card1_desc">Поймали новую мышь? Зафиксируйте её здесь.</p>
-                <div class="apple-inset space-y-3 text-[14px] font-medium text-dynamic-text">
-                    <div class="flex items-start text-morph" data-id="c1_li1"><i class="fa-solid fa-check text-orange-500 mt-1 mr-3 text-sm"></i> Введите номер заявки.</div>
-                    <div class="flex items-start text-morph" data-id="c1_li2"><i class="fa-solid fa-check text-orange-500 mt-1 mr-3 text-sm"></i> Выберите состав бригады (ваше имя уже там).</div>
-                    <div class="flex items-start text-morph" data-id="c1_li3"><i class="fa-solid fa-check text-orange-500 mt-1 mr-3 text-sm"></i> Нажмите «ПОДТВЕРДИТЬ СОСТАВ».</div>
+                <p class="text-[16px] text-dynamic-muted mb-6 leading-relaxed font-medium text-morph content-3d" data-id="card1_desc">Поймали новую мышь? Зафиксируйте её здесь.</p>
+                <div class="apple-inset space-y-4 text-[15px] font-medium text-dynamic-text">
+                    <div class="flex items-start text-morph" data-id="c1_li1"><i class="fa-solid fa-check text-orange-500 mt-1 mr-4 text-base"></i> Введите номер заявки.</div>
+                    <div class="flex items-start text-morph" data-id="c1_li2"><i class="fa-solid fa-check text-orange-500 mt-1 mr-4 text-base"></i> Выберите состав бригады (ваше имя уже там).</div>
+                    <div class="flex items-start text-morph" data-id="c1_li3"><i class="fa-solid fa-check text-orange-500 mt-1 mr-4 text-base"></i> Нажмите «ПОДТВЕРДИТЬ СОСТАВ».</div>
                 </div>
             </div>
         </div>
 
-        <!-- Карточка 2 -->
         <div class="apple-card reveal tilt-card" onclick="triggerHaptic('light')">
-            <div class="p-6">
-                <div class="flex items-center mb-4 content-3d">
-                    <div class="apple-app-icon"><i class="fa-solid fa-list-ul text-2xl icon-3d icon-3d-purple"></i></div>
-                    <h3 class="font-display text-2xl font-bold ml-4 text-dynamic-text text-morph" data-id="card2_title">Мои заявки (Лоток)</h3>
+            <div class="glare"></div>
+            <div class="p-7">
+                <div class="flex items-center mb-5 content-3d">
+                    <div class="apple-app-icon"><i class="fa-solid fa-list-ul text-[28px] icon-3d icon-3d-purple"></i></div>
+                    <h3 class="font-display text-2xl font-bold ml-5 text-dynamic-text text-morph" data-id="card2_title">Мои заявки (Лоток)</h3>
                 </div>
-                <p class="text-[15px] text-dynamic-muted mb-5 leading-relaxed font-medium text-morph content-3d" data-id="card2_desc">Ваш рабочий стол.</p>
-                <div class="space-y-4 text-[14px] content-3d">
-                    <div class="flex items-center"><span class="ios-pill w-28">Пауза</span><span class="ml-3 text-dynamic-text font-medium text-morph" data-id="st_pause_desc">Бросить работу (указать причину).</span></div>
-                    <div class="flex items-center"><span class="ios-pill w-28">В работу</span><span class="ml-3 text-dynamic-text font-medium text-morph" data-id="st_work_desc">Снять с паузы.</span></div>
-                    <div class="flex items-center"><span class="ios-pill w-28">Завершить</span><span class="ml-3 text-dynamic-text font-medium text-morph" data-id="st_done_desc">Мышь съедена. В Архив.</span></div>
-                    <div class="flex items-center mt-2 pt-3 border-t border-dynamic-border"><span class="ios-pill w-28 shadow-md font-bold text-orange-600">На завтра</span><span class="ml-3 text-dynamic-text font-bold text-morph" data-id="st_tmrw_desc">Важно! Добавляет в план.</span></div>
+                <p class="text-[16px] text-dynamic-muted mb-6 leading-relaxed font-medium text-morph content-3d" data-id="card2_desc">Ваш рабочий стол.</p>
+                <div class="space-y-5 text-[15px] content-3d">
+                    <div class="flex items-center"><span class="ios-pill w-32">Пауза</span><span class="ml-4 text-dynamic-text font-medium text-morph" data-id="st_pause_desc">Бросить работу (указать причину).</span></div>
+                    <div class="flex items-center"><span class="ios-pill w-32">В работу</span><span class="ml-4 text-dynamic-text font-medium text-morph" data-id="st_work_desc">Снять с паузы.</span></div>
+                    <div class="flex items-center"><span class="ios-pill w-32">Завершить</span><span class="ml-4 text-dynamic-text font-medium text-morph" data-id="st_done_desc">Мышь съедена. В Архив.</span></div>
+                    <div class="flex items-center mt-3 pt-4 border-t border-dynamic-border"><span class="ios-pill w-32 shadow-md font-bold text-orange-600 border-orange-200">На завтра</span><span class="ml-4 text-dynamic-text font-bold text-morph" data-id="st_tmrw_desc">Важно! Добавляет в план.</span></div>
                 </div>
             </div>
         </div>
 
-        <!-- Карточка 3 -->
         <div class="apple-card reveal tilt-card overflow-hidden" onclick="triggerHaptic('light')">
-            <div class="p-6">
-                <div class="flex items-center mb-4 relative z-10 content-3d">
-                    <div class="apple-app-icon"><i class="fa-solid fa-calendar-day text-2xl icon-3d icon-3d-orange"></i></div>
-                    <h3 class="font-display text-2xl font-bold ml-4 text-dynamic-text text-morph" data-id="card3_title">На завтра (Миска)</h3>
+            <div class="glare"></div>
+            <div class="p-7">
+                <div class="flex items-center mb-5 relative z-10 content-3d">
+                    <div class="apple-app-icon"><i class="fa-solid fa-calendar-day text-[28px] icon-3d icon-3d-orange"></i></div>
+                    <h3 class="font-display text-2xl font-bold ml-5 text-dynamic-text text-morph" data-id="card3_title">На завтра (Миска)</h3>
                 </div>
-                <p class="text-[15px] text-dynamic-muted mb-5 leading-relaxed font-medium relative z-10 text-morph content-3d" data-id="card3_desc">Корзина планов. Если передумали — жмите Убрать.</p>
-                <div class="apple-inset relative z-10">
-                    <p class="text-orange-600 text-[13px] font-bold uppercase tracking-widest mb-1 text-morph" data-id="card3_rule_title"><i class="fa-solid fa-bolt mr-2"></i> Железное правило</p>
-                    <p class="text-[14px] font-medium text-dynamic-text opacity-90 leading-relaxed text-morph" data-id="card3_rule">Запись строго <strong>с 12:00 до 16:30</strong>. После кормушка закрывается!</p>
+                <p class="text-[16px] text-dynamic-muted mb-6 leading-relaxed font-medium relative z-10 text-morph content-3d" data-id="card3_desc">Корзина планов. Если передумали — жмите Убрать.</p>
+                <div class="apple-inset relative z-10 bg-orange-50/50 border-orange-200/50">
+                    <p class="text-orange-600 text-[14px] font-bold uppercase tracking-widest mb-2 text-morph" data-id="card3_rule_title"><i class="fa-solid fa-bolt mr-2"></i> Железное правило</p>
+                    <p class="text-[15px] font-medium text-dynamic-text opacity-90 leading-relaxed text-morph" data-id="card3_rule">Запись строго <strong>с 12:00 до 16:30</strong>. После кормушка закрывается!</p>
                 </div>
             </div>
         </div>
 
-        <!-- Карточка 4 -->
         <div class="apple-card reveal tilt-card" onclick="triggerHaptic('heavy')">
-            <div class="p-6 flex items-center content-3d">
-                <div class="apple-app-icon"><i class="fa-solid fa-life-ring text-2xl icon-3d icon-3d-red"></i></div>
-                <div class="ml-4">
+            <div class="glare"></div>
+            <div class="p-7 flex items-center content-3d">
+                <div class="apple-app-icon"><i class="fa-solid fa-life-ring text-[28px] icon-3d icon-3d-red"></i></div>
+                <div class="ml-5">
                     <h3 class="font-display text-xl font-bold text-dynamic-text text-morph" data-id="card4_title">Сообщить о проблеме</h3>
-                    <p class="text-[14px] font-medium text-dynamic-muted mt-1 text-morph" data-id="card4_desc">Принесет жалобу в зубах прямо Насте.</p>
+                    <p class="text-[15px] font-medium text-dynamic-muted mt-2 text-morph" data-id="card4_desc">Принесет жалобу в зубах прямо Насте.</p>
                 </div>
             </div>
         </div>
 
-        <h2 class="text-[13px] font-bold text-dynamic-muted uppercase tracking-widest mb-3 ml-4 mt-10 hide-for-elderly reveal"><i class="fa-solid fa-crown mr-2 opacity-50"></i> Вожакам стаи</h2>
-        <div class="apple-card hide-for-elderly p-5 grid grid-cols-2 gap-3 reveal tilt-card">
-            <div class="apple-inset flex flex-col justify-between hover:bg-white/50 transition cursor-pointer" onclick="triggerHaptic('light')">
-                <div class="content-3d w-full flex justify-center mb-4 mt-2"><i class="fa-solid fa-bullhorn text-3xl icon-3d icon-3d-blue"></i></div>
-                <div class="content-3d text-center"><h4 class="font-bold text-[15px] mb-1 text-dynamic-text">Опрос</h4><p class="text-[12px] text-dynamic-muted leading-snug text-morph" data-id="adm_1">Разбудить всех пинком.</p></div>
+        <h2 class="text-[14px] font-bold text-dynamic-muted uppercase tracking-widest mb-4 ml-5 mt-12 hide-for-elderly reveal"><i class="fa-solid fa-crown mr-2 opacity-50"></i> Вожакам стаи</h2>
+        <div class="apple-card hide-for-elderly p-6 grid grid-cols-2 gap-4 reveal tilt-card">
+            <div class="glare"></div>
+            <div class="apple-inset flex flex-col justify-between hover:bg-white/60 transition cursor-pointer" onclick="triggerHaptic('light')">
+                <div class="content-3d w-full flex justify-center mb-5 mt-2"><i class="fa-solid fa-bullhorn text-4xl icon-3d icon-3d-blue"></i></div>
+                <div class="content-3d text-center"><h4 class="font-bold text-[16px] mb-1 text-dynamic-text">Опрос</h4><p class="text-[13px] text-dynamic-muted leading-snug text-morph" data-id="adm_1">Разбудить всех пинком.</p></div>
             </div>
-            <div class="apple-inset flex flex-col justify-between hover:bg-white/50 transition cursor-pointer" onclick="triggerHaptic('light')">
-                <div class="content-3d w-full flex justify-center mb-4 mt-2"><i class="fa-solid fa-eye text-3xl icon-3d icon-3d-purple"></i></div>
-                <div class="content-3d text-center"><h4 class="font-bold text-[15px] mb-1 text-dynamic-text">Черновик</h4><p class="text-[12px] text-dynamic-muted leading-snug text-morph" data-id="adm_2">Подсмотреть на завтра.</p></div>
+            <div class="apple-inset flex flex-col justify-between hover:bg-white/60 transition cursor-pointer" onclick="triggerHaptic('light')">
+                <div class="content-3d w-full flex justify-center mb-5 mt-2"><i class="fa-solid fa-eye text-4xl icon-3d icon-3d-purple"></i></div>
+                <div class="content-3d text-center"><h4 class="font-bold text-[16px] mb-1 text-dynamic-text">Черновик</h4><p class="text-[13px] text-dynamic-muted leading-snug text-morph" data-id="adm_2">Подсмотреть на завтра.</p></div>
             </div>
-            <div class="apple-inset col-span-2 sm:col-span-1 hover:bg-white/50 transition cursor-pointer" onclick="triggerHaptic('medium')">
-                <div class="content-3d w-full flex justify-center mb-4 mt-2"><i class="fa-solid fa-users-slash text-3xl icon-3d icon-3d-amber"></i></div>
-                <div class="content-3d text-center"><h4 class="font-bold text-[15px] text-dynamic-text mb-1">Кто не записался</h4><p class="text-[12px] text-dynamic-muted leading-snug text-morph" data-id="adm_3">Раздать лещи вонючкам.</p></div>
+            <div class="apple-inset col-span-2 sm:col-span-1 hover:bg-white/60 transition cursor-pointer" onclick="triggerHaptic('medium')">
+                <div class="content-3d w-full flex justify-center mb-5 mt-2"><i class="fa-solid fa-users-slash text-4xl icon-3d icon-3d-amber"></i></div>
+                <div class="content-3d text-center"><h4 class="font-bold text-[16px] text-dynamic-text mb-1">Кто не записался</h4><p class="text-[13px] text-dynamic-muted leading-snug text-morph" data-id="adm_3">Раздать лещи вонючкам.</p></div>
             </div>
-            <div class="apple-inset col-span-2 sm:col-span-1 hover:bg-white/50 transition cursor-pointer" onclick="triggerHaptic('medium')">
-                <div class="content-3d w-full flex justify-center mb-4 mt-2"><i class="fa-solid fa-circle-dot text-3xl icon-3d icon-3d-green animate-pulse"></i></div>
-                <div class="content-3d text-center"><h4 class="font-bold text-[15px] text-dynamic-text mb-1">Live-отчет</h4><p class="text-[12px] text-dynamic-muted leading-snug text-morph" data-id="adm_4">Онлайн-слежка ВКЛ/ВЫКЛ.</p></div>
+            <div class="apple-inset col-span-2 sm:col-span-1 hover:bg-white/60 transition cursor-pointer" onclick="triggerHaptic('medium')">
+                <div class="content-3d w-full flex justify-center mb-5 mt-2"><i class="fa-solid fa-circle-dot text-4xl icon-3d icon-3d-green animate-pulse"></i></div>
+                <div class="content-3d text-center"><h4 class="font-bold text-[16px] text-dynamic-text mb-1">Live-отчет</h4><p class="text-[13px] text-dynamic-muted leading-snug text-morph" data-id="adm_4">Онлайн-слежка ВКЛ/ВЫКЛ.</p></div>
             </div>
         </div>
 
-        <h2 class="text-[13px] font-bold text-dynamic-muted uppercase tracking-widest mb-3 ml-4 mt-10 hide-for-elderly reveal"><i class="fa-solid fa-table mr-2 opacity-50"></i> База Данных (Таблицы)</h2>
+        <h2 class="text-[14px] font-bold text-dynamic-muted uppercase tracking-widest mb-4 ml-5 mt-12 hide-for-elderly reveal"><i class="fa-solid fa-table mr-2 opacity-50"></i> База Данных (Таблицы)</h2>
         <div class="apple-card hide-for-elderly p-0 reveal tilt-card">
-            <div class="p-4 border-b border-dynamic-border flex items-center content-3d"><div class="apple-app-icon w-12 h-12 mr-4"><i class="fa-solid fa-users text-xl icon-3d icon-3d-blue"></i></div><div><h3 class="font-bold text-[15px] text-dynamic-text">1. Сотрудники</h3><p class="text-[13px] text-dynamic-muted mt-0.5">Допущенные к боту.</p></div></div>
-            <div class="p-4 border-b border-dynamic-border flex items-center content-3d"><div class="apple-app-icon w-12 h-12 mr-4"><i class="fa-solid fa-crown text-xl icon-3d icon-3d-purple"></i></div><div><h3 class="font-bold text-[15px] text-dynamic-text">2. Админы</h3><p class="text-[13px] text-dynamic-muted mt-0.5">Получают жалобы.</p></div></div>
-            <div class="p-4 border-b border-dynamic-border flex items-center content-3d"><div class="apple-app-icon w-12 h-12 mr-4"><i class="fa-solid fa-bolt text-xl icon-3d icon-3d-green"></i></div><div><h3 class="font-bold text-[15px] text-dynamic-text">3. Live</h3><p class="text-[13px] text-dynamic-muted mt-0.5">Дашборд онлайн. Не трогать!</p></div></div>
-            <div class="p-4 border-b border-dynamic-border flex items-center content-3d"><div class="apple-app-icon w-12 h-12 mr-4"><i class="fa-solid fa-star text-xl icon-3d icon-3d-orange"></i></div><div><h3 class="font-bold text-[15px] text-dynamic-text">6. Отчеты</h3><p class="text-[13px] text-dynamic-muted mt-0.5">Главный архив (выгрузка в 16:30).</p></div></div>
-            <div class="p-4 flex items-center content-3d"><div class="apple-app-icon w-12 h-12 mr-4"><i class="fa-solid fa-brain text-xl icon-3d icon-3d-red"></i></div><div><h3 class="font-bold text-[15px] text-dynamic-text">7. Память (Опасно)</h3><p class="text-[13px] text-dynamic-muted mt-0.5">Ремонт: удалить строку зависшего.</p></div></div>
+            <div class="glare"></div>
+            <div class="p-5 border-b border-dynamic-border flex items-center content-3d"><div class="apple-app-icon w-14 h-14 mr-5"><i class="fa-solid fa-users text-2xl icon-3d icon-3d-blue"></i></div><div><h3 class="font-bold text-[16px] text-dynamic-text">1. Сотрудники</h3><p class="text-[14px] text-dynamic-muted mt-1">Допущенные к боту.</p></div></div>
+            <div class="p-5 border-b border-dynamic-border flex items-center content-3d"><div class="apple-app-icon w-14 h-14 mr-5"><i class="fa-solid fa-crown text-2xl icon-3d icon-3d-purple"></i></div><div><h3 class="font-bold text-[16px] text-dynamic-text">2. Админы</h3><p class="text-[14px] text-dynamic-muted mt-1">Получают жалобы.</p></div></div>
+            <div class="p-5 border-b border-dynamic-border flex items-center content-3d"><div class="apple-app-icon w-14 h-14 mr-5"><i class="fa-solid fa-bolt text-2xl icon-3d icon-3d-green"></i></div><div><h3 class="font-bold text-[16px] text-dynamic-text">3. Live</h3><p class="text-[14px] text-dynamic-muted mt-1">Дашборд онлайн. Не трогать!</p></div></div>
+            <div class="p-5 border-b border-dynamic-border flex items-center content-3d"><div class="apple-app-icon w-14 h-14 mr-5"><i class="fa-solid fa-star text-2xl icon-3d icon-3d-orange"></i></div><div><h3 class="font-bold text-[16px] text-dynamic-text">6. Отчеты</h3><p class="text-[14px] text-dynamic-muted mt-1">Главный архив (выгрузка в 16:30).</p></div></div>
+            <div class="p-5 flex items-center content-3d"><div class="apple-app-icon w-14 h-14 mr-5"><i class="fa-solid fa-brain text-2xl icon-3d icon-3d-red"></i></div><div><h3 class="font-bold text-[16px] text-dynamic-text">7. Память (Опасно)</h3><p class="text-[14px] text-dynamic-muted mt-1">Ремонт: удалить строку зависшего.</p></div></div>
         </div>
 
-        <h2 class="text-[13px] font-mono text-dynamic-muted uppercase tracking-widest mb-3 ml-4 mt-10 hide-for-elderly reveal">> sys_admin</h2>
+        <h2 class="text-[14px] font-mono text-dynamic-muted uppercase tracking-widest mb-4 ml-5 mt-12 hide-for-elderly reveal">> sys_admin</h2>
         <div class="apple-card hide-for-elderly p-0 overflow-hidden reveal tilt-card">
-            <div class="bg-black/5 px-4 py-2 flex items-center border-b border-dynamic-border content-3d">
-                <div class="flex gap-1.5 mr-4">
-                    <div class="w-3 h-3 rounded-full bg-red-400"></div><div class="w-3 h-3 rounded-full bg-yellow-400"></div><div class="w-3 h-3 rounded-full bg-green-400"></div>
+            <div class="glare"></div>
+            <div class="bg-black/5 px-5 py-3 flex items-center border-b border-dynamic-border content-3d">
+                <div class="flex gap-2 mr-5">
+                    <div class="w-3.5 h-3.5 rounded-full bg-red-400"></div><div class="w-3.5 h-3.5 rounded-full bg-yellow-400"></div><div class="w-3.5 h-3.5 rounded-full bg-green-400"></div>
                 </div>
-                <span class="font-mono text-[12px] text-dynamic-muted">cloudflare_terminal</span>
+                <span class="font-mono text-[13px] text-dynamic-muted font-bold">cloudflare_terminal</span>
             </div>
-            <div class="p-5 font-mono text-[13px] space-y-4 text-dynamic-text opacity-90 content-3d">
+            <div class="p-6 font-mono text-[14px] space-y-5 text-dynamic-text opacity-90 content-3d leading-relaxed">
                 <p>Бот пингует себя раз в минуту. Cloudflare настроен на авторестарт.</p>
-                <div class="border-l-2 border-orange-400 pl-3">
-                    <strong class="block mb-1 font-bold text-orange-600">Safe.Crash(16:30)</strong>
+                <div class="border-l-4 border-orange-400 pl-4 bg-orange-50/30 p-3 rounded-r-lg">
+                    <strong class="block mb-2 font-bold text-orange-600">Safe.Crash(16:30)</strong>
                     <span>Если упали в 16:29, бот выгрузит отчет при рестарте, дождется ответа Google, потом очистит телефоны.</span>
                 </div>
             </div>
         </div>
 
-        <div class="mt-12 mb-10 relative z-10 reveal tilt-card">
-            <div class="apple-card p-6 sm:p-8 border border-dynamic-border text-center mx-auto max-w-lg shadow-2xl relative overflow-visible bg-[#fbfbfd]">
-                <div class="absolute -top-3 left-1/2 -translate-x-1/2 w-20 h-6 bg-gradient-to-b from-gray-300 to-gray-400 rounded-lg shadow-md border border-gray-400 z-20 flex justify-center items-center">
-                    <div class="w-12 h-2 bg-gray-500 rounded-full opacity-50"></div>
+        <div class="mt-16 mb-12 relative z-10 reveal tilt-card">
+            <div class="apple-card p-8 sm:p-10 border border-dynamic-border text-center mx-auto max-w-lg shadow-2xl relative overflow-visible bg-gradient-to-b from-[#ffffff] to-[#f5f5f7]">
+                <div class="glare"></div>
+                <!-- 3D Clip -->
+                <div class="absolute -top-4 left-1/2 -translate-x-1/2 w-24 h-8 bg-gradient-to-b from-gray-200 to-gray-400 rounded-lg shadow-lg border border-gray-400/50 z-20 flex justify-center items-center transform-style: preserve-3d transform: translateZ(20px);">
+                    <div class="w-14 h-2 bg-gray-600 rounded-full opacity-60 inset-shadow"></div>
                 </div>
-                <i class="fa-solid fa-file-signature text-5xl text-gray-300 mb-4 mt-2 content-3d icon-3d icon-3d-gray"></i>
-                <h3 class="text-2xl font-bold uppercase text-dynamic-text border-b border-gray-200 pb-4 mb-6 tracking-widest text-morph content-3d" data-id="warn_title">Лист ознакомления</h3>
-                <p class="text-xl font-bold text-red-600 mb-6 text-morph content-3d" data-id="warn_subtitle">ЧУБАЙС КУСАЕТСЯ!</p>
-                <div class="apple-inset bg-red-50 border-red-200 inline-block uppercase text-morph mb-8 font-bold text-[14px] text-red-800" data-id="warn_action">ЗА ШКИРКУ НЕ БРАТЬ!</div>
-                <div class="border-t border-gray-200 pt-6 flex justify-between items-end content-3d">
-                    <span class="text-[12px] text-gray-500 font-bold uppercase tracking-widest text-morph" data-id="warn_sign">Подпись Насти:</span>
-                    <span class="border-b border-gray-400 w-24 sm:w-32 inline-block opacity-40"></span>
+                
+                <i class="fa-solid fa-file-signature text-6xl text-gray-300 mb-5 mt-4 content-3d icon-3d icon-3d-gray"></i>
+                <h3 class="text-2xl font-bold uppercase text-dynamic-text border-b-2 border-gray-200/50 pb-5 mb-7 tracking-widest text-morph content-3d" data-id="warn_title">Лист ознакомления</h3>
+                <p class="text-2xl font-black text-red-600 mb-7 text-morph content-3d drop-shadow-md" data-id="warn_subtitle">ЧУБАЙС КУСАЕТСЯ!</p>
+                <div class="apple-inset bg-red-50/80 border-red-200/80 inline-block uppercase text-morph mb-10 font-bold text-[15px] text-red-800 tracking-wide" data-id="warn_action">ЗА ШКИРКУ НЕ БРАТЬ!</div>
+                <div class="border-t-2 border-gray-200/50 pt-8 flex justify-between items-end content-3d">
+                    <span class="text-[14px] text-gray-500 font-bold uppercase tracking-widest text-morph" data-id="warn_sign">Подпись Насти:</span>
+                    <span class="border-b-2 border-gray-400 w-32 sm:w-40 inline-block opacity-40"></span>
                 </div>
             </div>
         </div>
     </div>
 
     <div id="wife-container">
-        <div class="absolute -top-20 left-2 apple-inset backdrop-blur-xl border border-white/80 bg-white/80 text-dynamic-text text-[13px] font-bold py-3 px-4 w-56 animate-float z-50 text-center shadow-lg rounded-2xl" id="wife-alert-hint" data-id="wife_hint">
+        <div class="absolute -top-24 left-2 apple-inset backdrop-blur-2xl border border-white/90 bg-white/90 text-dynamic-text text-[14px] font-bold py-4 px-5 w-64 animate-float z-50 text-center shadow-2xl rounded-3xl" id="wife-alert-hint" data-id="wife_hint">
             Запомни, что делать, если Чубайс молчит! 👇
-            <div class="absolute -bottom-1.5 left-6 w-3 h-3 bg-white border-r border-b border-white/80 transform rotate-45"></div>
+            <div class="absolute -bottom-2 left-8 w-4 h-4 bg-white border-r border-b border-white/90 transform rotate-45 shadow-sm"></div>
         </div>
         
         <div class="apple-fab cursor-pointer hover:scale-105" onclick="toggleWife(this)">
-            <i class="fa-solid fa-cat text-[26px] icon-3d icon-3d-orange" style="transform: translateZ(10px)"></i>
+            <i class="fa-solid fa-cat text-[30px] icon-3d icon-3d-orange" style="transform: translateZ(15px)"></i>
         </div>
 
         <div class="imessage-bubble" id="wife-bubble">
-            <p class="font-bold mb-2 flex items-center text-[15px]" data-id="wife_name">
-                <i class="fa-solid fa-user-circle text-orange-500 mr-2 text-lg"></i> Мадам Эс. <span class="text-[10px] text-gray-500 ml-2 border border-gray-300 px-1.5 py-0.5 rounded uppercase tracking-wide bg-white">(Сыкуха)</span>
+            <p class="font-bold mb-3 flex items-center text-[16px]" data-id="wife_name">
+                <i class="fa-solid fa-user-circle text-orange-500 mr-2 text-xl"></i> Мадам Эс. <span class="text-[11px] text-gray-500 ml-2 border border-gray-300 px-2 py-0.5 rounded-md uppercase tracking-wider bg-gray-50/50">(Сыкуха)</span>
             </p>
-            <p class="mb-2 text-[14px] text-dynamic-text text-morph font-medium" data-id="wife_text1">Без паники! Он под валерьянкой.</p>
-            <p class="apple-inset bg-orange-50 border-orange-100 p-3 text-gray-800 text-[13px] leading-relaxed text-morph font-medium" data-id="wife_text2">
+            <p class="mb-3 text-[15px] text-dynamic-text text-morph font-medium" data-id="wife_text1">Без паники! Он под валерьянкой.</p>
+            <p class="apple-inset bg-orange-50/80 border-orange-100/80 p-4 text-gray-800 text-[14px] leading-relaxed text-morph font-medium" data-id="wife_text2">
                 Если он <strong>5-6 минут молчит</strong> — я его пинаю. У нас алименты и 14 котят, кошачья жизнь суровая. Смена продолжается!
             </p>
         </div>
@@ -469,8 +471,8 @@
         
         if (tg) {
             tg.ready(); tg.expand(); 
-            if(tg.setHeaderColor) tg.setHeaderColor('#F2F2F7');
-            if(tg.setBackgroundColor) tg.setBackgroundColor('#F2F2F7');
+            if(tg.setHeaderColor) tg.setHeaderColor('#F5F5F7');
+            if(tg.setBackgroundColor) tg.setBackgroundColor('#F5F5F7');
             
             tg.MainButton.setText('🚀 ЗАПУСТИТЬ ЧУБАЙСА (/start)');
             tg.MainButton.color = '#F97316'; tg.MainButton.textColor = '#FFFFFF';
@@ -491,30 +493,35 @@
             }
         }
 
-        // --- 3D CANVAS ПЫЛЬ / СНЕГ ---
+        // --- 3D PARTICLE ENGINE WITH MOUSE INTERACTION ---
         const canvas = document.getElementById('dust-canvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
         let w = canvas.width = window.innerWidth;
         let h = canvas.height = window.innerHeight;
+        let mouseX = w/2, mouseY = h/2;
 
-        window.addEventListener('resize', () => {
-            w = canvas.width = window.innerWidth;
-            h = canvas.height = window.innerHeight;
-            initParticles();
-        });
+        window.addEventListener('mousemove', e => { mouseX = e.clientX; mouseY = e.clientY; });
+        window.addEventListener('resize', () => { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; initParticles(); });
 
         class Particle {
             constructor() {
                 this.x = Math.random() * w;
                 this.y = Math.random() * h;
                 this.z = Math.random() * 2 + 0.5;
-                this.r = (Math.random() * 2 + 1) * this.z;
-                this.vx = (Math.random() - 0.5) * 0.5;
+                this.r = (Math.random() * 2.5 + 1) * this.z;
+                this.vx = (Math.random() - 0.5) * 0.4;
                 this.vy = -(Math.random() * 0.5 + 0.2) * this.z;
-                this.alpha = Math.random() * 0.5 + 0.1;
+                this.alpha = Math.random() * 0.6 + 0.1;
             }
             update() {
+                // Subtle mouse avoidance
+                let dx = mouseX - this.x; let dy = mouseY - this.y;
+                let dist = Math.sqrt(dx*dx + dy*dy);
+                if (dist < 150) {
+                    this.x -= (dx/dist) * 0.5;
+                    this.y -= (dy/dist) * 0.5;
+                }
                 this.x += this.vx; this.y += this.vy;
                 if (this.y < -10) this.y = h + 10;
                 if (this.x < -10) this.x = w + 10;
@@ -523,14 +530,14 @@
             draw() {
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(200, 200, 210, ${this.alpha})`;
+                ctx.fillStyle = `rgba(180, 180, 200, ${this.alpha})`;
                 ctx.fill();
             }
         }
 
         function initParticles() {
             particles = [];
-            let count = window.innerWidth < 600 ? 40 : 100;
+            let count = window.innerWidth < 600 ? 50 : 120;
             for(let i=0; i<count; i++) particles.push(new Particle());
         }
 
@@ -542,20 +549,20 @@
         initParticles(); animateCanvas();
 
         function createExplosion(x, y) {
-            const emojis = ['🐾', '🐈', '✨', '💨'];
-            for(let i=0; i<15; i++) {
+            const emojis = ['🐾', '🐈', '✨', '🐟'];
+            for(let i=0; i<20; i++) {
                 let el = document.createElement('div');
                 el.innerText = emojis[Math.floor(Math.random()*emojis.length)];
                 el.style.position = 'fixed'; el.style.left = x + 'px'; el.style.top = y + 'px';
-                el.style.fontSize = '24px'; el.style.pointerEvents = 'none'; el.style.zIndex = '99999';
+                el.style.fontSize = '28px'; el.style.pointerEvents = 'none'; el.style.zIndex = '99999';
                 document.body.appendChild(el);
-                const angle = Math.random() * Math.PI * 2; const velocity = 50 + Math.random() * 150;
+                const angle = Math.random() * Math.PI * 2; const velocity = 80 + Math.random() * 200;
                 const tx = Math.cos(angle) * velocity; const ty = Math.sin(angle) * velocity - 100; 
                 el.animate([
-                    { transform: 'translate(-50%, -50%) scale(0.5) rotate(0deg)', opacity: 0.8 },
-                    { transform: `translate(calc(-50% + ${tx}px), calc(-50% + ${ty}px)) scale(1.5) rotate(${Math.random()*360}deg)`, opacity: 0 }
-                ], { duration: 800 + Math.random()*600, easing: 'cubic-bezier(0.25, 1, 0.5, 1)' });
-                setTimeout(()=>el.remove(), 1400);
+                    { transform: 'translate(-50%, -50%) scale(0.5) rotate(0deg)', opacity: 1 },
+                    { transform: `translate(calc(-50% + ${tx}px), calc(-50% + ${ty}px)) scale(1.5) rotate(${Math.random()*720}deg)`, opacity: 0 }
+                ], { duration: 1000 + Math.random()*800, easing: 'cubic-bezier(0.25, 1, 0.5, 1)' });
+                setTimeout(()=>el.remove(), 1800);
             }
         }
 
@@ -573,13 +580,13 @@
 
         // --- Текстовая база для режимов ---
         const texts = {
-            main_title: { normal: "Чубайс <span class='text-liquid-gradient block mt-1'>Pro (2026)</span>", retro: "ЭВМ «Чубайс» <span class='block mt-1 opacity-80 text-xl'>Ветеран ПНР</span>", elderly: "Крупная памятка <span class='block mt-1 font-normal text-xl'>для телефона</span>" },
+            main_title: { normal: "Чубайс <span class='text-liquid-gradient block mt-1'>Pro (2026)</span>", retro: "ЭВМ «Чубайс» <span class='block mt-1 opacity-80 text-2xl'>Ветеран ПНР</span>", elderly: "Крупная памятка <span class='block mt-1 font-normal text-2xl'>для телефона</span>" },
             main_desc: { normal: "Интеллектуальный помощник. Собирает отчеты, пока спит на сервере. Подчиняется исключительно Насте.", retro: "Комплекс учета выработки. Одобрено парткомом. Старший мастер - т. Настя.", elderly: "Прочитайте простые правила. Одобрено Настей." },
             menu_title: { normal: "Главное меню (Когтеточка)", retro: "Пульт управления", elderly: "Главное меню" },
             card1_desc: { normal: "Поймали новую мышь? Зафиксируйте её здесь.", retro: "Оформляется строго по ГОСТу.", elderly: "Нажимайте, когда начинаете новую работу." },
-            c1_li1: { normal: "<i class='fa-solid fa-check text-orange-500 mt-1 mr-3 text-sm'></i> Введите номер заявки.", retro: "<i class='fa-solid fa-check text-orange-500 mt-1 mr-3 text-sm'></i> Заполните путевку.", elderly: "<i class='fa-solid fa-check text-orange-500 mt-1 mr-3 text-sm'></i> Введите номер задания цифрами." },
-            c1_li2: { normal: "<i class='fa-solid fa-check text-orange-500 mt-1 mr-3 text-sm'></i> Выберите состав бригады.", retro: "<i class='fa-solid fa-check text-orange-500 mt-1 mr-3 text-sm'></i> Утвердите состав артели.", elderly: "<i class='fa-solid fa-check text-orange-500 mt-1 mr-3 text-sm'></i> Выберите фамилии коллег." },
-            c1_li3: { normal: "<i class='fa-solid fa-check text-orange-500 mt-1 mr-3 text-sm'></i> Нажмите «ПОДТВЕРДИТЬ СОСТАВ».", retro: "<i class='fa-solid fa-check text-orange-500 mt-1 mr-3 text-sm'></i> Нажмите «ПОДТВЕРДИТЬ СОСТАВ».", elderly: "<i class='fa-solid fa-check text-orange-500 mt-1 mr-3 text-sm'></i> Нажмите «ПОДТВЕРДИТЬ СОСТАВ»." },
+            c1_li1: { normal: "<i class='fa-solid fa-check text-orange-500 mt-1 mr-4 text-base'></i> Введите номер заявки.", retro: "<i class='fa-solid fa-check text-orange-500 mt-1 mr-4 text-base'></i> Заполните путевку.", elderly: "<i class='fa-solid fa-check text-orange-500 mt-1 mr-4 text-base'></i> Введите номер задания цифрами." },
+            c1_li2: { normal: "<i class='fa-solid fa-check text-orange-500 mt-1 mr-4 text-base'></i> Выберите состав бригады.", retro: "<i class='fa-solid fa-check text-orange-500 mt-1 mr-4 text-base'></i> Утвердите состав артели.", elderly: "<i class='fa-solid fa-check text-orange-500 mt-1 mr-4 text-base'></i> Выберите фамилии коллег." },
+            c1_li3: { normal: "<i class='fa-solid fa-check text-orange-500 mt-1 mr-4 text-base'></i> Нажмите «ПОДТВЕРДИТЬ СОСТАВ».", retro: "<i class='fa-solid fa-check text-orange-500 mt-1 mr-4 text-base'></i> Нажмите «ПОДТВЕРДИТЬ СОСТАВ».", elderly: "<i class='fa-solid fa-check text-orange-500 mt-1 mr-4 text-base'></i> Нажмите «ПОДТВЕРДИТЬ СОСТАВ»." },
             card2_title: { normal: "Мои заявки (Лоток)", retro: "Мои заявки (Журнал)", elderly: "Мои заявки" },
             card2_desc: { normal: "Ваш рабочий стол.", retro: "Журнал учета рабочего времени.", elderly: "Здесь ваши текущие дела." },
             st_pause_desc: { normal: "Бросить работу (указать причину).", retro: "Приостановить производство.", elderly: "Отложить работу на потом." },
@@ -598,12 +605,15 @@
             adm_4: { normal: "Онлайн-слежка ВКЛ/ВЫКЛ.", retro: "Радар учета стахановцев.", elderly: "" },
             warn_title: { normal: "Лист ознакомления", retro: "ЖУРНАЛ ПО ТБ", elderly: "Журнал ознакомления" },
             warn_subtitle: { normal: "ЧУБАЙС КУСАЕТСЯ!", retro: "БЕЗ КАСКИ НЕ ВХОДИТЬ!", elderly: "ОЗНАКОМЛЕН" },
-            warn_action: { normal: "ЗА ШКИРКУ НЕ БРАТЬ!", retro: "ЗА ШКИРКУ НЕ БРАТЬ!", elderly: "РАСПИШИТЕСЬ ЗДЕСЬ" },
+            warn_action: { normal: "ЗА ШКИРКУ НЕ БРАТЬ!", retro: "ШТРАФ ЛИШЕНИЕ ПРЕМИИ!", elderly: "РАСПИШИТЕСЬ ЗДЕСЬ" },
             warn_sign: { normal: "Подпись Насти:", retro: "Виза Насти:", elderly: "Подпись Насти:" },
             wife_hint: { normal: "Запомни, что делать, если Чубайс молчит! 👇", retro: "Действия при отказе оборудования 👇", elderly: "Что делать, если программа сломалась 👇" },
-            wife_name: { normal: "<i class='fa-solid fa-user-circle text-orange-500 mr-2 text-lg'></i> Мадам Эс. <span class='text-[10px] text-gray-500 ml-2 border border-gray-300 px-1.5 py-0.5 rounded uppercase tracking-wide bg-white'>(Сыкуха)</span>", retro: "<i class='fa-solid fa-user-circle text-orange-500 mr-2 text-lg'></i> Дежурный механик", elderly: "<i class='fa-solid fa-user-circle text-orange-500 mr-2 text-lg'></i> Справка" },
+            wife_name: { normal: "<i class='fa-solid fa-user-circle text-orange-500 mr-2 text-xl'></i> Мадам Эс. <span class='text-[11px] text-gray-500 ml-2 border border-gray-300 px-2 py-0.5 rounded-md uppercase tracking-wider bg-gray-50/50'>(Сыкуха)</span>", retro: "<i class='fa-solid fa-user-circle text-orange-500 mr-2 text-xl'></i> Дежурный механик", elderly: "<i class='fa-solid fa-user-circle text-orange-500 mr-2 text-xl'></i> Справка" },
             wife_text1: { normal: "Без паники! Он под валерьянкой.", retro: "Валидол под язык! Супруг план перевыполняет.", elderly: "Ничего страшного! Программа обновляется." },
-            wife_text2: { normal: "Если он <strong>5-6 минут молчит</strong> — я его пинаю. У нас алименты и 14 котят, кошачья жизнь суровая. Смена продолжается!", retro: "Если <strong>5-6 минут телеграмму не отбивает</strong> — я беру скалку. Смена продолжается!", elderly: "Если не отвечает 5-6 минут, подождите немного. Смена продолжается." }
+            wife_text2: { normal: "Если он <strong>5-6 минут молчит</strong> — я его пинаю. У нас алименты и 14 котят, кошачья жизнь суровая. Смена продолжается!", retro: "Если <strong>5-6 минут телеграмму не отбивает</strong> — я беру скалку. Смена продолжается!", elderly: "Если не отвечает 5-6 минут, подождите немного. Смена продолжается." },
+            eld_warn1: { normal: "", retro: "", elderly: "Чтобы программа начала с вами работать, нужно отправить ей команду один раз." },
+            eld_warn2: { normal: "", retro: "", elderly: "Нажмите на кнопку в самом низу вашего телефона:" },
+            eld_warn3: { normal: "", retro: "", elderly: "Или напишите вручную: /start" }
         };
 
         function setMode(index, btnElement) {
@@ -611,7 +621,7 @@
             
             const indicator = document.getElementById('mode-indicator');
             indicator.style.width = btnElement.offsetWidth + 'px';
-            indicator.style.transform = `translateX(${btnElement.offsetLeft - 2}px)`;
+            indicator.style.transform = `translateX(${btnElement.offsetLeft - 3}px)`;
             
             document.querySelectorAll('.mode-btn').forEach((btn, i) => {
                 if (i === index) btn.classList.add('active'); else btn.classList.remove('active');
@@ -636,14 +646,14 @@
                     setTimeout(() => {
                         el.innerHTML = texts[id][modeKey];
                         el.classList.remove('blur-out');
-                    }, 400); 
+                    }, 500); 
                 }
             });
             
             if(tg && tg.setHeaderColor) {
-                if(index === 0) { tg.setHeaderColor('#F2F2F7'); tg.setBackgroundColor('#F2F2F7'); tg.MainButton.color = '#F97316'; tg.MainButton.textColor = '#FFFFFF'; }
-                if(index === 1) { tg.setHeaderColor('#EFE9D9'); tg.setBackgroundColor('#EFE9D9'); tg.MainButton.color = '#3E3222'; tg.MainButton.textColor = '#EFE9D9';}
-                if(index === 2) { tg.setHeaderColor('#FFFFFF'); tg.setBackgroundColor('#FFFFFF'); tg.MainButton.color = '#000000'; tg.MainButton.textColor = '#FFFFFF';}
+                if(index === 0) { tg.setHeaderColor('#F5F5F7'); tg.setBackgroundColor('#F5F5F7'); }
+                if(index === 1) { tg.setHeaderColor('#EAE3D2'); tg.setBackgroundColor('#EAE3D2'); }
+                if(index === 2) { tg.setHeaderColor('#FFFFFF'); tg.setBackgroundColor('#FFFFFF'); }
             }
         }
 
@@ -655,27 +665,55 @@
             bubble.classList.toggle('show');
         }
 
-        // --- 3D Магнетизм карточек ---
+        // --- ADVANCED 3D LERP ENGINE ---
         if (window.matchMedia("(hover: hover)").matches) {
             document.querySelectorAll('.tilt-card').forEach(card => {
+                let currentX = 0, currentY = 0;
+                let targetX = 0, targetY = 0;
+                let isHovering = false;
+                
+                function animateLerp() {
+                    if (document.body.classList.contains('elderly-mode') || document.body.classList.contains('retro-mode')) {
+                        card.style.transform = ''; return;
+                    }
+                    if (isHovering || Math.abs(targetX - currentX) > 0.1 || Math.abs(targetY - currentY) > 0.1) {
+                        currentX += (targetX - currentX) * 0.1;
+                        currentY += (targetY - currentY) * 0.1;
+                        card.style.transform = `rotateY(${currentX}deg) rotateX(${-currentY}deg) scale3d(1.02, 1.02, 1.02)`;
+                        requestAnimationFrame(animateLerp);
+                    } else {
+                        card.style.transform = '';
+                    }
+                }
+
                 card.addEventListener('mousemove', e => {
                     if(document.body.classList.contains('elderly-mode') || document.body.classList.contains('retro-mode')) return;
                     const rect = card.getBoundingClientRect();
                     const x = e.clientX - rect.left;
                     const y = e.clientY - rect.top;
-                    card.style.setProperty('--mouse-x', `${x}px`);
-                    card.style.setProperty('--mouse-y', `${y}px`);
                     
+                    // Update Glare
+                    card.style.setProperty('--mouse-x', `${(x / rect.width) * 100}%`);
+                    card.style.setProperty('--mouse-y', `${(y / rect.height) * 100}%`);
+                    
+                    // Update Tilt Target
                     const xc = rect.width / 2;
                     const yc = rect.height / 2;
-                    const dx = x - xc;
-                    const dy = y - yc;
-                    card.style.transform = `rotateY(${dx / 30}deg) rotateX(${-dy / 30}deg) scale3d(1.02, 1.02, 1.02)`;
+                    targetX = (x - xc) / 25;
+                    targetY = (y - yc) / 25;
                 });
+
+                card.addEventListener('mouseenter', () => {
+                    isHovering = true;
+                    requestAnimationFrame(animateLerp);
+                });
+
                 card.addEventListener('mouseleave', () => {
-                    card.style.transform = '';
+                    isHovering = false;
+                    targetX = 0; targetY = 0;
                     card.style.setProperty('--mouse-x', `50%`);
-                    card.style.setProperty('--mouse-y', `50%`);
+                    card.style.setProperty('--mouse-y', `-20%`);
+                    requestAnimationFrame(animateLerp);
                 });
             });
         }
@@ -686,18 +724,18 @@
                 setTimeout(() => {
                     const indicator = document.getElementById('mode-indicator');
                     indicator.style.width = firstBtn.offsetWidth + 'px';
-                    indicator.style.transform = `translateX(${firstBtn.offsetLeft - 2}px)`;
-                }, 50);
+                    indicator.style.transform = `translateX(${firstBtn.offsetLeft - 3}px)`;
+                }, 100);
             }
 
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach((entry, index) => {
                     if (entry.isIntersecting) {
-                        setTimeout(() => entry.target.classList.add('visible'), index * 100); 
+                        setTimeout(() => entry.target.classList.add('visible'), index * 120); 
                         observer.unobserve(entry.target);
                     }
                 });
-            }, { threshold: 0.1, rootMargin: "0px 0px -20px 0px" });
+            }, { threshold: 0.1, rootMargin: "0px 0px -40px 0px" });
 
             document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
         };
