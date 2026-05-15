@@ -60,9 +60,17 @@
             perspective: 1200px;
         }
 
+        /* Исправление снега:
+           Убрали z-index: -1, поставили z-index: 1, чтобы он был поверх фона body,
+           а весь контент обернули в z-index: 10
+        */
         #dust-canvas {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            pointer-events: none; z-index: -1; opacity: 1;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 1; opacity: 1;
+        }
+        
+        .content-layer {
+            position: relative; z-index: 10;
         }
 
         /* 3D Экструзия Иконок */
@@ -155,6 +163,20 @@
             display: flex; align-items: center; justify-content: center;
             transform: translateZ(25px);
         }
+
+        /* Анимации появления при загрузке (Hero) */
+        .hero-element {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: heroFadeUp 1s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+        }
+        @keyframes heroFadeUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .hero-delay-1 { animation-delay: 0.1s; }
+        .hero-delay-2 { animation-delay: 0.3s; }
+        .hero-delay-3 { animation-delay: 0.5s; }
+        .hero-delay-4 { animation-delay: 0.9s; }
 
         /* Анимации появления при скролле */
         .reveal-on-scroll {
@@ -294,7 +316,7 @@
         body.elderly-mode .apple-quote { border-left: 6px solid #000; background: #f9f9f9; box-shadow: none; border-radius: 0;}
         body.elderly-mode .hide-for-elderly { display: none !important; }
         body.elderly-mode .animate-float { animation: none !important; transform: none !important; }
-        body.elderly-mode .reveal-on-scroll { opacity: 1; transform: none; transition: none; } 
+        body.elderly-mode .reveal-on-scroll, body.elderly-mode .hero-element { opacity: 1; transform: none; transition: none; animation: none; } 
     </style>
 </head>
 <body class="antialiased">
@@ -322,254 +344,260 @@
 
     <canvas id="dust-canvas"></canvas>
 
-    <div class="nav-wrapper">
-        <div class="max-w-2xl mx-auto">
-            <div class="segmented-control">
-                <div id="mode-indicator" class="mode-indicator"></div>
-                <div class="magnetic-wrap active" onclick="setMode(0, this)">
-                    <div class="mode-btn">Молодые спецы</div>
-                </div>
-                <div class="magnetic-wrap" onclick="setMode(1, this)">
-                    <div class="mode-btn">Ветераны</div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <!-- Основной слой с контентом (поверх канваса) -->
+    <div class="content-layer">
 
-    <!-- Экран-Превью: занимает всю высоту экрана для вау-эффекта -->
-    <div class="min-h-[90vh] flex flex-col items-center justify-center text-center relative z-10 px-5 max-w-2xl mx-auto">
-        
-        <!-- ВАЖНО ВЕТЕРАНАМ -->
-        <div class="liquid-card mb-8 hidden hide-in-young border-4 border-red-600 rounded-2xl w-full" id="elderly-start-warning">
-            <div class="p-6 text-center">
-                <i class="fa-solid fa-triangle-exclamation text-5xl mb-4 text-red-600"></i>
-                <h2 class="text-3xl font-black mb-3">ОЧЕНЬ ВАЖНО!</h2>
-                <p class="font-bold text-xl mb-5">Чтобы программа начала работать, распишитесь в самом низу и нажмите появившуюся кнопку.</p>
-                <p class="text-gray-800 text-lg font-bold">Или напишите вручную команду: /start</p>
-            </div>
-        </div>
-
-        <!-- Парящая BWP Лапа с густой шерстью -->
-        <div class="mx-auto mb-4 cursor-pointer animate-float" onclick="playUIChime(); triggerHaptic('heavy')">
-            <i class="fa-solid fa-paw text-[110px] sm:text-[130px] bwp-gradient fur-heavy"></i>
-        </div>
-        
-        <h1 class="text-5xl sm:text-7xl font-black tracking-tight mb-3 text-morph" data-id="main_title">
-            <span class="ai-gradient fur-effect">Пушистый бот Чубайс</span><br>
-            <span class="text-2xl sm:text-3xl font-black ai-gradient fur-effect" style="text-shadow: 0 4px 15px rgba(0,0,0,0.1); transform: translateZ(30px); display: inline-block; margin-top: 10px;">Pro (2026)</span>
-        </h1>
-        <p class="text-[17px] text-dynamic-muted font-medium text-morph max-w-lg mx-auto leading-relaxed mt-4" data-id="main_desc">
-            Ваш цифровой ассистент <span class="note-sticker">🤖</span> по учету заявок. Мурчит, спит на сервере Cloudflare и <mark class="note-highlight pink">строго подчиняется Насте.</mark>
-        </p>
-
-        <!-- Анимация подсказки "Листайте вниз" -->
-        <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce opacity-60 flex flex-col items-center hide-for-elderly cursor-pointer" onclick="window.scrollBy({top: window.innerHeight*0.8, behavior: 'smooth'})">
-            <span class="text-[11px] font-bold uppercase tracking-widest mb-1 text-gray-500">Листай</span>
-            <i class="fa-solid fa-chevron-down text-gray-400 text-xl"></i>
-        </div>
-    </div>
-
-    <div class="px-5 max-w-2xl mx-auto relative z-10">
-
-        <h2 class="text-[14px] font-bold text-dynamic-muted uppercase tracking-widest mb-4 ml-5 text-morph reveal-on-scroll" data-id="menu_title">Главное меню (Когтеточка) <span class="note-sticker">🐈</span></h2>
-        
-        <!-- Карточка 1 -->
-        <div class="liquid-card reveal-on-scroll" onclick="triggerHaptic('light')">
-            <div class="p-7">
-                <div class="flex items-center mb-6" style="transform: translateZ(15px);">
-                    <div class="apple-app-icon"><i class="fa-solid fa-plus text-[26px] icon-3d-blue"></i></div>
-                    <div class="ml-5">
-                        <h3 class="text-[28px] font-black text-morph" data-id="card1_title"><span class="ai-gradient fur-effect">Новая заявка</span></h3>
-                        <p class="text-[15px] text-dynamic-muted text-morph mt-0.5" data-id="card1_subtitle">Поймали мышь <span class="note-sticker">🐭</span>? Фиксируем.</p>
+        <div class="nav-wrapper">
+            <div class="max-w-2xl mx-auto">
+                <div class="segmented-control">
+                    <div id="mode-indicator" class="mode-indicator"></div>
+                    <div class="magnetic-wrap active" onclick="setMode(0, this)">
+                        <div class="mode-btn">Молодые спецы</div>
                     </div>
-                </div>
-                
-                <details onclick="playUIClick()">
-                    <summary>
-                        <span class="text-morph" data-id="acc1_title">Алгоритм создания 🤔</span>
-                        <i class="fa-solid fa-chevron-down chevron"></i>
-                    </summary>
-                    <div class="details-content">
-                        <div class="apple-quote text-morph" data-id="acc1_text">
-                            <strong>1. Ввод номеров:</strong> Нажимаете кнопку, пишете номер. Несколько штук? Пишите через запятую.<br><br>
-                            <strong>2. Сбор бригады <span class="note-sticker">👷‍♂️</span>:</strong> Бот знает всех. Ваше имя добавляется автоматически. Введите пару букв фамилии коллеги — он его найдет по запаху в базе.<br><br>
-                            <strong>3. Сохранение:</strong> <mark class="note-highlight">Обязательно</mark> нажмите зеленую кнопку «✅ Подтвердить состав». Иначе бот посмотрит на вас как на дурака и выкинет заявку в лоток!
-                        </div>
+                    <div class="magnetic-wrap" onclick="setMode(1, this)">
+                        <div class="mode-btn">Ветераны</div>
                     </div>
-                </details>
-            </div>
-        </div>
-
-        <!-- Карточка 2 -->
-        <div class="liquid-card reveal-on-scroll" onclick="triggerHaptic('light')">
-            <div class="p-7">
-                <div class="flex items-center mb-6" style="transform: translateZ(15px);">
-                    <div class="apple-app-icon"><i class="fa-solid fa-list-ul text-[26px] icon-3d-purple"></i></div>
-                    <div class="ml-5">
-                        <h3 class="text-[28px] font-black text-morph" data-id="card2_title"><span class="ai-gradient fur-effect">Мои заявки</span></h3>
-                        <p class="text-[15px] text-dynamic-muted text-morph mt-0.5" data-id="card2_subtitle">Ваш рабочий стол <span class="note-sticker">📦</span>.</p>
-                    </div>
-                </div>
-
-                <details onclick="playUIClick()">
-                    <summary>
-                        <span class="flex items-center"><span class="w-3 h-3 rounded-full bg-yellow-400 mr-4 shadow-md"></span> Пауза <span class="note-sticker">☕</span></span>
-                        <i class="fa-solid fa-chevron-down chevron"></i>
-                    </summary>
-                    <div class="details-content">
-                        <div class="apple-quote text-morph" data-id="acc2_text">
-                            Работа встала? Не хватает деталей или ушли пить чай? Жмите <strong>«Пауза»</strong>. Чубайс попросит указать причину (чтобы было что сказать начальству). Время простоя <mark class="note-highlight">не учитывается</mark> в отчете.<br>
-                            Вернулись? Жмите <strong>«▶️ В работу»</strong>.
-                        </div>
-                    </div>
-                </details>
-
-                <details onclick="playUIClick()">
-                    <summary>
-                        <span class="flex items-center"><span class="w-3 h-3 rounded-full bg-green-500 mr-4 shadow-md"></span> Завершить / Архив <span class="note-sticker">✅</span></span>
-                        <i class="fa-solid fa-chevron-down chevron"></i>
-                    </summary>
-                    <div class="details-content">
-                        <div class="apple-quote text-morph" data-id="acc3_text">
-                            Мышь поймана, работа сделана. Жмите <strong>«Завершить»</strong>. Бот закрывает счетчик и прячет заявку глубоко в <strong>Архив</strong>. <br><br>
-                            <em>Секрет:</em> Кнопка Архива висит в самом низу списка. Там лежат ваши последние 40 дел. Если случайно закопали не ту заявку — зайдите туда и нажмите 🔄 Восстановить.
-                        </div>
-                    </div>
-                </details>
-
-                <details onclick="playUIClick()" style="background: rgba(255, 45, 85, 0.05); border-color: rgba(255, 45, 85, 0.2);">
-                    <summary style="color: #FF2D55;">
-                        <span class="flex items-center text-morph font-bold" data-id="acc5_title"><i class="fa-solid fa-arrow-right-to-bracket mr-4"></i> Перенос «На завтра» <span class="note-sticker">📅</span></span>
-                        <i class="fa-solid fa-chevron-down chevron"></i>
-                    </summary>
-                    <div class="details-content">
-                        <div class="apple-quote text-morph" style="border-left-color: #FF2D55;" data-id="acc5_text">
-                            <mark class="note-highlight blue">Маст-хэв функция перед уходом домой!</mark> Не доделали сегодня? Жмите сюда, и заявка перелетит в вашу корзину планов на следующую смену. Вы сможете выбрать: оставить ту же бригаду или изменить состав.
-                        </div>
-                    </div>
-                </details>
-            </div>
-        </div>
-
-        <!-- Карточка 3 -->
-        <div class="liquid-card reveal-on-scroll" onclick="triggerHaptic('light')">
-            <div class="p-7">
-                <div class="flex items-center mb-6" style="transform: translateZ(15px);">
-                    <div class="apple-app-icon"><i class="fa-solid fa-calendar-day text-[26px] icon-3d-orange"></i></div>
-                    <div class="ml-5">
-                        <h3 class="text-[28px] font-black text-morph" data-id="card3_title"><span class="ai-gradient fur-effect">На завтра (Миска)</span></h3>
-                        <p class="text-[15px] text-dynamic-muted text-morph mt-0.5" data-id="card3_subtitle">Ваш план действий <span class="note-sticker">🔮</span>.</p>
-                    </div>
-                </div>
-
-                <div class="apple-quote mb-2 text-morph" data-id="card3_rule" style="transform: translateZ(10px); background: #fff;">
-                    <strong class="text-orange-500 block mb-2 uppercase tracking-widest text-[13px]"><i class="fa-solid fa-bolt mr-2"></i> Строгий Тайминг:</strong>
-                    Формирование планов открыто <strong>с 12:00 до 16:30</strong>. <br><br>
-                    <mark class="note-highlight">Ровно в 16:30</mark> срабатывает скрипт: бот выплевывает идеальный отчет в Гугл Таблицу и безжалостно стирает ваши заявки с телефонов! <br><br>
-                    <span class="text-red-500 font-bold text-sm">⚠️ У вас 0 заявок на завтра?</span> Бот повесит вам в чат позорную табличку, пока не добавите хотя бы одну.
                 </div>
             </div>
         </div>
 
-        <!-- Блок Выживаемости -->
-        <div class="liquid-card reveal-on-scroll" style="background: linear-gradient(135deg, rgba(230, 240, 255, 0.8) 0%, rgba(255, 255, 255, 0.4) 100%); border-color: rgba(100, 150, 255, 0.4);" onclick="triggerHaptic('light')">
-            <div class="p-7">
-                <div class="flex items-center mb-6" style="transform: translateZ(15px);">
-                    <div class="apple-app-icon"><i class="fa-solid fa-heart-pulse text-[26px] icon-3d-red"></i></div>
-                    <div class="ml-5">
-                        <h3 class="text-[24px] font-black text-morph text-blue-900" data-id="card4_title">Жизнеобеспечение <span class="note-sticker">🔋</span></h3>
-                        <p class="text-[15px] text-blue-700/80 font-medium text-morph mt-0.5" data-id="card4_subtitle">Почему кот не спит на посту.</p>
-                    </div>
-                </div>
-
-                <details onclick="playUIClick()" style="background: rgba(255,255,255,0.7);">
-                    <summary><span class="text-blue-900"><i class="fa-solid fa-satellite-dish mr-2"></i> Как он выживает?</span><i class="fa-solid fa-chevron-down chevron"></i></summary>
-                    <div class="details-content">
-                        <div class="apple-quote text-morph text-[14px]" style="border-left-color: #007AFF;" data-id="acc6_text">
-                            <strong>1. Система Анти-Сон:</strong> Сервера любят "засыпать", экономя ресурсы. Но Чубайс хитрый — раз в минуту он <mark class="note-highlight blue">пингует сам себя</mark> через прокси Cloudflare. Плюс шлет защищенный сигнал монитору.<br><br>
-                            <strong>2. Защита от лимитов (Error 429):</strong> Гугл Таблицы иногда орут: "Слишком много запросов!". Чубайс не сдается. Он <mark class="note-highlight green">ждет 2 секунды</mark>, потом 4, потом 8. Он все равно доставит отчет.<br><br>
-                            <strong>3. Safe.Crash (16:30):</strong> Если сервер упал в 16:29, бот не паникует. При рестарте он <strong>сначала выгрузит пропущенный отчет</strong>, дождется ответа, и только потом почистит телефоны работяг. Ни одна мышь не пропадет!
-                        </div>
-                    </div>
-                </details>
-            </div>
-        </div>
-
-        <!-- АДМИН ПАНЕЛЬ LIQUID GLASS -->
-        <div class="relative mt-16 rounded-[40px] overflow-hidden hide-for-elderly liquid-card reveal-on-scroll" id="admin-wrapper" style="transform: translateZ(10px); padding: 0;">
+        <!-- Экран-Превью: занимает всю высоту экрана для вау-эффекта (100svh) -->
+        <div class="min-h-[100svh] flex flex-col items-center justify-center text-center relative px-5 max-w-2xl mx-auto pb-20 pt-10">
             
-            <!-- Lock Screen -->
-            <div id="admin-lock" class="admin-lock-screen" onclick="unlockAdmin()">
-                <div class="admin-lock-icon-wrap" id="lock-icon-wrap">
-                    <i id="lock-icon" class="fa-solid fa-lock text-4xl text-gray-800"></i>
+            <!-- ВАЖНО ВЕТЕРАНАМ -->
+            <div class="liquid-card mb-8 hidden hide-in-young border-4 border-red-600 rounded-2xl w-full hero-element" id="elderly-start-warning">
+                <div class="p-6 text-center">
+                    <i class="fa-solid fa-triangle-exclamation text-5xl mb-4 text-red-600"></i>
+                    <h2 class="text-3xl font-black mb-3">ОЧЕНЬ ВАЖНО!</h2>
+                    <p class="font-bold text-xl mb-5">Чтобы программа начала работать, распишитесь в самом низу и нажмите появившуюся кнопку.</p>
+                    <p class="text-gray-800 text-lg font-bold">Или напишите вручную команду: /start</p>
                 </div>
-                <h3 class="font-black text-gray-800 tracking-wide text-2xl mb-1">Зона Вожаков</h3>
-                <p class="text-[15px] text-gray-600 font-medium">Коснись, чтобы открыть <span class="note-sticker">🔓</span></p>
             </div>
 
-            <!-- Admin Content -->
-            <div id="admin-content" class="p-8 admin-content-blur">
-                <div class="flex items-center mb-8 border-b border-gray-300/50 pb-5">
-                    <i class="fa-solid fa-crown text-3xl mr-5 icon-3d-orange"></i>
-                    <h3 class="font-black text-2xl ai-gradient fur-effect" style="padding: 0; margin: 0;">Панель Управления</h3>
-                </div>
-                
-                <!-- Admin Accordion 1: Базы Данных -->
-                <details onclick="playUIClick()">
-                    <summary><span class="flex items-center"><i class="fa-solid fa-table text-green-600 w-8"></i> Анатомия Google Таблиц</span><i class="fa-solid fa-chevron-down chevron"></i></summary>
-                    <div class="details-content">
-                        <div class="apple-quote text-[14px]" style="border-left-color: #34C759;">
-                            <p class="mb-3">Таблица — это мозг бота. Разберем все листы (вкладки):</p>
-                            <ul class="space-y-3 list-disc pl-4">
-                                <li><strong>1. Сотрудники:</strong> Кого бот пускает к миске. Впишите ID и ФИО. Нет в списке — бот игнорирует.</li>
-                                <li><strong>2. Админы:</strong> У кого есть эта панель и кому несут жалобы в зубах.</li>
-                                <li><strong>3-4 (Live / Завершенные):</strong> Живой дашборд и архив. <mark class="note-highlight">Не трогать руками!</mark> Бот перезаписывает их сам при каждом чихе.</li>
-                                <li><strong>5. Просмотр на завтра:</strong> Черновик планов. Удобно для слежки в 15:00. Обновляется раз в час.</li>
-                                <li><strong>6. Отчеты:</strong> Главная кладовка. В 16:30 финальный план падает сюда (данные добавляются вниз, формируя историю).</li>
-                            </ul>
-                            <div class="bg-red-50 p-3 rounded-xl border border-red-200 mt-4 shadow-inner">
-                                <p class="text-red-700 font-bold mb-1"><i class="fa-solid fa-skull mr-2"></i> Лист 7: Память (JSON)</p>
-                                <p class="text-red-900 text-[13px]">Нейронные связи бота. Если у пользователя намертво зависло меню (баг) — находим здесь строку с его ID и безжалостно удаляем. Бот забудет его грехи и начнет с чистого листа.</p>
+            <!-- Парящая BWP Лапа с густой шерстью -->
+            <div class="mx-auto mb-4 cursor-pointer animate-float hero-element hero-delay-1" onclick="playUIChime(); triggerHaptic('heavy')">
+                <i class="fa-solid fa-paw text-[110px] sm:text-[130px] bwp-gradient fur-heavy"></i>
+            </div>
+            
+            <h1 class="text-4xl sm:text-6xl font-black tracking-tight mb-3 text-morph hero-element hero-delay-2" data-id="main_title">
+                <span class="ai-gradient fur-effect">Пушистый бот Чубайс</span><br>
+                <span class="text-2xl sm:text-3xl font-black ai-gradient fur-effect" style="text-shadow: 0 4px 15px rgba(0,0,0,0.1); transform: translateZ(30px); display: inline-block; margin-top: 10px;">Pro (2026)</span>
+            </h1>
+            <p class="text-[16px] sm:text-[17px] text-dynamic-muted font-medium text-morph max-w-lg mx-auto leading-relaxed mt-4 hero-element hero-delay-3" data-id="main_desc">
+                Ваш цифровой ассистент <span class="note-sticker">🤖</span> по учету заявок. Мурчит, спит на сервере Cloudflare и <mark class="note-highlight pink">строго подчиняется Насте.</mark>
+            </p>
+
+            <!-- Анимация подсказки "Листайте вниз" -->
+            <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce flex flex-col items-center hide-for-elderly cursor-pointer hero-element hero-delay-4" onclick="window.scrollBy({top: window.innerHeight*0.8, behavior: 'smooth'})">
+                <span class="text-[12px] font-black uppercase tracking-widest mb-1 text-gray-400">Листай</span>
+                <i class="fa-solid fa-chevron-down text-gray-400 text-xl drop-shadow-md"></i>
+            </div>
+        </div>
+
+        <!-- Основной контент инструкции -->
+        <div class="px-5 max-w-2xl mx-auto">
+
+            <h2 class="text-[14px] font-bold text-dynamic-muted uppercase tracking-widest mb-4 ml-5 text-morph reveal-on-scroll" data-id="menu_title">Главное меню (Когтеточка) <span class="note-sticker">🐈</span></h2>
+            
+            <!-- Карточка 1 -->
+            <div class="liquid-card reveal-on-scroll" onclick="triggerHaptic('light')">
+                <div class="p-7">
+                    <div class="flex items-center mb-6" style="transform: translateZ(15px);">
+                        <div class="apple-app-icon"><i class="fa-solid fa-plus text-[26px] icon-3d-blue"></i></div>
+                        <div class="ml-5">
+                            <h3 class="text-[28px] font-black text-morph" data-id="card1_title"><span class="ai-gradient fur-effect">Новая заявка</span></h3>
+                            <p class="text-[15px] text-dynamic-muted text-morph mt-0.5" data-id="card1_subtitle">Поймали мышь <span class="note-sticker">🐭</span>? Фиксируем.</p>
+                        </div>
+                    </div>
+                    
+                    <details onclick="playUIClick()">
+                        <summary>
+                            <span class="text-morph" data-id="acc1_title">Алгоритм создания 🤔</span>
+                            <i class="fa-solid fa-chevron-down chevron"></i>
+                        </summary>
+                        <div class="details-content">
+                            <div class="apple-quote text-morph" data-id="acc1_text">
+                                <strong>1. Ввод номеров:</strong> Нажимаете кнопку, пишете номер. Несколько штук? Пишите через запятую.<br><br>
+                                <strong>2. Сбор бригады <span class="note-sticker">👷‍♂️</span>:</strong> Бот знает всех. Ваше имя добавляется автоматически. Введите пару букв фамилии коллеги — он его найдет по запаху в базе.<br><br>
+                                <strong>3. Сохранение:</strong> <mark class="note-highlight">Обязательно</mark> нажмите зеленую кнопку «✅ Подтвердить состав». Иначе бот посмотрит на вас как на дурака и выкинет заявку в лоток!
                             </div>
                         </div>
-                    </div>
-                </details>
+                    </details>
+                </div>
+            </div>
 
-                <!-- Admin Accordion 3: Кнопки Управления -->
-                <details onclick="playUIClick()">
-                    <summary><span class="flex items-center"><i class="fa-solid fa-gamepad text-orange-500 w-8"></i> Команды бота</span><i class="fa-solid fa-chevron-down chevron"></i></summary>
-                    <div class="details-content">
-                        <div class="apple-quote text-[14px]">
-                            <p class="mb-3"><strong>Управление таймером:</strong> По умолчанию стоит <mark class="note-highlight">АВТО (12:00-16:30)</mark>. Форс-мажор? Жмите "Открыть" (разрешит запись) или "Закрыть" (кормушка захлопнется) прямо в боте.</p>
-                            <p class="mb-3"><strong>Опрос:</strong> Принудительно рассылает всем гудок <span class="note-sticker">📢</span> с напоминанием сдать планы (не дожидаясь 12:00).</p>
-                            <p><strong>Кто не записался:</strong> Выводит список "вонючек", отлынивающих от работы. Можно нажать кнопку, и бот в личку отругает всех опоздавших.</p>
+            <!-- Карточка 2 -->
+            <div class="liquid-card reveal-on-scroll" onclick="triggerHaptic('light')">
+                <div class="p-7">
+                    <div class="flex items-center mb-6" style="transform: translateZ(15px);">
+                        <div class="apple-app-icon"><i class="fa-solid fa-list-ul text-[26px] icon-3d-purple"></i></div>
+                        <div class="ml-5">
+                            <h3 class="text-[28px] font-black text-morph" data-id="card2_title"><span class="ai-gradient fur-effect">Мои заявки</span></h3>
+                            <p class="text-[15px] text-dynamic-muted text-morph mt-0.5" data-id="card2_subtitle">Ваш рабочий стол <span class="note-sticker">📦</span>.</p>
                         </div>
                     </div>
-                </details>
 
-            </div>
-        </div>
+                    <details onclick="playUIClick()">
+                        <summary>
+                            <span class="flex items-center"><span class="w-3 h-3 rounded-full bg-yellow-400 mr-4 shadow-md"></span> Пауза <span class="note-sticker">☕</span></span>
+                            <i class="fa-solid fa-chevron-down chevron"></i>
+                        </summary>
+                        <div class="details-content">
+                            <div class="apple-quote text-morph" data-id="acc2_text">
+                                Работа встала? Не хватает деталей или ушли пить чай? Жмите <strong>«Пауза»</strong>. Чубайс попросит указать причину (чтобы было что сказать начальству). Время простоя <mark class="note-highlight">не учитывается</mark> в отчете.<br>
+                                Вернулись? Жмите <strong>«▶️ В работу»</strong>.
+                            </div>
+                        </div>
+                    </details>
 
-        <!-- Блок Подписи (Interactive Canvas) -->
-        <div class="mt-16 mb-12 text-center px-4 reveal-on-scroll">
-            <h3 class="text-[14px] font-bold text-gray-400 uppercase tracking-widest mb-4">Департамент Контроля</h3>
-            
-            <div id="signature-container">
-                <div id="signature-hint">Распишитесь здесь пальцем <i class="fa-solid fa-pen-nib ml-2"></i></div>
-                <canvas id="signature-pad"></canvas>
-            </div>
-            
-            <p class="text-[14px] text-gray-500 font-medium mt-4">Обязуюсь кормить кота и не трогать за шкирку.</p>
+                    <details onclick="playUIClick()">
+                        <summary>
+                            <span class="flex items-center"><span class="w-3 h-3 rounded-full bg-green-500 mr-4 shadow-md"></span> Завершить / Архив <span class="note-sticker">✅</span></span>
+                            <i class="fa-solid fa-chevron-down chevron"></i>
+                        </summary>
+                        <div class="details-content">
+                            <div class="apple-quote text-morph" data-id="acc3_text">
+                                Мышь поймана, работа сделана. Жмите <strong>«Завершить»</strong>. Бот закрывает счетчик и прячет заявку глубоко в <strong>Архив</strong>. <br><br>
+                                <em>Секрет:</em> Кнопка Архива висит в самом низу списка. Там лежат ваши последние 40 дел. Если случайно закопали не ту заявку — зайдите туда и нажмите 🔄 Восстановить.
+                            </div>
+                        </div>
+                    </details>
 
-            <div id="start-bot-btn-wrapper">
-                <div class="bg-bot-orange ai-gradient text-white font-black py-4 px-10 rounded-2xl inline-block uppercase text-2xl shadow-[0_10px_30px_rgba(255,45,85,0.4)] border border-white cursor-pointer hover:scale-105 transition-transform" style="background-size: 200% auto; -webkit-text-fill-color: white; color: white; animation: ai-shimmer 4s linear infinite;" onclick="playUIChime(); triggerHaptic('success'); tg && tg.close();">
-                    🚀 СТАРТ
+                    <details onclick="playUIClick()" style="background: rgba(255, 45, 85, 0.05); border-color: rgba(255, 45, 85, 0.2);">
+                        <summary style="color: #FF2D55;">
+                            <span class="flex items-center text-morph font-bold" data-id="acc5_title"><i class="fa-solid fa-arrow-right-to-bracket mr-4"></i> Перенос «На завтра» <span class="note-sticker">📅</span></span>
+                            <i class="fa-solid fa-chevron-down chevron"></i>
+                        </summary>
+                        <div class="details-content">
+                            <div class="apple-quote text-morph" style="border-left-color: #FF2D55;" data-id="acc5_text">
+                                <mark class="note-highlight blue">Маст-хэв функция перед уходом домой!</mark> Не доделали сегодня? Жмите сюда, и заявка перелетит в вашу корзину планов на следующую смену. Вы сможете выбрать: оставить ту же бригаду или изменить состав.
+                            </div>
+                        </div>
+                    </details>
                 </div>
-                <p class="text-sm text-gray-500 mt-2 font-bold">Или отправьте команду /start в боте</p>
             </div>
-        </div>
 
-    </div>
+            <!-- Карточка 3 -->
+            <div class="liquid-card reveal-on-scroll" onclick="triggerHaptic('light')">
+                <div class="p-7">
+                    <div class="flex items-center mb-6" style="transform: translateZ(15px);">
+                        <div class="apple-app-icon"><i class="fa-solid fa-calendar-day text-[26px] icon-3d-orange"></i></div>
+                        <div class="ml-5">
+                            <h3 class="text-[28px] font-black text-morph" data-id="card3_title"><span class="ai-gradient fur-effect">На завтра (Миска)</span></h3>
+                            <p class="text-[15px] text-dynamic-muted text-morph mt-0.5" data-id="card3_subtitle">Ваш план действий <span class="note-sticker">🔮</span>.</p>
+                        </div>
+                    </div>
+
+                    <div class="apple-quote mb-2 text-morph" data-id="card3_rule" style="transform: translateZ(10px); background: #fff;">
+                        <strong class="text-orange-500 block mb-2 uppercase tracking-widest text-[13px]"><i class="fa-solid fa-bolt mr-2"></i> Строгий Тайминг:</strong>
+                        Формирование планов открыто <strong>с 12:00 до 16:30</strong>. <br><br>
+                        <mark class="note-highlight">Ровно в 16:30</mark> срабатывает скрипт: бот выплевывает идеальный отчет в Гугл Таблицу и безжалостно стирает ваши заявки с телефонов! <br><br>
+                        <span class="text-red-500 font-bold text-sm">⚠️ У вас 0 заявок на завтра?</span> Бот повесит вам в чат позорную табличку, пока не добавите хотя бы одну.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Блок Выживаемости -->
+            <div class="liquid-card reveal-on-scroll" style="background: linear-gradient(135deg, rgba(230, 240, 255, 0.8) 0%, rgba(255, 255, 255, 0.4) 100%); border-color: rgba(100, 150, 255, 0.4);" onclick="triggerHaptic('light')">
+                <div class="p-7">
+                    <div class="flex items-center mb-6" style="transform: translateZ(15px);">
+                        <div class="apple-app-icon"><i class="fa-solid fa-heart-pulse text-[26px] icon-3d-red"></i></div>
+                        <div class="ml-5">
+                            <h3 class="text-[24px] font-black text-morph text-blue-900" data-id="card4_title">Жизнеобеспечение <span class="note-sticker">🔋</span></h3>
+                            <p class="text-[15px] text-blue-700/80 font-medium text-morph mt-0.5" data-id="card4_subtitle">Почему кот не спит на посту.</p>
+                        </div>
+                    </div>
+
+                    <details onclick="playUIClick()" style="background: rgba(255,255,255,0.7);">
+                        <summary><span class="text-blue-900"><i class="fa-solid fa-satellite-dish mr-2"></i> Как он выживает?</span><i class="fa-solid fa-chevron-down chevron"></i></summary>
+                        <div class="details-content">
+                            <div class="apple-quote text-morph text-[14px]" style="border-left-color: #007AFF;" data-id="acc6_text">
+                                <strong>1. Система Анти-Сон:</strong> Сервера любят "засыпать", экономя ресурсы. Но Чубайс хитрый — раз в минуту он <mark class="note-highlight blue">пингует сам себя</mark> через прокси Cloudflare. Плюс шлет защищенный сигнал монитору.<br><br>
+                                <strong>2. Защита от лимитов (Error 429):</strong> Гугл Таблицы иногда орут: "Слишком много запросов!". Чубайс не сдается. Он <mark class="note-highlight green">ждет 2 секунды</mark>, потом 4, потом 8. Он все равно доставит отчет.<br><br>
+                                <strong>3. Safe.Crash (16:30):</strong> Если сервер упал в 16:29, бот не паникует. При рестарте он <strong>сначала выгрузит пропущенный отчет</strong>, дождется ответа, и только потом почистит телефоны работяг. Ни одна мышь не пропадет!
+                            </div>
+                        </div>
+                    </details>
+                </div>
+            </div>
+
+            <!-- АДМИН ПАНЕЛЬ LIQUID GLASS -->
+            <div class="relative mt-16 rounded-[40px] overflow-hidden hide-for-elderly liquid-card reveal-on-scroll" id="admin-wrapper" style="transform: translateZ(10px); padding: 0;">
+                
+                <!-- Lock Screen -->
+                <div id="admin-lock" class="admin-lock-screen" onclick="unlockAdmin()">
+                    <div class="admin-lock-icon-wrap" id="lock-icon-wrap">
+                        <i id="lock-icon" class="fa-solid fa-lock text-4xl text-gray-800"></i>
+                    </div>
+                    <h3 class="font-black text-gray-800 tracking-wide text-2xl mb-1">Зона Вожаков</h3>
+                    <p class="text-[15px] text-gray-600 font-medium">Коснись, чтобы открыть <span class="note-sticker">🔓</span></p>
+                </div>
+
+                <!-- Admin Content -->
+                <div id="admin-content" class="p-8 admin-content-blur">
+                    <div class="flex items-center mb-8 border-b border-gray-300/50 pb-5">
+                        <i class="fa-solid fa-crown text-3xl mr-5 icon-3d-orange"></i>
+                        <h3 class="font-black text-2xl ai-gradient fur-effect" style="padding: 0; margin: 0;">Панель Управления</h3>
+                    </div>
+                    
+                    <!-- Admin Accordion 1: Базы Данных -->
+                    <details onclick="playUIClick()">
+                        <summary><span class="flex items-center"><i class="fa-solid fa-table text-green-600 w-8"></i> Анатомия Google Таблиц</span><i class="fa-solid fa-chevron-down chevron"></i></summary>
+                        <div class="details-content">
+                            <div class="apple-quote text-[14px]" style="border-left-color: #34C759;">
+                                <p class="mb-3">Таблица — это мозг бота. Разберем все листы (вкладки):</p>
+                                <ul class="space-y-3 list-disc pl-4">
+                                    <li><strong>1. Сотрудники:</strong> Кого бот пускает к миске. Впишите ID и ФИО. Нет в списке — бот игнорирует.</li>
+                                    <li><strong>2. Админы:</strong> У кого есть эта панель и кому несут жалобы в зубах.</li>
+                                    <li><strong>3-4 (Live / Завершенные):</strong> Живой дашборд и архив. <mark class="note-highlight">Не трогать руками!</mark> Бот перезаписывает их сам при каждом чихе.</li>
+                                    <li><strong>5. Просмотр на завтра:</strong> Черновик планов. Удобно для слежки в 15:00. Обновляется раз в час.</li>
+                                    <li><strong>6. Отчеты:</strong> Главная кладовка. В 16:30 финальный план падает сюда (данные добавляются вниз, формируя историю).</li>
+                                </ul>
+                                <div class="bg-red-50 p-3 rounded-xl border border-red-200 mt-4 shadow-inner">
+                                    <p class="text-red-700 font-bold mb-1"><i class="fa-solid fa-skull mr-2"></i> Лист 7: Память (JSON)</p>
+                                    <p class="text-red-900 text-[13px]">Нейронные связи бота. Если у пользователя намертво зависло меню (баг) — находим здесь строку с его ID и безжалостно удаляем. Бот забудет его грехи и начнет с чистого листа.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </details>
+
+                    <!-- Admin Accordion 3: Кнопки Управления -->
+                    <details onclick="playUIClick()">
+                        <summary><span class="flex items-center"><i class="fa-solid fa-gamepad text-orange-500 w-8"></i> Команды бота</span><i class="fa-solid fa-chevron-down chevron"></i></summary>
+                        <div class="details-content">
+                            <div class="apple-quote text-[14px]">
+                                <p class="mb-3"><strong>Управление таймером:</strong> По умолчанию стоит <mark class="note-highlight">АВТО (12:00-16:30)</mark>. Форс-мажор? Жмите "Открыть" (разрешит запись) или "Закрыть" (кормушка захлопнется) прямо в боте.</p>
+                                <p class="mb-3"><strong>Опрос:</strong> Принудительно рассылает всем гудок <span class="note-sticker">📢</span> с напоминанием сдать планы (не дожидаясь 12:00).</p>
+                                <p><strong>Кто не записался:</strong> Выводит список "вонючек", отлынивающих от работы. Можно нажать кнопку, и бот в личку отругает всех опоздавших.</p>
+                            </div>
+                        </div>
+                    </details>
+
+                </div>
+            </div>
+
+            <!-- Блок Подписи (Interactive Canvas) -->
+            <div class="mt-16 mb-12 text-center reveal-on-scroll">
+                <h3 class="text-[14px] font-bold text-gray-400 uppercase tracking-widest mb-4">Департамент Контроля</h3>
+                
+                <div id="signature-container">
+                    <div id="signature-hint">Распишитесь здесь пальцем <i class="fa-solid fa-pen-nib ml-2"></i></div>
+                    <canvas id="signature-pad"></canvas>
+                </div>
+                
+                <p class="text-[14px] text-gray-500 font-medium mt-4">Обязуюсь кормить кота и не трогать за шкирку.</p>
+
+                <div id="start-bot-btn-wrapper">
+                    <div class="bg-bot-orange ai-gradient text-white font-black py-4 px-10 rounded-2xl inline-block uppercase text-2xl shadow-[0_10px_30px_rgba(255,45,85,0.4)] border border-white cursor-pointer hover:scale-105 transition-transform" style="background-size: 200% auto; -webkit-text-fill-color: white; color: white; animation: ai-shimmer 4s linear infinite;" onclick="playUIChime(); triggerHaptic('success'); tg && tg.close();">
+                        🚀 СТАРТ
+                    </div>
+                    <p class="text-sm text-gray-500 mt-2 font-bold">Или отправьте команду /start в боте</p>
+                </div>
+            </div>
+
+        </div> <!-- End of content-layer max-w-2xl -->
+
+    </div> <!-- End of content-layer (z-10 wrapper) -->
 
     <!-- Всплывающее окно Сыкухи -->
     <div id="wife-container" class="fixed bottom-8 left-6 z-50">
@@ -753,8 +781,7 @@
         sigCanvas.addEventListener('touchmove', draw, {passive: false});
         sigCanvas.addEventListener('touchend', stopDrawing);
 
-        // --- STREAMING_CHUNK:Javascript Logic - Liquid Glass Particle Engine... ---
-        // Liquid Glass Particles (Объемные капли/пыль)
+        // --- Liquid Glass Particle Engine (Bokeh) ---
         const canvasBg = document.getElementById('dust-canvas');
         const ctxBg = canvasBg.getContext('2d');
         let particles = [];
@@ -762,7 +789,9 @@
         let h = canvasBg.height = window.innerHeight;
 
         window.addEventListener('resize', () => { 
-            w = canvasBg.width = window.innerWidth; h = canvasBg.height = window.innerHeight; initParticles(); 
+            w = canvasBg.width = window.innerWidth; 
+            h = canvasBg.height = window.innerHeight; 
+            initParticles(); 
             resizeCanvas(); 
         });
 
@@ -770,22 +799,23 @@
             constructor() {
                 this.x = Math.random() * w;
                 this.y = Math.random() * h;
-                // Более крупные частицы для эффекта "стеклянных капель"
-                this.r = Math.random() * 8 + 2; 
-                this.baseVy = Math.random() * 0.4 + 0.1;
-                // Более прозрачные для нежного свечения
-                this.alpha = Math.random() * 0.4 + 0.1;
+                // Крупные капли (Боке)
+                this.r = Math.random() * 15 + 5; 
+                this.baseVy = Math.random() * 0.6 + 0.2;
+                // Более плотные цвета
+                this.alpha = Math.random() * 0.6 + 0.15;
             }
             update() {
-                this.y -= this.baseVy; // Летят вверх как пузырьки
-                this.x += Math.sin(this.y * 0.005) * 0.4;
-                if (this.y < -20) { this.y = h + 20; this.x = Math.random() * w; }
+                this.y -= this.baseVy; // Летят вверх
+                this.x += Math.sin(this.y * 0.005) * 0.5;
+                if (this.y < -30) { this.y = h + 30; this.x = Math.random() * w; }
             }
             draw() {
-                // Создаем радиальный градиент для эффекта "Liquid Drop"
+                // Создаем мягкий градиент-блик
                 let gradient = ctxBg.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.r);
                 gradient.addColorStop(0, `rgba(255, 255, 255, ${this.alpha})`);
-                gradient.addColorStop(1, `rgba(200, 200, 210, 0)`);
+                gradient.addColorStop(0.5, `rgba(255, 255, 255, ${this.alpha * 0.5})`);
+                gradient.addColorStop(1, `rgba(255, 255, 255, 0)`);
                 
                 ctxBg.beginPath();
                 ctxBg.arc(this.x, this.y, this.r, 0, Math.PI * 2);
@@ -795,8 +825,8 @@
         }
         function initParticles() {
             particles = [];
-            // Меньше частиц, но они крупнее
-            let count = window.innerWidth < 600 ? 30 : 60;
+            // Густота капель
+            let count = window.innerWidth < 600 ? 50 : 100;
             for(let i=0; i<count; i++) particles.push(new Particle());
         }
         function animateCanvasBg() {
@@ -957,8 +987,6 @@
 
             initRevealObserver();
             resizeCanvas();
-            
-            document.querySelectorAll('.reveal-on-scroll')[0]?.classList.add('is-revealed');
         };
     </script>
 </body>
