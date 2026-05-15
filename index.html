@@ -45,7 +45,7 @@
 
     <style>
         :root {
-            var(--bg-color): #DFE4EB;
+            --bg-color: #DFE4EB;
             --text-main: #1C1C1E; 
             --text-muted: #8E8E93;
             /* Ультра-премиальное жидкое стекло iOS 27 */
@@ -218,11 +218,11 @@
         /* Подсказка для ветеранов */
         #tech-hint {
             position: absolute; top: calc(100% + 12px); left: 50%; transform: translateX(-50%) translateY(-10px);
-            background: rgba(255, 45, 85, 0.95); color: white; padding: 8px 14px; border-radius: 12px;
+            background: rgba(255, 45, 85, 0.95); color: white; padding: 10px 16px; border-radius: 12px;
             font-size: 13px; font-weight: 600; box-shadow: 0 8px 20px rgba(255, 45, 85, 0.3);
             opacity: 0; transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
             pointer-events: none; z-index: 10001; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-            white-space: nowrap;
+            white-space: normal; width: max-content; max-width: 220px; text-align: center; line-height: 1.3;
         }
         #tech-hint::before {
             content: ''; position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%);
@@ -296,7 +296,7 @@
             transition: all 0.5s ease;
         }
 
-        /* Всплывающий Кот (Wife Bubble) - Выше капель */
+        /* Всплывающий Кот (Wife Bubble) */
         #wife-container {
             position: fixed; bottom: calc(env(safe-area-inset-bottom) + 24px); left: 20px; z-index: 10000;
         }
@@ -339,14 +339,14 @@
             display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
         }
 
-        /* Эффект разбитого стекла (Slo-Mo Shatter Effect) */
+        /* Эффект разбитого стекла */
         .shatter-piece {
             position: absolute;
             background: rgba(255,255,255,0.9);
             backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
             box-shadow: inset 0 0 10px rgba(0,0,0,0.05), 0 5px 15px rgba(0,0,0,0.1);
             border: 1px solid rgba(255,255,255,1); border-radius: 4px; pointer-events: none;
-            transition: all 2.5s cubic-bezier(0.1, 0.8, 0.2, 1); /* Slow-mo */
+            transition: all 2.5s cubic-bezier(0.1, 0.8, 0.2, 1);
             z-index: 30;
         }
         
@@ -437,7 +437,7 @@
     <!-- Стеклянная прослойка (Блюр фона) -->
     <div id="bg-glass-overlay" class="hide-for-elderly"></div>
 
-    <!-- Навигация (Dynamic Island Style) вынесена в корень для жесткой фиксации -->
+    <!-- Навигация (Dynamic Island Style) -->
     <div class="nav-wrapper">
         <div class="max-w-2xl mx-auto w-full flex justify-center relative">
             <div class="segmented-control">
@@ -447,7 +447,7 @@
                 </div>
                 <div class="magnetic-wrap" onclick="setMode(1, this)">
                     <div class="mode-btn">Те, кто постарше</div>
-                    <!-- Подсказка для ветеранов -->
+                    <!-- Подсказка для ветеранов (с исправленным переносом) -->
                     <div id="tech-hint">
                         Если технологии вам чужды — жмите сюда 👋
                     </div>
@@ -552,7 +552,7 @@
                         </summary>
                         <div class="details-content">
                             <div class="apple-quote text-morph" data-id="acc2_text">
-                                Ушли пить чай или ждете запчасти? Жмите <strong>«Пауза»</strong> и пишите причину. Внимание: пауза <mark class="note-highlight">автоматически выкидывает заявку</mark> из ваших планов на завтра! Вернулись? Жмите <strong>«▶️ В работу»</strong>.
+                                Проблемы на работе? Кончились материалы или наладчик ушел пить чай? Жмите <strong>«Пауза»</strong> и пишите причину (Настя всё читает!). Внимание: пауза <mark class="note-highlight">автоматически выкидывает заявку</mark> из планов на завтра! Вернулись? Жмите <strong>«▶️ В работу»</strong>.
                             </div>
                         </div>
                     </details>
@@ -602,7 +602,32 @@
                     </div>
                 </div>
             </div>
-            
+
+            <!-- Карточка АВТОБУС -->
+            <div class="liquid-card reveal-on-scroll" onclick="triggerHaptic('light')">
+                <div class="p-5 sm:p-7">
+                    <div class="flex items-center mb-6" style="transform: translateZ(15px);">
+                        <div class="apple-app-icon"><i class="fa-solid fa-bus text-[22px] sm:text-[26px] icon-3d-blue"></i></div>
+                        <div class="ml-4 sm:ml-5 min-w-0">
+                            <h3 class="text-[24px] sm:text-[28px] font-black text-morph leading-tight" data-id="card_bus_title"><span class="ai-gradient fur-effect">Развозка (Автобус)</span></h3>
+                            <p class="text-[14px] sm:text-[15px] text-dynamic-muted text-morph mt-1" data-id="card_bus_subtitle">Кто не успел — топает пешком 🚶‍♂️</p>
+                        </div>
+                    </div>
+                    
+                    <details onclick="playUIClick()" style="background: rgba(0, 122, 255, 0.05); border-color: rgba(0, 122, 255, 0.2);">
+                        <summary style="color: #007AFF;">
+                            <span class="text-morph font-bold" data-id="acc_bus_title"><i class="fa-solid fa-stopwatch mr-2"></i> Дедлайн: строго до 13:45!</span>
+                            <i class="fa-solid fa-chevron-down chevron"></i>
+                        </summary>
+                        <div class="details-content">
+                            <div class="apple-quote text-morph" style="border-left-color: #007AFF;" data-id="acc_bus_text">
+                                <mark class="note-highlight blue text-white">Железное правило:</mark> Запись закрывается ровно в <strong>13:45</strong>! После этого времени бот умывает лапы и шлет всех лесом к Насте. Не успели? Топаете домой пешком.<br><br><strong>Процесс:</strong> Выбираете здание (00UAC/94VAC). Бот сам вспомнит вашу стандартную остановку из базы! А если сегодня пятница — он заботливо спросит, на какой день вас записать.
+                            </div>
+                        </div>
+                    </details>
+                </div>
+            </div>
+
             <!-- ОР КОТА (Сообщить о проблеме) -->
             <div class="liquid-card reveal-on-scroll hide-for-elderly" onclick="triggerHaptic('light')">
                 <div class="p-5 sm:p-7">
@@ -680,9 +705,13 @@
                                     <div class="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center shrink-0"><i class="fa-solid fa-calendar-check text-orange-500 text-[13px]"></i></div>
                                     <div class="min-w-0"><p class="font-bold text-[14px] leading-tight">На завтра / Отчеты (Листы 5-6)</p><p class="text-[12px] text-gray-500 mt-1 leading-snug">5 лист - черновик для подглядывания. 6 лист - финальная кладовка.</p></div>
                                 </div>
+                                <div class="flex p-3 sm:p-4 border-b border-gray-100 gap-3 items-start bg-blue-50/50">
+                                    <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center shrink-0 border border-blue-200"><i class="fa-solid fa-bus text-blue-500 text-[13px]"></i></div>
+                                    <div class="min-w-0"><p class="font-bold text-[14px] text-blue-800 leading-tight">Автобус</p><p class="text-[12px] text-blue-800/80 mt-1 leading-snug">Список на выезд. В 13:45 бот присылает отчет и очищает лист до следующего дня.</p></div>
+                                </div>
                                 <div class="flex p-3 sm:p-4 bg-red-50/50 gap-3 items-start">
                                     <div class="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center shrink-0 border border-red-200"><i class="fa-solid fa-skull text-red-500 text-[13px]"></i></div>
-                                    <div class="min-w-0"><p class="font-bold text-[14px] text-red-700 leading-tight">Память Матрицы (JSON - Лист 7)</p><p class="text-[12px] text-red-800/80 mt-1 leading-snug">Если зависло меню — удалите строку с ID мастера. Произойдет сброс, как в "Людях в черном". Чубайс забудет все его дела.</p></div>
+                                    <div class="min-w-0"><p class="font-bold text-[14px] text-red-700 leading-tight">Память Матрицы (JSON - Лист 7)</p><p class="text-[12px] text-red-800/80 mt-1 leading-snug">Если зависло меню — удалите строку с ID наладчика. Произойдет сброс. Чубайс забудет все его дела.</p></div>
                                 </div>
 
                             </div>
@@ -1010,7 +1039,7 @@
                 <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center shrink-0"><i class="fa-solid fa-satellite-dish text-blue-500"></i></div>
                 <div class="min-w-0">
                     <p class="font-bold text-[14px] leading-tight">Система Анти-Сон</p>
-                    <p class="text-[12px] sm:text-[13px] text-gray-600 mt-1 leading-snug">Сервера любят засыпать. Но Чубайс глушит виртуальный энергетик и <mark class="note-highlight blue">пингует сам себя</mark> через прокси Cloudflare раз в минуту.</p>
+                    <p class="text-[12px] sm:text-[13px] text-gray-600 mt-1 leading-snug">Сервера любят засыпать. Но Чубайс глушит виртуальный энергетик и <mark class="note-highlight blue">пингует сам себя</mark> через прокси Cloudflare раз в 5 минут.</p>
                 </div>
             </div>
             <div class="bg-white/80 rounded-2xl p-3 sm:p-4 border border-green-100 shadow-sm flex items-start gap-3 sm:gap-4">
@@ -1031,7 +1060,7 @@
                 <div class="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center shrink-0"><i class="fa-solid fa-moon text-orange-500"></i></div>
                 <div class="min-w-0">
                     <p class="font-bold text-[14px] leading-tight">Тихий режим</p>
-                    <p class="text-[12px] sm:text-[13px] text-gray-600 mt-1 leading-snug">Если бот перезапускается с 20:00 до 8:00, он включается в тихом режиме и ни с кем не здоровается, чтобы не будить мастеров.</p>
+                    <p class="text-[12px] sm:text-[13px] text-gray-600 mt-1 leading-snug">Если бот перезапускается с 20:00 до 8:00, он включается в тихом режиме и ни с кем не здоровается, чтобы не будить наладчиков.</p>
                 </div>
             </div>
         `;
@@ -1060,8 +1089,8 @@
             card2_title: { normal: "<span class='ai-gradient fur-effect'>Мои заявки</span>", elderly: "Мои заявки" },
             card2_subtitle: { normal: "Ваш рабочий лоток <span class='note-sticker'>📦</span>.", elderly: "То, над чем сейчас пыхтим." },
             acc2_text: {
-                normal: "Ушли пить чай или ждете запчасти? Жмите <strong>«Пауза»</strong> и пишите причину. Внимание: пауза <mark class='note-highlight'>автоматически выкидывает заявку</mark> из ваших планов на завтра! Вернулись? Жмите <strong>«▶️ В работу»</strong>.",
-                elderly: "Пошли пить чай или на перекур? Жмите <strong>«Пауза»</strong> и укажите причину (чтобы начальство видело). Время простоя в отчет не идет.<br><br>Вернулись? Жмите <strong>«В работу»</strong>, и таймер снова затикает."
+                normal: "Проблемы на работе? Кончились материалы или наладчик ушел пить чай? Жмите <strong>«Пауза»</strong> и пишите причину (Настя всё читает!). Внимание: пауза <mark class='note-highlight'>автоматически выкидывает заявку</mark> из планов на завтра! Вернулись? Жмите <strong>«▶️ В работу»</strong>.",
+                elderly: "Возникли проблемы на работе? Нет запчастей или наладчик ушел на перекур? Жмите <strong>«Пауза»</strong> и укажите причину (чтобы начальство видело). Время простоя в отчет не идет.<br><br>Вернулись? Жмите <strong>«В работу»</strong>, и таймер снова затикает."
             },
             acc3_text: {
                 normal: "Сделал дело — жми <strong>«Завершить»</strong>! Заявка прячется в Архив (Чубайс помнит последние 40 ваших дел). Если промазали кнопкой — идите вниз списка, заходите в Архив и жмите 🔄 Восстановить (заявка снова вернется в работу).",
@@ -1079,6 +1108,14 @@
                 normal: "<strong class='text-orange-500 block mb-2 uppercase tracking-widest text-[12px] sm:text-[13px]'><i class='fa-solid fa-bolt mr-2'></i> Строгий Тайминг:</strong> Ровно в <strong>12:00</strong> Чубайс присылает утренний опрос (и вешает закреп). В <strong>16:30</strong> он молча формирует финальный отчет, скидывает его в Google Таблицу и забирает миску (чистит ваши заявки).<br><br><span class='text-red-500 font-bold text-sm'>⚠️ Кто не успел:</span> попадает в список 'Вонючек' для Насти и получает позорный стикер.<br><br><mark class='note-highlight green text-white'>Связанные души:</mark> Если напарник записал вас в свою заявку на завтра — Чубайс это увидит и сам снимет с вас позорный закреп! Командная работа!",
                 elderly: "<strong>Запомните как Отче наш:</strong> Добавить планы нужно строго <strong>до 16:30</strong>! Ровно в 16:30 программа автоматически отправляет рапорт руководству и стирает ваши данные с телефона.<br><br>Кто забудет и останется с 0 заявок — программа виртуально повесит на вас позорную табличку 'Лентяй' прямо в чате. Техника ошибок не прощает!<br><br><em>Хитрость:</em> Если ваш напарник запишет вас в свою бригаду на завтра, программа сама поймет, что вы при деле, и перестанет вам надоедать."
             },
+
+            card_bus_title: { normal: "<span class='ai-gradient fur-effect'>Развозка (Автобус)</span>", elderly: "Запись на Автобус 🚌" },
+            card_bus_subtitle: { normal: "Кто не успел — топает пешком 🚶‍♂️", elderly: "Едем домой с комфортом." },
+            acc_bus_title: { normal: "<i class='fa-solid fa-stopwatch mr-2'></i> Дедлайн: строго до 13:45!", elderly: "Как записаться?" },
+            acc_bus_text: { 
+                normal: "<mark class='note-highlight blue text-white'>Железное правило:</mark> Запись закрывается ровно в <strong>13:45</strong>! После этого времени бот умывает лапы и шлет всех лесом к Насте. Не успели записаться? Ваши проблемы, топайте домой пешком или идите кланяться Насте.<br><br><strong>Процесс:</strong> Выбираете здание (00UAC/94VAC). Бот сам вспомнит вашу стандартную остановку из базы! А если сегодня пятница — он заботливо спросит, на какой день вас записать.",
+                elderly: "Нажмите 'Запись на автобус' в меню. Выберите свое здание и остановку. <br><br><strong>Очень важно:</strong> Записаться нужно строго <strong>до 13:45</strong>! Если опоздали — программа закроет списки, и придется идти домой пешком или звонить руководству."
+            },
             
             card_sos_title: { normal: "<span class='ai-gradient fur-effect'>Ор мартовского кота</span>", elderly: "Кнопка Паники" },
             card_sos_subtitle: { normal: "Связь с начальством <span class='note-sticker'>🆘</span>", elderly: "Если всё сломалось 🆘" },
@@ -1092,17 +1129,20 @@
 
             wife_title: { normal: "Служба Спасения <span class='note-sticker'>🚑</span>", elderly: "Советы (Кошка)" },
             wife_text: {
-                normal: "Если бот молчит больше 5 минут — значит подавился мышью. Я его пну, у нас 14 котят и ипотека на лоток, расслабляться некогда! <br><br><mark class='note-highlight pink'>Ни одна заявка не пропадет.</mark>",
+                normal: "Если бот молчит 5 минут — значит сервер завис. Я его пну, у нас 14 котят! <mark class='note-highlight pink'>Ни одна заявка не пропадет.</mark>",
                 elderly: "Увидели, что кот 'завис'? <strong>Не надо тыкать в экран со всей силы сто раз подряд!</strong> Просто подождите 5 минут. Сервер подумает и сам ответит. Не волнуйтесь, ваши труды никуда не исчезнут."
             }
         };
 
         function setMode(index, btnWrapElement) {
-            playUIClick(); triggerHaptic('medium');
+            playUIClick();
+            triggerHaptic('medium');
             
             const indicator = document.getElementById('mode-indicator');
-            indicator.style.width = btnWrapElement.offsetWidth + 'px';
-            indicator.style.transform = `translateX(${btnWrapElement.offsetLeft - 6}px)`;
+            if(indicator && btnWrapElement) {
+                indicator.style.width = btnWrapElement.offsetWidth + 'px';
+                indicator.style.transform = `translateX(${btnWrapElement.offsetLeft - 6}px)`;
+            }
             
             document.querySelectorAll('.magnetic-wrap').forEach((wrap, i) => {
                 if (i === index) wrap.classList.add('active'); else wrap.classList.remove('active');
@@ -1122,23 +1162,27 @@
                 const id = el.getAttribute('data-id');
                 if (texts[id] && texts[id][modeKey] !== undefined) {
                     el.classList.add('blur-out');
-                    setTimeout(() => { el.innerHTML = texts[id][modeKey]; el.classList.remove('blur-out'); }, 400); 
+                    setTimeout(() => {
+                        el.innerHTML = texts[id][modeKey];
+                        el.classList.remove('blur-out');
+                    }, 400); 
                 }
             });
 
             const lifeSupport = document.getElementById('life_support_content');
-            lifeSupport.style.opacity = '0';
-            setTimeout(() => {
-                lifeSupport.innerHTML = index === 0 ? htmlLifeSupportNormal : htmlLifeSupportElderly;
-                lifeSupport.style.opacity = '1';
-            }, 300);
+            if(lifeSupport) {
+                lifeSupport.style.opacity = '0';
+                setTimeout(() => {
+                    lifeSupport.innerHTML = index === 0 ? htmlLifeSupportNormal : htmlLifeSupportElderly;
+                    lifeSupport.style.opacity = '1';
+                }, 300);
+            }
 
             if(tg && tg.setHeaderColor) {
                 if(index === 0) tg.setHeaderColor('#DFE4EB');
                 if(index === 1) tg.setHeaderColor('#FFFFFF');
             }
 
-            // Убираем подсказку навсегда, если юзер переключил режим
             const hint = document.getElementById('tech-hint');
             if(hint) {
                 hint.classList.remove('show');
@@ -1147,31 +1191,18 @@
         }
 
         function unlockAdmin() {
-            playSound('unlock'); triggerHaptic('heavy');
+            playSound('unlock');
+            triggerHaptic('heavy');
             const wrapper = document.getElementById('admin-wrapper');
             const icon = document.getElementById('lock-icon');
-            icon.classList.remove('fa-lock'); icon.classList.add('fa-lock-open'); icon.style.color = '#FF9500';
-            setTimeout(() => { wrapper.classList.add('admin-unlocked'); }, 400);
-        }
-
-        function toggleWife(forceClose = false) {
-            const bubble = document.getElementById('wife-bubble');
-            const badge = document.getElementById('wife-badge');
-            const closeBtn = document.getElementById('wife-close-btn');
-            const avatar = document.getElementById('wife-avatar');
             
-            if(badge) badge.remove();
+            icon.classList.remove('fa-lock');
+            icon.classList.add('fa-lock-open');
+            icon.style.color = '#FF9500';
             
-            if (forceClose || bubble.style.opacity === '1') {
-                bubble.style.opacity = '0'; bubble.style.transform = 'scale(0.9) translateY(16px)'; bubble.style.pointerEvents = 'none';
-                closeBtn.style.display = 'none';
-                avatar.classList.add('animate-wiggle');
-            } else {
-                playUIClick(); triggerHaptic('light');
-                bubble.style.opacity = '1'; bubble.style.transform = 'scale(1) translateY(0)'; bubble.style.pointerEvents = 'auto';
-                closeBtn.style.display = 'flex';
-                avatar.classList.remove('animate-wiggle');
-            }
+            setTimeout(() => {
+                wrapper.classList.add('admin-unlocked');
+            }, 400);
         }
 
         window.onload = () => {
@@ -1179,36 +1210,45 @@
             if (firstWrap) {
                 setTimeout(() => {
                     const indicator = document.getElementById('mode-indicator');
-                    indicator.style.width = firstWrap.offsetWidth + 'px'; indicator.style.transform = `translateX(${firstWrap.offsetLeft - 6}px)`;
+                    if(indicator) {
+                        indicator.style.width = firstWrap.offsetWidth + 'px';
+                        indicator.style.transform = `translateX(${firstWrap.offsetLeft - 6}px)`;
+                    }
                 }, 100);
             }
 
-            // Логика появления заботливой подсказки
             setTimeout(() => {
                 const hint = document.getElementById('tech-hint');
                 if (hint && !hint.classList.contains('hidden-forever')) {
                     hint.classList.add('show');
-                    // Автоматически скрыть через 10 секунд
-                    setTimeout(() => {
-                        hint.classList.remove('show');
-                    }, 10000);
+                    setTimeout(() => { hint.classList.remove('show'); }, 10000);
                 }
             }, 1500);
             
             const details = document.querySelectorAll("details");
             details.forEach((targetDetail) => {
                 targetDetail.addEventListener("click", () => {
-                    details.forEach((detail) => { if (detail !== targetDetail) detail.removeAttribute("open"); });
+                    details.forEach((detail) => {
+                        if (detail !== targetDetail) {
+                            detail.removeAttribute("open");
+                        }
+                    });
                 });
             });
 
             const dateOpts = { day: 'numeric', month: 'short', year: 'numeric' };
-            document.getElementById('current-date').textContent = new Date().toLocaleDateString('ru-RU', dateOpts);
+            const dateEl = document.getElementById('current-date');
+            if(dateEl) dateEl.textContent = new Date().toLocaleDateString('ru-RU', dateOpts);
 
             initWifeLogic();
             resizeDust();
-            document.getElementById('life_support_content').innerHTML = htmlLifeSupportNormal;
-            document.getElementById('life_support_content').style.transition = 'opacity 0.3s ease';
+            resizeCanvas();
+            
+            const lifeSupport = document.getElementById('life_support_content');
+            if(lifeSupport) {
+                lifeSupport.innerHTML = htmlLifeSupportNormal;
+                lifeSupport.style.transition = 'opacity 0.3s ease';
+            }
         };
     </script>
 </body>
