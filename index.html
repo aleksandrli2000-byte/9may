@@ -59,7 +59,7 @@
         }
 
         body {
-            background-color: #DFE4EB; color: var(--text-main);
+            background-color: var(--bg-color); color: var(--text-main);
             transition: background-color 0.5s ease, color 0.5s ease;
             -webkit-tap-highlight-color: transparent; overscroll-behavior-y: none;
             padding-bottom: calc(env(safe-area-inset-bottom) + 160px);
@@ -218,7 +218,7 @@
         /* Подсказка для ветеранов */
         #tech-hint {
             position: absolute; top: calc(100% + 12px); left: 50%; transform: translateX(-50%) translateY(-10px);
-            background: rgba(255, 45, 85, 0.95); color: white; padding: 10px 16px; border-radius: 12px;
+            background: rgba(255, 45, 85, 0.95); color: white; padding: 8px 14px; border-radius: 12px;
             font-size: 13px; font-weight: 600; box-shadow: 0 8px 20px rgba(255, 45, 85, 0.3);
             opacity: 0; transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
             pointer-events: none; z-index: 10001; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
@@ -235,6 +235,19 @@
         @keyframes hintFloat {
             0%, 100% { transform: translateX(-50%) translateY(0); }
             50% { transform: translateX(-50%) translateY(4px); }
+        }
+
+        /* Сигнальная лента для РВД */
+        .signal-tape {
+            background: repeating-linear-gradient(
+                -45deg,
+                #FFCC00,
+                #FFCC00 15px,
+                #1C1C1E 15px,
+                #1C1C1E 30px
+            );
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            border: 1px solid rgba(0,0,0,0.2);
         }
 
         .text-morph { display: inline-block; transition: opacity 0.4s ease, filter 0.4s ease; }
@@ -296,7 +309,7 @@
             transition: all 0.5s ease;
         }
 
-        /* Всплывающий Кот (Wife Bubble) */
+        /* Всплывающий Кот (Wife Bubble) - Выше капель */
         #wife-container {
             position: fixed; bottom: calc(env(safe-area-inset-bottom) + 24px); left: 20px; z-index: 10000;
         }
@@ -404,6 +417,9 @@
             border: 2px solid #000000 !important;
             box-shadow: none !important;
         }
+
+        /* СТИЛИ ДЛЯ РВД ИНСТРУМЕНТОВ/ЦАРАПИН У СТАРШИХ УБРАНЫ */
+        body.elderly-mode .rvd-decor { display: none !important; }
     </style>
 </head>
 <body class="antialiased">
@@ -437,7 +453,7 @@
     <!-- Стеклянная прослойка (Блюр фона) -->
     <div id="bg-glass-overlay" class="hide-for-elderly"></div>
 
-    <!-- Навигация (Dynamic Island Style) -->
+    <!-- Навигация (Dynamic Island Style) вынесена в корень для жесткой фиксации -->
     <div class="nav-wrapper">
         <div class="max-w-2xl mx-auto w-full flex justify-center relative">
             <div class="segmented-control">
@@ -447,10 +463,8 @@
                 </div>
                 <div class="magnetic-wrap" onclick="setMode(1, this)">
                     <div class="mode-btn">Те, кто постарше</div>
-                    <!-- Подсказка для ветеранов (с исправленным переносом) -->
-                    <div id="tech-hint">
-                        Если технологии вам чужды — жмите сюда 👋
-                    </div>
+                    <!-- Подсказка для ветеранов -->
+                    <div id="tech-hint">Кто далек от технологий — вам сюда 👋</div>
                 </div>
             </div>
         </div>
@@ -507,7 +521,7 @@
 
             <h2 class="text-[13px] sm:text-[14px] font-bold text-dynamic-muted uppercase tracking-widest mb-4 ml-4 sm:ml-5 text-morph reveal-on-scroll" data-id="menu_title">Меню (Когтеточка строгого режима) <span class="note-sticker">🐈</span></h2>
             
-            <!-- Карточка 1: Новая заявка -->
+            <!-- Новая заявка -->
             <div class="liquid-card reveal-on-scroll" onclick="triggerHaptic('light')">
                 <div class="p-5 sm:p-7">
                     <div class="flex items-center mb-6" style="transform: translateZ(15px);">
@@ -517,12 +531,8 @@
                             <p class="text-[14px] sm:text-[15px] text-dynamic-muted text-morph mt-1" data-id="card1_subtitle">Ленивый бот с хорошей памятью <span class="note-sticker">🐭</span></p>
                         </div>
                     </div>
-                    
                     <details onclick="playUIClick()">
-                        <summary>
-                            <span class="text-morph" data-id="acc1_title">Алгоритм создания 🤔</span>
-                            <i class="fa-solid fa-chevron-down chevron"></i>
-                        </summary>
+                        <summary><span class="text-morph" data-id="acc1_title">Алгоритм создания 🤔</span><i class="fa-solid fa-chevron-down chevron"></i></summary>
                         <div class="details-content">
                             <div class="apple-quote text-morph" data-id="acc1_text">
                                 <p class="mb-3"><strong>1. Ввод номеров:</strong> Пишете номер (можно несколько через запятую). Чубайс бдит: если заявка уже завершена кем-то другим, он скажет, кто это был! Если кто-то работает по ней с таким же составом — он ругнется и не даст создать дубль.</p>
@@ -534,7 +544,7 @@
                 </div>
             </div>
 
-            <!-- Карточка 2: Мои заявки -->
+            <!-- Мои заявки -->
             <div class="liquid-card reveal-on-scroll" onclick="triggerHaptic('light')">
                 <div class="p-5 sm:p-7">
                     <div class="flex items-center mb-6" style="transform: translateZ(15px);">
@@ -544,36 +554,24 @@
                             <p class="text-[14px] sm:text-[15px] text-dynamic-muted text-morph mt-1" data-id="card2_subtitle">Ваш рабочий лоток <span class="note-sticker">📦</span>.</p>
                         </div>
                     </div>
-
                     <details onclick="playUIClick()">
-                        <summary>
-                            <span class="flex items-center text-[15px] sm:text-[16px]"><span class="w-3 h-3 rounded-full bg-yellow-400 mr-3 sm:mr-4 shadow-md shrink-0"></span> Пауза <span class="note-sticker">☕</span></span>
-                            <i class="fa-solid fa-chevron-down chevron"></i>
-                        </summary>
+                        <summary><span class="flex items-center text-[15px] sm:text-[16px]"><span class="w-3 h-3 rounded-full bg-yellow-400 mr-3 sm:mr-4 shadow-md shrink-0"></span> Пауза <span class="note-sticker">☕</span></span><i class="fa-solid fa-chevron-down chevron"></i></summary>
                         <div class="details-content">
                             <div class="apple-quote text-morph" data-id="acc2_text">
                                 Проблемы на работе? Кончились материалы или наладчик ушел пить чай? Жмите <strong>«Пауза»</strong> и пишите причину (Настя всё читает!). Внимание: пауза <mark class="note-highlight">автоматически выкидывает заявку</mark> из планов на завтра! Вернулись? Жмите <strong>«▶️ В работу»</strong>.
                             </div>
                         </div>
                     </details>
-
                     <details onclick="playUIClick()">
-                        <summary>
-                            <span class="flex items-center text-[15px] sm:text-[16px]"><span class="w-3 h-3 rounded-full bg-green-500 mr-3 sm:mr-4 shadow-md shrink-0"></span> Завершить / Архив <span class="note-sticker">✅</span></span>
-                            <i class="fa-solid fa-chevron-down chevron"></i>
-                        </summary>
+                        <summary><span class="flex items-center text-[15px] sm:text-[16px]"><span class="w-3 h-3 rounded-full bg-green-500 mr-3 sm:mr-4 shadow-md shrink-0"></span> Завершить / Архив <span class="note-sticker">✅</span></span><i class="fa-solid fa-chevron-down chevron"></i></summary>
                         <div class="details-content">
                             <div class="apple-quote text-morph" data-id="acc3_text">
                                 Сделал дело — жми <strong>«Завершить»</strong>! Заявка прячется в Архив (Чубайс помнит последние 40 ваших дел). Если промазали кнопкой — идите вниз списка, заходите в Архив и жмите 🔄 Восстановить (заявка снова вернется в работу).
                             </div>
                         </div>
                     </details>
-
                     <details onclick="playUIClick()" style="background: rgba(255, 45, 85, 0.05); border-color: rgba(255, 45, 85, 0.2);">
-                        <summary style="color: #FF2D55;">
-                            <span class="flex items-center text-morph font-bold text-[15px] sm:text-[16px]" data-id="acc5_title"><i class="fa-solid fa-arrow-right-to-bracket mr-3 sm:mr-4 shrink-0"></i> Перенос «На завтра» <span class="note-sticker">📅</span></span>
-                            <i class="fa-solid fa-chevron-down chevron"></i>
-                        </summary>
+                        <summary style="color: #FF2D55;"><span class="flex items-center text-morph font-bold text-[15px] sm:text-[16px]" data-id="acc5_title"><i class="fa-solid fa-arrow-right-to-bracket mr-3 sm:mr-4 shrink-0"></i> Перенос «На завтра» <span class="note-sticker">📅</span></span><i class="fa-solid fa-chevron-down chevron"></i></summary>
                         <div class="details-content">
                             <div class="apple-quote text-morph" style="border-left-color: #FF2D55;" data-id="acc5_text">
                                 <mark class="note-highlight blue">Главная фишка перед уходом домой!</mark> Переносит текущую заявку в планы на следующую смену. Бот спросит: оставить текущую бригаду или выгнать лентяев и набрать новых? <br><br><em>Помните: пауза или завершение отменяют перенос на завтра!</em>
@@ -583,7 +581,7 @@
                 </div>
             </div>
 
-            <!-- Карточка 3: На завтра -->
+            <!-- На завтра -->
             <div class="liquid-card reveal-on-scroll" onclick="triggerHaptic('light')">
                 <div class="p-5 sm:p-7">
                     <div class="flex items-center mb-6" style="transform: translateZ(15px);">
@@ -593,7 +591,6 @@
                             <p class="text-[14px] sm:text-[15px] text-dynamic-muted text-morph mt-1" data-id="card3_subtitle">Ваш план действий <span class="note-sticker">🔮</span>.</p>
                         </div>
                     </div>
-
                     <div class="apple-quote mb-2 text-morph" data-id="card3_rule" style="transform: translateZ(10px); background: #fff;">
                         <strong class="text-orange-500 block mb-2 uppercase tracking-widest text-[12px] sm:text-[13px]"><i class="fa-solid fa-bolt mr-2"></i> Строгий Тайминг:</strong>
                         Ровно в <strong>12:00</strong> Чубайс присылает утренний опрос (и вешает закреп). В <strong>16:30</strong> он молча формирует финальный отчет, скидывает его в Google Таблицу и забирает миску (чистит ваши заявки).<br><br>
@@ -603,7 +600,7 @@
                 </div>
             </div>
 
-            <!-- Карточка АВТОБУС -->
+            <!-- Автобус -->
             <div class="liquid-card reveal-on-scroll" onclick="triggerHaptic('light')">
                 <div class="p-5 sm:p-7">
                     <div class="flex items-center mb-6" style="transform: translateZ(15px);">
@@ -613,21 +610,73 @@
                             <p class="text-[14px] sm:text-[15px] text-dynamic-muted text-morph mt-1" data-id="card_bus_subtitle">Кто не успел — топает пешком 🚶‍♂️</p>
                         </div>
                     </div>
-                    
                     <details onclick="playUIClick()" style="background: rgba(0, 122, 255, 0.05); border-color: rgba(0, 122, 255, 0.2);">
-                        <summary style="color: #007AFF;">
-                            <span class="text-morph font-bold" data-id="acc_bus_title"><i class="fa-solid fa-stopwatch mr-2"></i> Дедлайн: строго до 13:45!</span>
-                            <i class="fa-solid fa-chevron-down chevron"></i>
-                        </summary>
+                        <summary style="color: #007AFF;"><span class="text-morph font-bold" data-id="acc_bus_title"><i class="fa-solid fa-stopwatch mr-2"></i> Дедлайн: строго до 13:45!</span><i class="fa-solid fa-chevron-down chevron"></i></summary>
                         <div class="details-content">
-                            <div class="apple-quote text-morph" style="border-left-color: #007AFF;" data-id="acc_bus_text">
-                                <mark class="note-highlight blue text-white">Железное правило:</mark> Запись закрывается ровно в <strong>13:45</strong>! После этого времени бот умывает лапы и шлет всех лесом к Насте. Не успели? Топаете домой пешком.<br><br><strong>Процесс:</strong> Выбираете здание (00UAC/94VAC). Бот сам вспомнит вашу стандартную остановку из базы! А если сегодня пятница — он заботливо спросит, на какой день вас записать.
+                            <div class="apple-quote text-morph" style="border-left-color: #007AFF; background: #fff;" data-id="acc_bus_text">
+                                <mark class="note-highlight blue text-white">Железное правило:</mark> Запись закрывается ровно в <strong>13:45</strong>! После этого времени бот умывает лапы и шлет всех лесом к Насте. Не успели записаться? Ваши проблемы, топайте домой пешком или идите кланяться Насте.<br><br><strong>Процесс:</strong> Выбираете здание (00UAC/94VAC). Бот сам вспомнит вашу стандартную остановку из базы! А если сегодня пятница — он заботливо спросит, на какой день вас записать.
                             </div>
                         </div>
                     </details>
                 </div>
             </div>
 
+            <!-- Карточка РВД (Выходного дня / Сигнальная лента) -->
+            <div class="liquid-card reveal-on-scroll relative overflow-hidden" onclick="triggerHaptic('light')" style="border-color: rgba(255, 204, 0, 0.5); border-width: 2px;">
+                
+                <!-- Декорации (Лента, царапины, бинты) -->
+                <div class="absolute inset-0 z-0 pointer-events-none rvd-decor">
+                    <!-- Сигнальная лента -->
+                    <div class="absolute -top-6 -right-12 w-48 h-8 rotate-45 signal-tape"></div>
+                    <div class="absolute -bottom-6 -left-12 w-48 h-8 rotate-45 signal-tape"></div>
+                    
+                    <!-- Царапины от кошки -->
+                    <div class="absolute top-12 right-10 w-16 h-16 pointer-events-none rotate-[20deg] opacity-80">
+                        <div class="absolute top-0 left-2 w-1 h-14 bg-red-500 rounded-full shadow-[0_0_8px_rgba(255,45,85,0.8)] rotate-[-15deg]"></div>
+                        <div class="absolute top-2 left-6 w-1 h-16 bg-red-500 rounded-full shadow-[0_0_8px_rgba(255,45,85,0.8)] rotate-[-15deg]"></div>
+                        <div class="absolute top-1 left-10 w-1 h-12 bg-red-500 rounded-full shadow-[0_0_8px_rgba(255,45,85,0.8)] rotate-[-15deg]"></div>
+                    </div>
+                    
+                    <!-- Медицинские бинты -->
+                    <div class="absolute top-1/2 -left-8 w-32 h-6 bg-[#F5F5F5] border-y border-dashed border-[#D1D1D6] shadow-sm rotate-[-15deg] opacity-90"></div>
+                </div>
+
+                <div class="p-5 sm:p-7 relative z-10">
+                    <div class="flex items-center mb-6" style="transform: translateZ(15px);">
+                        <div class="apple-app-icon relative bg-white">
+                            <i class="fa-solid fa-screwdriver-wrench text-[22px] sm:text-[26px] icon-3d-red"></i>
+                            <!-- Миска рядом с иконкой -->
+                            <div class="absolute -bottom-3 -right-4 text-[24px] drop-shadow-lg" style="transform: rotate(10deg);">🥣</div>
+                        </div>
+                        <div class="ml-4 sm:ml-5 min-w-0">
+                            <h3 class="text-[24px] sm:text-[28px] font-black text-morph leading-tight" data-id="card_rvd_title"><span class="ai-gradient fur-effect">Вышел в РВД</span></h3>
+                            <p class="text-[14px] sm:text-[15px] text-dynamic-muted text-morph mt-1" data-id="card_rvd_subtitle">Работа в выходные 🛠</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Табличка -->
+                    <div class="bg-[#F8E7A2] border-2 border-[#D4A373] rounded-lg p-3 px-4 text-center transform rotate-[-2deg] shadow-[0_5px_15px_rgba(0,0,0,0.1)] mx-auto w-[90%] sm:max-w-[80%] mt-2 rvd-decor relative">
+                        <!-- Гвоздик -->
+                        <div class="w-3 h-3 bg-red-500 rounded-full absolute -top-1.5 left-1/2 transform -translate-x-1/2 shadow-sm border border-red-700"></div>
+                        <p class="font-bold text-[#8B5A2B] text-[13px] sm:text-[14px] leading-tight" style="font-family: 'Comic Sans MS', cursive, sans-serif;">
+                            В будущем мб что-то тут будет, но мне пока лень 🐾
+                        </p>
+                    </div>
+
+                    <details onclick="playUIClick()" class="mt-5" style="background: rgba(255, 45, 85, 0.05); border-color: rgba(255, 45, 85, 0.2);">
+                        <summary style="color: #FF3B30;">
+                            <span class="text-morph font-bold" data-id="acc_rvd_title"><i class="fa-solid fa-shield-cat mr-2"></i> Зачем эта кнопка?</span>
+                            <i class="fa-solid fa-chevron-down chevron"></i>
+                        </summary>
+                        <div class="details-content">
+                            <div class="apple-quote text-morph" style="border-left-color: #FF3B30; background: #fff;" data-id="acc_rvd_text">
+                                Бот не отправляет уведомления в выходные. Нажав кнопку <strong>«Вышел в РВД»</strong>, бот поймет, что вы на смене, и <mark class="note-highlight red text-white">включит звуковые уведомления</mark> для вас! Иначе Настя не докричится.
+                            </div>
+                        </div>
+                    </details>
+                </div>
+            </div>
+            
             <!-- ОР КОТА (Сообщить о проблеме) -->
             <div class="liquid-card reveal-on-scroll hide-for-elderly" onclick="triggerHaptic('light')">
                 <div class="p-5 sm:p-7">
@@ -780,7 +829,7 @@
                 <i class="fa-solid fa-cat text-2xl sm:text-3xl icon-3d-orange" style="color: #FF2D55; text-shadow: 0 2px 10px rgba(255,45,85,0.4);"></i>
             </div>
             
-            <!-- Кнопка закрытия пузыря (появляется только когда пузырь открыт) -->
+            <!-- Кнопка закрытия пузыря -->
             <div id="wife-close-btn" class="absolute -top-2 -left-2 w-6 h-6 bg-gray-200 rounded-full border-2 border-white items-center justify-center cursor-pointer shadow-md z-20 hidden text-[10px] text-gray-600 font-bold hover:bg-gray-300 transition-colors" onclick="toggleWife(true); event.stopPropagation();">
                 <i class="fa-solid fa-xmark"></i>
             </div>
@@ -789,7 +838,7 @@
         <div id="wife-bubble" class="absolute bottom-16 sm:bottom-20 left-0 w-72 sm:w-80 liquid-card p-5 sm:p-6 opacity-0 pointer-events-none transform scale-90 translate-y-4 transition-all duration-500 origin-bottom-left" style="margin-bottom:0; border-radius: 20px sm:border-radius: 24px; border: 1px solid rgba(255,255,255,0.9);">
             <p class="font-black text-[15px] sm:text-[16px] mb-2 text-morph" data-id="wife_title">Служба Спасения <span class="note-sticker">🚑</span></p>
             <p class="text-[13px] sm:text-[14px] text-gray-800 leading-relaxed text-morph font-medium" data-id="wife_text">
-                Если бот молчит больше 5 минут — значит подавился мышью. Я его пну, у нас 14 котят и ипотека на лоток, расслабляться некогда! <br><br><mark class="note-highlight pink">Ни одна заявка не пропадет.</mark>
+                Если бот молчит 5 минут — значит сервер завис. Я его пну, у нас 14 котят! <mark class="note-highlight pink">Ни одна заявка не пропадет.</mark>
             </p>
         </div>
     </div>
@@ -829,9 +878,9 @@
                 gain.gain.setValueAtTime(0, t); gain.gain.linearRampToValueAtTime(0.05, t + 0.05); gain.gain.linearRampToValueAtTime(0, t + 0.3);
                 osc.start(t); osc.stop(t + 0.3);
             } else if (type === 'shatter') {
-                osc.type = 'square'; osc.frequency.setValueAtTime(800, t); osc.frequency.exponentialRampToValueAtTime(100, t + 0.3);
-                gain.gain.setValueAtTime(0.1, t); gain.gain.exponentialRampToValueAtTime(0.001, t + 0.3);
-                osc.start(t); osc.stop(t + 0.3);
+                osc.type = 'sawtooth'; osc.frequency.setValueAtTime(900, t); osc.frequency.exponentialRampToValueAtTime(50, t + 0.4);
+                gain.gain.setValueAtTime(0.2, t); gain.gain.exponentialRampToValueAtTime(0.001, t + 0.4);
+                osc.start(t); osc.stop(t + 0.4);
             }
         }
         function playUIClick() { playSound('click'); }
@@ -877,7 +926,27 @@
             reveals.forEach(el => observer.observe(el));
         }
 
-        // --- Signature Canvas & Shatter Effect ---
+        function toggleWife(forceClose = false) {
+            const bubble = document.getElementById('wife-bubble');
+            const badge = document.getElementById('wife-badge');
+            const closeBtn = document.getElementById('wife-close-btn');
+            const avatar = document.getElementById('wife-avatar');
+            
+            if(badge) badge.remove();
+            
+            if (forceClose || bubble.style.opacity === '1') {
+                bubble.style.opacity = '0'; bubble.style.transform = 'scale(0.9) translateY(16px)'; bubble.style.pointerEvents = 'none';
+                closeBtn.style.display = 'none';
+                avatar.classList.add('animate-wiggle');
+            } else {
+                playUIClick(); triggerHaptic('light');
+                bubble.style.opacity = '1'; bubble.style.transform = 'scale(1) translateY(0)'; bubble.style.pointerEvents = 'auto';
+                closeBtn.style.display = 'flex';
+                avatar.classList.remove('animate-wiggle');
+            }
+        }
+
+        // --- Signature Pad ---
         const sigCanvas = document.getElementById('signature-pad');
         const sigCtx = sigCanvas.getContext('2d');
         let isDrawing = false; let lastX = 0; let lastY = 0; let drawLength = 0; let isSigned = false;
@@ -930,41 +999,30 @@
                 for(let j=0; j<rows; j++) {
                     const piece = document.createElement('div');
                     piece.className = 'shatter-piece';
-                    piece.style.width = (w + 2) + 'px';
-                    piece.style.height = (h + 2) + 'px';
-                    piece.style.left = (i * w) + 'px';
-                    piece.style.top = (j * h) + 'px';
-                    
+                    piece.style.width = (w + 2) + 'px'; piece.style.height = (h + 2) + 'px';
+                    piece.style.left = (i * w) + 'px'; piece.style.top = (j * h) + 'px';
                     wrapper.appendChild(piece);
                     
                     setTimeout(() => {
-                        playUIShatter();
-                        piece.style.opacity = '1';
-                        
+                        playUIShatter(); piece.style.opacity = '1';
                         const angle = Math.random() * Math.PI * 2;
                         const velocity = 50 + Math.random() * 80;
                         const tx = Math.cos(angle) * velocity;
                         const ty = Math.sin(angle) * velocity + 150;
                         const rot = (Math.random() - 0.5) * 500;
-                        
                         piece.style.transform = `translate(${tx}px, ${ty}px) rotate(${rot}deg) scale(0)`;
                         piece.style.opacity = '0';
                     }, 50);
-                    
                     setTimeout(() => piece.remove(), 2600);
                 }
             }
-            
             wrapper.classList.add('is-shattered');
             document.getElementById('sig-promise').style.opacity = '0'; 
-            
-            setTimeout(() => {
-                playUISuccess(); triggerHaptic('success');
-            }, 600);
+            setTimeout(() => { playUISuccess(); triggerHaptic('success'); }, 600);
         }
 
         sigCanvas.addEventListener('mousedown', startDrawing); sigCanvas.addEventListener('mousemove', draw); sigCanvas.addEventListener('mouseup', stopDrawing); sigCanvas.addEventListener('mouseout', stopDrawing);
-        sigCanvas.addEventListener('touchstart', startDrawing, {passive: false}); sigCanvas.addEventListener('touchmove', draw, {passive: false}); sigCanvas.addEventListener('touchend', stopDrawing);
+        sigCanvas.addEventListener('touchstart', startDrawing, {passive: false}); sigCanvas.addEventListener('touchmove', draw, {passive: false}); sigCanvas.addEventListener('touchmove', function(e) { if(isDrawing) e.preventDefault(); }, {passive: false}); sigCanvas.addEventListener('touchend', stopDrawing);
 
         // --- Градиентная пыль Apple Intelligence ---
         const dustCanvas = document.getElementById('dust-canvas');
@@ -1064,6 +1122,7 @@
                 </div>
             </div>
         `;
+        
         const htmlLifeSupportElderly = `<div class="apple-quote text-[13px] sm:text-[14px]"><strong>Случайно выключили интернет? Не паникуем!</strong> Внутри кота крутятся надежные шестеренки. Если у вас на телефоне пропал сигнал, ваша заявка всё равно намертво сохранится в памяти бота. Шайтан-машина сама достучится до сервера и отдаст отчет руководству, как только связь появится. Переделывать ничего не придется!</div>`;
 
         // Texts Database
@@ -1117,6 +1176,14 @@
                 elderly: "Нажмите 'Запись на автобус' в меню. Выберите свое здание и остановку. <br><br><strong>Очень важно:</strong> Записаться нужно строго <strong>до 13:45</strong>! Если опоздали — программа закроет списки, и придется идти домой пешком или звонить руководству."
             },
             
+            card_rvd_title: { normal: "<span class='ai-gradient fur-effect'>Вышел в РВД</span>", elderly: "Работа в выходные" },
+            card_rvd_subtitle: { normal: "Работа в выходные 🛠", elderly: "Оповещение о выходе на работу." },
+            acc_rvd_title: { normal: "<i class='fa-solid fa-shield-cat mr-2'></i> Зачем эта кнопка?", elderly: "Для чего нужно?" },
+            acc_rvd_text: { 
+                normal: "Бот не отправляет уведомления в выходные. Нажав кнопку <strong>«Вышел в РВД»</strong>, бот поймет, что вы на смене, и <mark class='note-highlight red text-white'>включит звуковые уведомления</mark> для вас! Иначе Настя не докричится.",
+                elderly: "Программа не беспокоит сотрудников в субботу и воскресенье. Если вы вышли на работу в свой выходной, нажмите эту кнопку. Программа поймет, что вы на смене, и будет присылать вам важные сообщения."
+            },
+
             card_sos_title: { normal: "<span class='ai-gradient fur-effect'>Ор мартовского кота</span>", elderly: "Кнопка Паники" },
             card_sos_subtitle: { normal: "Связь с начальством <span class='note-sticker'>🆘</span>", elderly: "Если всё сломалось 🆘" },
             acc_sos_text: { 
