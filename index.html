@@ -45,8 +45,7 @@
 
     <style>
         :root {
-            /* Чуть затемненный фон, чтобы дым и стекло выглядели контрастнее */
-            --bg-color: #DFE4EB;
+            var(--bg-color): #DFE4EB;
             --text-main: #1C1C1E; 
             --text-muted: #8E8E93;
             /* Ультра-премиальное жидкое стекло iOS 27 */
@@ -60,7 +59,7 @@
         }
 
         body {
-            background-color: var(--bg-color); color: var(--text-main);
+            background-color: #DFE4EB; color: var(--text-main);
             transition: background-color 0.5s ease, color 0.5s ease;
             -webkit-tap-highlight-color: transparent; overscroll-behavior-y: none;
             padding-bottom: calc(env(safe-area-inset-bottom) + 160px);
@@ -194,7 +193,7 @@
         }
         .reveal-on-scroll.is-revealed { opacity: 1; transform: translateY(0) scale(1); }
 
-        /* Навигация (Dynamic Island Style) */
+        /* Навигация (Dynamic Island вынесен из 3D-зоны) */
         .nav-wrapper {
             position: fixed; top: calc(env(safe-area-inset-top) + 16px); left: 0; right: 0; z-index: 10000;
             pointer-events: none; display: flex; justify-content: center;
@@ -215,6 +214,28 @@
         .magnetic-wrap { flex: none; position: relative; z-index: 2; }
         .mode-btn { text-align: center; font-size: 14px; font-weight: 600; padding: 10px 24px; color: var(--text-muted); transition: color 0.3s; cursor: pointer; border-radius: 9999px; white-space: nowrap;}
         .magnetic-wrap.active .mode-btn { color: #000000; font-weight: 800; }
+
+        /* Подсказка для ветеранов */
+        #tech-hint {
+            position: absolute; top: calc(100% + 12px); left: 50%; transform: translateX(-50%) translateY(-10px);
+            background: rgba(255, 45, 85, 0.95); color: white; padding: 8px 14px; border-radius: 12px;
+            font-size: 13px; font-weight: 600; box-shadow: 0 8px 20px rgba(255, 45, 85, 0.3);
+            opacity: 0; transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            pointer-events: none; z-index: 10001; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            white-space: nowrap;
+        }
+        #tech-hint::before {
+            content: ''; position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%);
+            border-width: 6px; border-style: solid; border-color: transparent transparent rgba(255, 45, 85, 0.95) transparent;
+        }
+        #tech-hint.show {
+            opacity: 1; transform: translateX(-50%) translateY(0);
+            animation: hintFloat 2.5s ease-in-out infinite;
+        }
+        @keyframes hintFloat {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(4px); }
+        }
 
         .text-morph { display: inline-block; transition: opacity 0.4s ease, filter 0.4s ease; }
         .text-morph.blur-out { filter: blur(10px); opacity: 0; }
@@ -344,19 +365,19 @@
 
         /* ВЕТЕРАНЫ (Плоский строгий дизайн) */
         body.elderly-mode { 
-            --bg-color: #FFFFFF; --text-main: #000000; --text-muted: #333333;
-            --liquid-glass-bg: #FFFFFF; --liquid-glass-border: #000000; --liquid-shadow: none;
+            background-color: #FFFFFF; color: #000000;
         }
         body.elderly-mode #dust-canvas, body.elderly-mode #smoke-container { display: none; }
-        body.elderly-mode .liquid-card { border: 2px solid #000; border-radius: 16px; transform: none !important; backdrop-filter: none; background: #fff;}
+        body.elderly-mode .liquid-card { border: 2px solid #000; border-radius: 16px; transform: none !important; backdrop-filter: none; background: #fff; box-shadow: none;}
         body.elderly-mode .liquid-card::before { display: none; }
         body.elderly-mode .apple-app-icon { background: #FFFFFF; border: 2px solid #000; box-shadow: none; border-radius: 12px; transform: none;}
         
         /* Спец-островок для ветеранов */
         body.elderly-mode .segmented-control {
-            background: #ffffff; border: 2px solid #000; box-shadow: 0 8px 0 #000; padding: 5px; border-radius: 9999px;
+            background: #ffffff; border: 2px solid #000; box-shadow: 0 6px 0 #000; padding: 5px; border-radius: 9999px;
+            backdrop-filter: none; -webkit-backdrop-filter: none;
         }
-        body.elderly-mode .mode-indicator { background: #000; top: 5px; bottom: 5px; border-radius: 9999px;}
+        body.elderly-mode .mode-indicator { background: #000; top: 5px; bottom: 5px; border-radius: 9999px; box-shadow: none;}
         body.elderly-mode .magnetic-wrap.active .mode-btn { color: #fff; }
         body.elderly-mode .mode-btn { color: #555; }
 
@@ -365,9 +386,9 @@
         body.elderly-mode .icon-3d-orange, body.elderly-mode .icon-3d-blue, body.elderly-mode .icon-3d-purple, body.elderly-mode .icon-3d-red { text-shadow: none !important; color: #000 !important; }
         
         body.elderly-mode .note-sticker { display: none; }
-        body.elderly-mode .note-highlight { background: none; box-shadow: none; padding: 0; transform: none; text-decoration: underline; font-weight: bold; }
+        body.elderly-mode .note-highlight { background: none; box-shadow: none; padding: 0; transform: none; text-decoration: underline; font-weight: bold; -webkit-text-fill-color: #000; color: #000;}
 
-        body.elderly-mode details { background: #FFFFFF; border: 2px solid #000; transform: none; border-radius: 8px; box-shadow: none;}
+        body.elderly-mode details { background: #FFFFFF; border: 2px solid #000; transform: none; border-radius: 12px; box-shadow: none;}
         body.elderly-mode .apple-quote { border-left: 6px solid #000; background: #f9f9f9; box-shadow: none; border-radius: 0;}
         body.elderly-mode .hide-for-elderly, body.elderly-mode #bg-glass-overlay { display: none !important; }
         body.elderly-mode .animate-float, body.elderly-mode .animate-wiggle { animation: none !important; transform: none !important; }
@@ -416,16 +437,20 @@
     <!-- Стеклянная прослойка (Блюр фона) -->
     <div id="bg-glass-overlay" class="hide-for-elderly"></div>
 
-    <!-- Навигация (Dynamic Island Style) вынесена КОРЕНЬ для жесткой фиксации -->
+    <!-- Навигация (Dynamic Island Style) вынесена в корень для жесткой фиксации -->
     <div class="nav-wrapper">
-        <div class="max-w-2xl mx-auto w-full flex justify-center">
+        <div class="max-w-2xl mx-auto w-full flex justify-center relative">
             <div class="segmented-control">
                 <div id="mode-indicator" class="mode-indicator"></div>
                 <div class="magnetic-wrap active" onclick="setMode(0, this)">
-                    <div class="mode-btn">Молодые спецы</div>
+                    <div class="mode-btn">Молодые</div>
                 </div>
                 <div class="magnetic-wrap" onclick="setMode(1, this)">
-                    <div class="mode-btn">Ветераны</div>
+                    <div class="mode-btn">Те, кто постарше</div>
+                    <!-- Подсказка для ветеранов -->
+                    <div id="tech-hint">
+                        Если технологии вам чужды — жмите сюда 👋
+                    </div>
                 </div>
             </div>
         </div>
@@ -500,8 +525,8 @@
                         </summary>
                         <div class="details-content">
                             <div class="apple-quote text-morph" data-id="acc1_text">
-                                <p class="mb-3"><strong>1. Ввод номеров:</strong> Пишете номер (можно несколько через запятую). Чубайс сразу пробивает базу: если заявка уже закрыта кем-то другим, он сдаст его с потрохами! А если кто-то уже работает по ней с таким же составом — он ругнется и не даст создать дубль.</p>
-                                <p class="mb-3"><strong>2. Сбор бригады <span class="note-sticker">👷‍♂️</span>:</strong> Ваше имя уже в списке. Введите пару букв фамилии коллеги — бот найдет его по запаху.</p>
+                                <p class="mb-3"><strong>1. Ввод номеров:</strong> Пишете номер (можно несколько через запятую). Чубайс бдит: если заявка уже завершена кем-то другим, он скажет, кто это был! Если кто-то работает по ней с таким же составом — он ругнется и не даст создать дубль.</p>
+                                <p class="mb-3"><strong>2. Сбор бригады <span class="note-sticker">👷‍♂️</span>:</strong> Ваше имя уже в списке. Введите пару букв фамилии коллеги — бот найдет его по запаху в базе.</p>
                                 <p><strong>3. Сохранение:</strong> <mark class="note-highlight">Обязательно</mark> нажмите зеленую кнопку «✅ Подтвердить состав». Иначе бот посмотрит на вас как на дурака и выкинет заявку.</p>
                             </div>
                         </div>
@@ -539,7 +564,7 @@
                         </summary>
                         <div class="details-content">
                             <div class="apple-quote text-morph" data-id="acc3_text">
-                                Сделал дело — жми <strong>«Завершить»</strong>! Заявка прячется в Архив (Чубайс помнит последние 40 ваших дел). Если промазали кнопкой — идите вниз списка, заходите в Архив и жмите 🔄 Восстановить.
+                                Сделал дело — жми <strong>«Завершить»</strong>! Заявка прячется в Архив (Чубайс помнит последние 40 ваших дел). Если промазали кнопкой — идите вниз списка, заходите в Архив и жмите 🔄 Восстановить (заявка снова вернется в работу).
                             </div>
                         </div>
                     </details>
@@ -590,7 +615,7 @@
                     </div>
 
                     <div class="apple-quote text-morph" data-id="acc_sos_text">
-                        Сломался бот? Кончился корм? Жмите 🆘! Чубайс выдаст список Администраторов. Выбираете жертву, пишете гневный текст, и бот <mark class="note-highlight">анонимно и на мягких лапках</mark> перешлет вашу боль в личку начальству.
+                        Сломался бот? Кончился корм? Жмите 🆘! Чубайс выдаст список Администраторов. Выбираете жертву, пишете гневный текст, и бот <mark class="note-highlight">анонимно и на мягких лапках</mark> перешлет вашу боль в личку начальству. Никто не узнает, кто нагадил мимо лотка.
                     </div>
                 </div>
             </div>
@@ -925,7 +950,7 @@
         resizeDust();
 
         let particles = [];
-        // Фирменные цвета Apple Intelligence (Синий, Фиолетовый, Оранжевый, Розовый)
+        // Фирменные цвета Apple Intelligence
         const aiColors = ['rgba(50, 197, 255, ', 'rgba(182, 32, 224, ', 'rgba(255, 149, 0, ', 'rgba(255, 45, 85, '];
 
         class MagicalDust {
@@ -979,7 +1004,7 @@
         }
         animateDustLoop();
 
-        // --- Описания и тексты, интегрированные с логикой Python бота ---
+        // --- Описания и тексты ---
         const htmlLifeSupportNormal = `
             <div class="bg-white/80 rounded-2xl p-3 sm:p-4 border border-blue-100 shadow-sm flex items-start gap-3 sm:gap-4">
                 <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center shrink-0"><i class="fa-solid fa-satellite-dish text-blue-500"></i></div>
@@ -1020,7 +1045,7 @@
             },
             main_desc: { 
                 normal: "Ваш цифровой ассистент <span class='note-sticker'>🤖</span> по учету заявок. Мурчит, живет по времени Стамбула 🇹🇷 и <mark class='note-highlight pink'>строго подчиняется Насте.</mark>", 
-                elderly: "Протерли очки? Этот ваш «4джи» интернет включили? Отлично! Чубайс — это программа, которая заменяет все бумажки. Тыкать аккуратно, слушается только Настю." 
+                elderly: "Чубайс — это программа, которая заменяет все бумажки. Работает надежно, ничего не потеряет. Слушается только Настю." 
             },
             menu_title: { normal: "Меню (Когтеточка строгого режима) <span class='note-sticker'>🐈</span>", elderly: "Кнопки управления (нажимать пальцем)" },
             
@@ -1036,7 +1061,7 @@
             card2_subtitle: { normal: "Ваш рабочий лоток <span class='note-sticker'>📦</span>.", elderly: "То, над чем сейчас пыхтим." },
             acc2_text: {
                 normal: "Ушли пить чай или ждете запчасти? Жмите <strong>«Пауза»</strong> и пишите причину. Внимание: пауза <mark class='note-highlight'>автоматически выкидывает заявку</mark> из ваших планов на завтра! Вернулись? Жмите <strong>«▶️ В работу»</strong>.",
-                elderly: "Пошли пить чай или крутить скрутки? Жмите <strong>«Пауза»</strong> и укажите причину (чтобы начальство видело). Время простоя в отчет не идет.<br><br>Вернулись с перекура? Жмите <strong>«В работу»</strong>, и таймер снова затикает."
+                elderly: "Пошли пить чай или на перекур? Жмите <strong>«Пауза»</strong> и укажите причину (чтобы начальство видело). Время простоя в отчет не идет.<br><br>Вернулись? Жмите <strong>«В работу»</strong>, и таймер снова затикает."
             },
             acc3_text: {
                 normal: "Сделал дело — жми <strong>«Завершить»</strong>! Заявка прячется в Архив (Чубайс помнит последние 40 ваших дел). Если промазали кнопкой — идите вниз списка, заходите в Архив и жмите 🔄 Восстановить (заявка снова вернется в работу).",
@@ -1077,7 +1102,6 @@
             
             const indicator = document.getElementById('mode-indicator');
             indicator.style.width = btnWrapElement.offsetWidth + 'px';
-            // Обновлен оффсет из-за новых отступов (padding: 6px)
             indicator.style.transform = `translateX(${btnWrapElement.offsetLeft - 6}px)`;
             
             document.querySelectorAll('.magnetic-wrap').forEach((wrap, i) => {
@@ -1112,6 +1136,13 @@
             if(tg && tg.setHeaderColor) {
                 if(index === 0) tg.setHeaderColor('#DFE4EB');
                 if(index === 1) tg.setHeaderColor('#FFFFFF');
+            }
+
+            // Убираем подсказку навсегда, если юзер переключил режим
+            const hint = document.getElementById('tech-hint');
+            if(hint) {
+                hint.classList.remove('show');
+                hint.classList.add('hidden-forever');
             }
         }
 
@@ -1148,11 +1179,21 @@
             if (firstWrap) {
                 setTimeout(() => {
                     const indicator = document.getElementById('mode-indicator');
-                    indicator.style.width = firstWrap.offsetWidth + 'px'; 
-                    // Обновлен оффсет из-за новых отступов
-                    indicator.style.transform = `translateX(${firstWrap.offsetLeft - 6}px)`;
+                    indicator.style.width = firstWrap.offsetWidth + 'px'; indicator.style.transform = `translateX(${firstWrap.offsetLeft - 6}px)`;
                 }, 100);
             }
+
+            // Логика появления заботливой подсказки
+            setTimeout(() => {
+                const hint = document.getElementById('tech-hint');
+                if (hint && !hint.classList.contains('hidden-forever')) {
+                    hint.classList.add('show');
+                    // Автоматически скрыть через 10 секунд
+                    setTimeout(() => {
+                        hint.classList.remove('show');
+                    }, 10000);
+                }
+            }, 1500);
             
             const details = document.querySelectorAll("details");
             details.forEach((targetDetail) => {
