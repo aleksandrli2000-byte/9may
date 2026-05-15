@@ -64,7 +64,6 @@
             -webkit-tap-highlight-color: transparent; overscroll-behavior-y: none;
             padding-bottom: calc(env(safe-area-inset-bottom) + 160px);
             overflow-x: hidden;
-            perspective: 1200px;
         }
 
         #dust-canvas {
@@ -247,51 +246,86 @@
         .admin-unlocked .admin-lock-screen { opacity: 0; pointer-events: none; backdrop-filter: blur(0px); }
         .admin-unlocked .admin-content-blur { filter: blur(0px); opacity: 1; pointer-events: auto; }
 
-        /* Всплывающий Кот (Wife Bubble) - Умное закрепление */
+        /* Всплывающий Кот (Wife Bubble) - Закрепленный в углу */
         #wife-container {
-            position: fixed; bottom: calc(env(safe-area-inset-bottom) + 24px); left: 20px; z-index: 100;
-            transform: translateY(150px) scale(0.5); opacity: 0; pointer-events: none;
-            transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-        #wife-container.visible {
-            transform: translateY(0) scale(1); opacity: 1; pointer-events: auto;
+            position: fixed; bottom: calc(env(safe-area-inset-bottom) + 24px); left: 20px; z-index: 9999;
         }
         #wife-bubble {
             box-shadow: 0 20px 50px rgba(0,0,0,0.15);
         }
 
-        /* Интерактивная Подпись (Apple Notes Paper) */
+        /* ИНТЕРАКТИВНАЯ ПОДПИСЬ (Apple Notes + Shatter Effect) */
+        #signature-wrapper {
+            position: relative;
+            perspective: 1200px;
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+        }
         #signature-container {
-            background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(20px);
-            border-radius: 32px; padding: 20px;
-            box-shadow: inset 0 2px 10px rgba(0,0,0,0.03), 0 10px 30px rgba(0,0,0,0.05);
-            border: 1px solid rgba(255,255,255,1); position: relative; overflow: hidden;
-            transition: all 0.5s ease;
-        }
-        #signature-container::after {
-            content: ''; position: absolute; bottom: 35px; left: 10%; right: 10%; height: 2px;
-            background: repeating-linear-gradient(to right, transparent, transparent 5px, rgba(0,0,0,0.1) 5px, rgba(0,0,0,0.1) 15px);
-            pointer-events: none; z-index: 0;
-        }
-        #signature-container.signed {
-            border: 1px solid #34C759;
-            box-shadow: inset 0 0 30px rgba(52, 199, 89, 0.15), 0 15px 40px rgba(52, 199, 89, 0.2);
-            background: rgba(242, 255, 245, 0.8);
-        }
-        #signature-container.signed::after { opacity: 0; }
-        #signature-pad { width: 100%; height: 120px; cursor: crosshair; touch-action: none; position: relative; z-index: 2; }
-        #signature-hint {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            color: #A1A1A6; font-weight: 600; pointer-events: none; transition: opacity 0.3s;
-            font-size: 16px; text-align: center; width: 100%; z-index: 1;
+            background: #fdfdfd; 
+            border-radius: 20px; padding: 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05), inset 0 1px 0 rgba(255,255,255,1);
+            border: 1px solid rgba(0,0,0,0.05); position: relative; overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transform-origin: center;
         }
         
-        #start-bot-btn-wrapper {
-            max-height: 0; opacity: 0; overflow: hidden; transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
-            transform: scale(0.8) translateY(-20px);
+        /* Линии блокнота */
+        .paper-lines {
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: repeating-linear-gradient(transparent, transparent 29px, #e5e5ea 30px);
+            opacity: 0.5; pointer-events: none; z-index: 0;
         }
-        #start-bot-btn-wrapper.show {
-            max-height: 120px; opacity: 1; transform: scale(1) translateY(0); margin-top: 24px;
+        
+        /* Линия для росписи */
+        .signature-line {
+            position: absolute; bottom: 40px; left: 10%; right: 10%;
+            border-bottom: 2px solid #c7c7cc; z-index: 1; pointer-events: none;
+        }
+        .signature-date {
+            position: absolute; bottom: 15px; right: 12%; color: #8e8e93; font-size: 12px; font-weight: 600;
+        }
+        .signature-joke {
+            position: absolute; top: 15px; left: 20px; color: #d1d1d6; font-size: 12px; font-weight: 500; font-style: italic; pointer-events: none;
+        }
+
+        #signature-pad { width: 100%; height: 160px; cursor: crosshair; touch-action: none; position: relative; z-index: 2; }
+        
+        #signature-hint {
+            position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%);
+            color: #A1A1A6; font-weight: 600; pointer-events: none; transition: opacity 0.3s;
+            font-size: 16px; text-align: center; width: 100%; z-index: 1;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+        }
+
+        /* Эффект разбитого стекла (Shatter Effect) */
+        .shatter-piece {
+            position: absolute;
+            background: rgba(255,255,255,0.9);
+            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.1), 0 10px 25px rgba(0,0,0,0.2);
+            border: 1px solid rgba(255,255,255,0.8);
+            border-radius: 4px;
+            pointer-events: none;
+            transition: all 2.5s cubic-bezier(0.15, 1, 0.3, 1);
+            z-index: 30;
+        }
+        
+        /* Спрятанная кнопка старта */
+        #start-bot-btn-wrapper {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.3);
+            opacity: 0; z-index: 20; pointer-events: none; transition: all 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+            width: 100%; text-align: center;
+        }
+        
+        /* Состояние после подписи */
+        #signature-wrapper.is-shattered #signature-container {
+            opacity: 0; transform: scale(0.9); visibility: hidden; transition: all 0.5s ease;
+        }
+        #signature-wrapper.is-shattered #start-bot-btn-wrapper {
+            opacity: 1; transform: translate(-50%, -50%) scale(1); pointer-events: auto;
+            transition-delay: 0.3s;
         }
 
         /* ВЕТЕРАНЫ (Плоский строгий дизайн) */
@@ -518,7 +552,7 @@
                 </div>
             </div>
 
-            <!-- Блок Выживаемости (Mobile Fix) -->
+            <!-- Блок Выживаемости -->
             <div class="liquid-card reveal-on-scroll" style="background: linear-gradient(135deg, rgba(230, 240, 255, 0.8) 0%, rgba(255, 255, 255, 0.4) 100%); border-color: rgba(100, 150, 255, 0.4);" onclick="triggerHaptic('light')">
                 <div class="p-5 sm:p-7">
                     <div class="flex items-center mb-6" style="transform: translateZ(15px);">
@@ -532,16 +566,13 @@
                     <details onclick="playUIClick()" style="background: rgba(255,255,255,0.7);">
                         <summary class="text-[15px] sm:text-[16px]"><span class="text-blue-900 flex items-center"><i class="fa-solid fa-shield-cat mr-2 sm:mr-3 shrink-0"></i> Как он выживает?</span><i class="fa-solid fa-chevron-down chevron"></i></summary>
                         <div class="details-content">
-                            <!-- Мини-карточки внутри (адаптивные flex-row) -->
-                            <div class="space-y-3" id="life_support_content">
-                                <!-- JS HTML goes here -->
-                            </div>
+                            <div class="space-y-3" id="life_support_content"></div>
                         </div>
                     </details>
                 </div>
             </div>
 
-            <!-- АДМИН ПАНЕЛЬ LIQUID GLASS (Mobile Fix) -->
+            <!-- АДМИН ПАНЕЛЬ LIQUID GLASS -->
             <div class="relative mt-16 rounded-[32px] sm:rounded-[40px] overflow-hidden hide-for-elderly liquid-card reveal-on-scroll" id="admin-wrapper" style="transform: translateZ(10px); padding: 0;">
                 
                 <!-- Lock Screen -->
@@ -562,12 +593,10 @@
                     
                     <p class="text-gray-500 text-[13px] sm:text-[14px] mb-6 font-medium leading-relaxed">Секретные настройки, таблицы и управление пушистым демоном.</p>
 
-                    <!-- Admin Accordion 1: Базы Данных -->
                     <details onclick="playUIClick()">
                         <summary class="text-[15px] sm:text-[16px]"><span class="flex items-center"><i class="fa-solid fa-table text-green-600 w-6 sm:w-8 text-center shrink-0"></i> Анатомия Таблиц</span><i class="fa-solid fa-chevron-down chevron"></i></summary>
                         <div class="details-content" style="padding-top: 5px;">
                             <div class="bg-white/80 rounded-2xl border border-gray-200/60 overflow-hidden shadow-sm">
-                                
                                 <div class="flex p-3 sm:p-4 border-b border-gray-100 gap-3 items-start">
                                     <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center shrink-0"><i class="fa-solid fa-users text-blue-500 text-[13px]"></i></div>
                                     <div class="min-w-0"><p class="font-bold text-[14px] leading-tight">Сотрудники / Админы (1-2)</p><p class="text-[12px] text-gray-500 mt-1 leading-snug">Кого бот пускает к миске. Нет ID? Бот поцарапает и проигнорирует.</p></div>
@@ -584,12 +613,10 @@
                                     <div class="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center shrink-0 border border-red-200"><i class="fa-solid fa-skull text-red-500 text-[13px]"></i></div>
                                     <div class="min-w-0"><p class="font-bold text-[14px] text-red-700 leading-tight">Память JSON (Лист 7)</p><p class="text-[12px] text-red-800/80 mt-1 leading-snug">Если зависло меню — удалите строку с ID. Произойдет сброс, как в "Людях в черном". Чубайс забудет все долги.</p></div>
                                 </div>
-
                             </div>
                         </div>
                     </details>
 
-                    <!-- Admin Accordion 3: Кнопки Управления -->
                     <details onclick="playUIClick()">
                         <summary class="text-[15px] sm:text-[16px]"><span class="flex items-center"><i class="fa-solid fa-gamepad text-orange-500 w-6 sm:w-8 text-center shrink-0"></i> Команды бота</span><i class="fa-solid fa-chevron-down chevron"></i></summary>
                         <div class="details-content">
@@ -604,33 +631,44 @@
                 </div>
             </div>
 
-            <!-- ОБНОВЛЕННАЯ Подпись (Apple Notes Style) -->
-            <div class="mt-16 mb-12 text-center reveal-on-scroll px-2 sm:px-0">
-                <h3 class="text-[13px] sm:text-[14px] font-bold text-gray-400 uppercase tracking-widest mb-4">Департамент Контроля</h3>
+            <!-- ИНТЕРАКТИВНАЯ ПОДПИСЬ (Shatter Effect) -->
+            <div class="mt-20 mb-16 text-center reveal-on-scroll px-2 sm:px-0" id="signature-block">
+                <h3 class="text-[13px] sm:text-[14px] font-bold text-gray-400 uppercase tracking-widest mb-6">Департамент Контроля</h3>
                 
-                <div id="signature-container">
-                    <div id="signature-hint" class="flex flex-col items-center">
-                        Распишитесь здесь пальцем 
-                        <i class="fa-solid fa-pen-nib mt-2 text-xl opacity-60"></i>
+                <div id="signature-wrapper" class="mx-auto max-w-md">
+                    <!-- Бумага для подписи -->
+                    <div id="signature-container">
+                        <div class="paper-lines"></div>
+                        <div class="signature-joke">Обвести контуром... Шучу.</div>
+                        <div class="signature-line"></div>
+                        <div class="signature-date" id="current-date"></div>
+                        
+                        <div id="signature-hint">
+                            <div class="bg-gray-100 rounded-full w-12 h-12 flex flex-col items-center justify-center mb-2 shadow-sm text-gray-400"><i class="fa-solid fa-pen-nib text-xl"></i></div>
+                            <span class="text-sm">Распишитесь пальцем,<br>чтобы разбудить кота</span>
+                        </div>
+                        <canvas id="signature-pad"></canvas>
                     </div>
-                    <canvas id="signature-pad"></canvas>
-                </div>
-                
-                <p class="text-[13px] sm:text-[14px] text-gray-500 font-medium mt-4 leading-relaxed px-4">Обязуюсь кормить кота, сдавать планы вовремя и не трогать пушистого за шкирку.</p>
 
-                <div id="start-bot-btn-wrapper">
-                    <div class="bg-bot-orange ai-gradient text-white font-black py-4 px-8 sm:px-10 rounded-2xl inline-block uppercase text-xl sm:text-2xl shadow-[0_10px_30px_rgba(255,45,85,0.4)] border border-white cursor-pointer hover:scale-105 transition-transform" style="background-size: 200% auto; -webkit-text-fill-color: white; color: white; animation: ai-shimmer 4s linear infinite;" onclick="playUIChime(); triggerHaptic('success'); tg && tg.close();">
-                        🚀 СТАРТ
+                    <!-- Скрытая кнопка СТАРТ -->
+                    <div id="start-bot-btn-wrapper">
+                        <div class="inline-flex items-center gap-2 mb-4 px-4 py-1.5 rounded-full bg-green-50 text-green-700 font-bold text-xs border border-green-200">
+                            <i class="fa-solid fa-check-double"></i> Одобрено Настей
+                        </div><br>
+                        <div class="bg-bot-orange ai-gradient text-white font-black py-4 px-8 sm:px-12 rounded-2xl inline-block uppercase text-xl sm:text-3xl shadow-[0_10px_40px_rgba(255,45,85,0.4)] border-2 border-white cursor-pointer hover:scale-105 transition-transform" style="background-size: 200% auto; -webkit-text-fill-color: white; color: white; animation: ai-shimmer 4s linear infinite;" onclick="playUIChime(); triggerHaptic('success'); tg && tg.close();">
+                            🚀 СТАРТ
+                        </div>
+                        <p class="text-[13px] sm:text-sm text-gray-500 mt-4 font-bold">Или отправьте команду /start в боте</p>
                     </div>
-                    <p class="text-[13px] sm:text-sm text-gray-500 mt-3 font-bold">Или отправьте команду /start в боте</p>
                 </div>
+                
+                <p class="text-[13px] sm:text-[14px] text-gray-500 font-medium mt-8 leading-relaxed px-4 max-w-md mx-auto" id="sig-promise">Обязуюсь кормить кота, сдавать планы вовремя и не трогать пушистого за шкирку.</p>
             </div>
 
         </div> <!-- End max-w-2xl -->
-
     </div> <!-- End content-layer -->
 
-    <!-- Всплывающее окно Сыкухи (Умное закрепление) -->
+    <!-- Всплывающее окно Сыкухи (Всегда в углу, пульсирует) -->
     <div id="wife-container">
         <div class="relative">
             <!-- Пульсирующий бейджик уведомления -->
@@ -649,7 +687,8 @@
         <div id="wife-bubble" class="absolute bottom-16 sm:bottom-20 left-0 w-72 sm:w-80 liquid-card p-5 sm:p-6 opacity-0 pointer-events-none transform scale-90 translate-y-4 transition-all duration-500 origin-bottom-left" style="margin-bottom:0; border-radius: 20px sm:border-radius: 24px; border: 1px solid rgba(255,255,255,0.9);">
             <p class="font-black text-[15px] sm:text-[16px] mb-2 text-morph" data-id="wife_title">Служба Спасения <span class="note-sticker">🚑</span></p>
             <p class="text-[13px] sm:text-[14px] text-gray-800 leading-relaxed text-morph font-medium" data-id="wife_text">
-                Если бот молчит больше 5-6 минут — значит подавился мышью. Я его пну, у нас 14 котят и ипотека на лоток, расслабляться некогда! <br><br><mark class="note-highlight pink">Ни одна заявка не пропадет.</mark>
+                <!-- Ошибка исправлена здесь -->
+                Если бот молчит больше 5-6 минут — значит подавился мышью. Я его пну, у нас 14 котят и ипотека на лоток, расслабляться некогда! <br><br><mark class='note-highlight pink'>Ни одна заявка не пропадет.</mark>
             </p>
         </div>
     </div>
@@ -688,11 +727,16 @@
                 osc.type = 'sine'; osc.frequency.setValueAtTime(500, t); osc.frequency.linearRampToValueAtTime(1000, t + 0.1);
                 gain.gain.setValueAtTime(0, t); gain.gain.linearRampToValueAtTime(0.05, t + 0.05); gain.gain.linearRampToValueAtTime(0, t + 0.3);
                 osc.start(t); osc.stop(t + 0.3);
+            } else if (type === 'shatter') {
+                osc.type = 'square'; osc.frequency.setValueAtTime(800, t); osc.frequency.exponentialRampToValueAtTime(100, t + 0.2);
+                gain.gain.setValueAtTime(0.1, t); gain.gain.exponentialRampToValueAtTime(0.001, t + 0.2);
+                osc.start(t); osc.stop(t + 0.2);
             }
         }
         function playUIClick() { playSound('click'); }
         function playUIChime() { playSound('click'); }
         function playUISuccess() { playSound('success'); }
+        function playUIShatter() { playSound('shatter'); }
 
         document.body.addEventListener('click', initAudio, { once: true });
         document.body.addEventListener('touchstart', initAudio, { once: true });
@@ -714,25 +758,21 @@
 
         // --- Sticky Wife Logic ---
         let wifeSeen = false;
-        function initScrollObserver() {
-            const wifeBtn = document.getElementById('wife-container');
+        let wifeWiggleInterval;
+        
+        function initWifeLogic() {
+            const avatar = document.getElementById('wife-avatar');
             
-            // Если скроллим ниже первого экрана, показываем кота навсегда (или пока не вернемся в самый верх)
-            window.addEventListener('scroll', () => {
-                if(window.scrollY > window.innerHeight * 0.3) {
-                    wifeBtn.classList.add('visible');
-                    // Авто-открытие при первом скролле
-                    if(!wifeSeen) {
-                        wifeSeen = true;
-                        setTimeout(() => toggleWife(false), 600);
-                    }
-                } else if (window.scrollY < 50) {
-                    // Прячем только если ушли в самый-самый верх
-                    wifeBtn.classList.remove('visible');
+            wifeWiggleInterval = setInterval(() => {
+                const bubble = document.getElementById('wife-bubble');
+                if(bubble.style.opacity !== '1') {
+                    avatar.classList.add('animate-wiggle');
+                    setTimeout(() => avatar.classList.remove('animate-wiggle'), 1000);
                 }
-            });
+            }, 5000);
+        }
 
-            // Reveal Animation
+        function initScrollObserver() {
             const reveals = document.querySelectorAll('.reveal-on-scroll');
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('is-revealed'); });
@@ -740,14 +780,14 @@
             reveals.forEach(el => observer.observe(el));
         }
 
-        // --- Signature Canvas ---
+        // --- Signature Canvas & Shatter Effect ---
         const sigCanvas = document.getElementById('signature-pad');
         const sigCtx = sigCanvas.getContext('2d');
         let isDrawing = false; let lastX = 0; let lastY = 0; let drawLength = 0; let isSigned = false;
 
         function resizeCanvas() {
             const rect = sigCanvas.parentElement.getBoundingClientRect();
-            sigCanvas.width = rect.width - 40; sigCanvas.height = 120;
+            sigCanvas.width = rect.width; sigCanvas.height = 160;
             sigCtx.lineWidth = 3; sigCtx.lineCap = 'round'; sigCtx.lineJoin = 'round'; sigCtx.strokeStyle = '#1C1C1E';
         }
 
@@ -766,7 +806,7 @@
             sigCtx.beginPath(); sigCtx.moveTo(lastX, lastY); sigCtx.lineTo(pos.x, pos.y); sigCtx.stroke();
             const dx = pos.x - lastX; const dy = pos.y - lastY; drawLength += Math.sqrt(dx*dx + dy*dy);
             lastX = pos.x; lastY = pos.y;
-            if (drawLength > 150 && !isSigned) unlockStartButton();
+            if (drawLength > 150 && !isSigned) triggerShatterEffect();
         }
 
         function stopDrawing() { isDrawing = false; }
@@ -777,12 +817,59 @@
             return { x: clientX - rect.left, y: clientY - rect.top };
         }
 
-        function unlockStartButton() {
-            isSigned = true; playUISuccess(); triggerHaptic('success');
-            document.getElementById('signature-container').classList.add('signed');
-            const btnWrapper = document.getElementById('start-bot-btn-wrapper');
-            btnWrapper.classList.add('show');
-            setTimeout(() => { btnWrapper.scrollIntoView({ behavior: 'smooth', block: 'end' }); }, 300);
+        // КИНЕМАТОГРАФИЧНЫЙ ВЗРЫВ ПОДПИСИ
+        function triggerShatterEffect() {
+            isSigned = true; 
+            
+            // Драматичная пауза перед взрывом
+            setTimeout(() => {
+                const container = document.getElementById('signature-container');
+                const wrapper = document.getElementById('signature-wrapper');
+                const rect = container.getBoundingClientRect();
+                
+                const cols = 6; const rows = 4;
+                const w = rect.width / cols; const h = rect.height / rows;
+                
+                playUIShatter();
+                triggerHaptic('heavy');
+                
+                for(let i=0; i<cols; i++) {
+                    for(let j=0; j<rows; j++) {
+                        const piece = document.createElement('div');
+                        piece.className = 'shatter-piece';
+                        piece.style.width = (w + 2) + 'px';
+                        piece.style.height = (h + 2) + 'px';
+                        piece.style.left = (i * w) + 'px';
+                        piece.style.top = (j * h) + 'px';
+                        
+                        wrapper.appendChild(piece);
+                        
+                        // Медленный разлет осколков
+                        setTimeout(() => {
+                            piece.style.opacity = '1';
+                            
+                            const angle = Math.random() * Math.PI * 2;
+                            const velocity = 150 + Math.random() * 200;
+                            const tx = Math.cos(angle) * velocity;
+                            const ty = Math.sin(angle) * velocity + 150;
+                            const rot = (Math.random() - 0.5) * 1000;
+                            
+                            piece.style.transform = `translate(${tx}px, ${ty}px) rotate(${rot}deg) scale(0)`;
+                            piece.style.opacity = '0';
+                        }, 50);
+                        
+                        setTimeout(() => piece.remove(), 2500);
+                    }
+                }
+                
+                wrapper.classList.add('is-shattered');
+                document.getElementById('sig-promise').style.opacity = '0'; 
+                
+                // Кнопка появляется с задержкой, пока летят осколки
+                setTimeout(() => {
+                    playUISuccess(); triggerHaptic('success');
+                }, 800);
+            }, 400);
         }
 
         sigCanvas.addEventListener('mousedown', startDrawing); sigCanvas.addEventListener('mousemove', draw); sigCanvas.addEventListener('mouseup', stopDrawing); sigCanvas.addEventListener('mouseout', stopDrawing);
@@ -819,7 +906,7 @@
         function animateCanvasBg() { ctxBg.clearRect(0, 0, w, h); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animateCanvasBg); }
         initParticles(); animateCanvasBg();
 
-        // --- Complex HTML for Life Support Block (Mobile Friendly) ---
+        // Complex HTML for Life Support Block
         const htmlLifeSupportNormal = `
             <div class="bg-white/80 rounded-2xl p-3 sm:p-4 border border-blue-100 shadow-sm flex items-start gap-3 sm:gap-4">
                 <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center shrink-0"><i class="fa-solid fa-satellite-dish text-blue-500"></i></div>
@@ -991,7 +1078,11 @@
                 });
             });
 
+            const dateOpts = { day: 'numeric', month: 'short', year: 'numeric' };
+            document.getElementById('current-date').textContent = new Date().toLocaleDateString('ru-RU', dateOpts);
+
             initScrollObserver();
+            initWifeLogic();
             resizeCanvas();
             document.getElementById('life_support_content').innerHTML = htmlLifeSupportNormal;
             document.getElementById('life_support_content').style.transition = 'opacity 0.3s ease';
