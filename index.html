@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Пушистый бот Чубайс</title>
+    <title>Пушистый Кодекс Чубайса</title>
     
     <!-- Telegram Web App -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -78,7 +78,7 @@
             --icon-shadow: 0 8px 16px rgba(0,0,0,0.8), inset 0 1px 2px rgba(255,255,255,0.1);
         }
 
-        /* ПАЛИТРА РОСАТОМА (БЕЛО-СИНЯЯ) */
+        /* ПАЛИТРА РОСАТОМА (БЕЛО-СИНЯЯ) - ТЕПЕРЬ РЕЖИМ ДУШНИЛЫ */
         body.rosatom-mode {
             --bg-color: #F4F7FB;
             --text-main: #003366;
@@ -106,7 +106,6 @@
             --card-inner-bg: rgba(0, 85, 204, 0.03);
             --details-open-bg: rgba(255, 255, 255, 0.95); /* Белый эффект */
             
-            /* Строгий дизайн иконок (Светлый фон для Росатома) */
             --icon-bg: #FFFFFF;
             --icon-border: rgba(0, 85, 204, 0.2);
             --icon-shadow: 0 8px 16px rgba(0,85,204,0.15), inset 0 1px 2px rgba(255,255,255,1);
@@ -146,21 +145,18 @@
 
         .content-layer { position: relative; z-index: 10; perspective: 1200px; }
 
-        /* ЧЕРНО-БЕЛЫЙ ФИЛЬТР (Для стартовой анимации) */
         #bw-filter {
             position: fixed; inset: 0; z-index: 99998; pointer-events: none;
             backdrop-filter: grayscale(100%); -webkit-backdrop-filter: grayscale(100%);
             opacity: 0; transition: opacity 2.5s ease-in-out;
         }
 
-        /* Универсальные 3D Иконки */
         .icon-3d-accent { 
             color: var(--color-accent); 
             text-shadow: 0 1px 0px rgba(0,0,0,0.2), 0 2px 0px rgba(0,0,0,0.2), 0 10px 20px var(--color-accent-shadow); 
             transition: all 0.5s ease; 
         }
 
-        /* Единый Градиент */
         .ai-gradient {
             background: linear-gradient(110deg, #FFFFFF 0%, var(--color-accent) 50%, #FFFFFF 100%);
             background-size: 200% auto;
@@ -176,7 +172,6 @@
         }
         @keyframes ai-shimmer { to { background-position: -200% center; } }
 
-        /* Шерсть */
         .fur-effect {
             filter: url(#realistic-fur-text); padding: 5px 10px; margin: -5px -10px; 
             display: inline-block; line-height: 1.1;
@@ -185,7 +180,6 @@
             filter: url(#realistic-fur-paw); padding: 20px; margin: -20px; display: inline-block;
         }
 
-        /* Маркеры и Стикеры */
         .note-highlight {
             background: var(--color-accent); padding: 2px 6px; border-radius: 6px; font-weight: 800;
             color: var(--bg-color) !important; -webkit-text-fill-color: var(--bg-color) !important;
@@ -203,7 +197,6 @@
         .note-sticker:hover { transform: scale(1.2) rotate(0deg); z-index: 10;}
         .note-sticker:nth-child(even) { transform: rotate(-6deg) translateY(-1px); }
 
-        /* LIQUID GLASS Карточки */
         .liquid-card {
             background: var(--liquid-glass-bg); backdrop-filter: blur(40px) saturate(200%) contrast(105%); -webkit-backdrop-filter: blur(40px) saturate(200%) contrast(105%);
             border-radius: 32px; box-shadow: var(--liquid-shadow); border: 1px solid var(--liquid-glass-border);
@@ -237,7 +230,6 @@
         }
         .reveal-on-scroll.is-revealed { opacity: 1; transform: translateY(0) scale(1); }
 
-        /* Навигация (Островок) */
         .nav-wrapper {
             position: fixed; top: calc(env(safe-area-inset-top) + 16px); left: 0; right: 0; z-index: 10000;
             pointer-events: none; display: flex; justify-content: center;
@@ -255,7 +247,6 @@
         .mode-btn { text-align: center; font-size: 14px; font-weight: 600; padding: 10px 24px; color: var(--nav-btn-inactive); transition: color 0.3s; cursor: pointer; border-radius: 9999px; white-space: nowrap;}
         .magnetic-wrap.active .mode-btn { color: var(--nav-btn-active); font-weight: 800; }
 
-        /* Подсказка для ветеранов */
         #tech-hint {
             position: absolute; top: calc(100% + 12px); left: 50%; transform: translateX(-50%) translateY(-10px);
             background: var(--color-accent); color: var(--bg-color); padding: 10px 16px; border-radius: 12px;
@@ -269,7 +260,6 @@
         #tech-hint.show { opacity: 1; transform: translateX(-50%) translateY(0); animation: hintFloat 2.5s ease-in-out infinite; }
         @keyframes hintFloat { 0%, 100% { transform: translateX(-50%) translateY(0); } 50% { transform: translateX(-50%) translateY(4px); } }
 
-        /* Сигнальная лента */
         .signal-tape {
             background: repeating-linear-gradient(-45deg, var(--color-accent), var(--color-accent) 15px, var(--signature-pad-bg) 15px, var(--signature-pad-bg) 30px);
             box-shadow: 0 4px 10px rgba(0,0,0,0.5); border: 1px solid var(--liquid-glass-border);
@@ -279,7 +269,6 @@
         .text-morph { display: inline-block; transition: opacity 0.4s ease, filter 0.4s ease; }
         .text-morph.blur-out { filter: blur(10px); opacity: 0; }
 
-        /* Аккордеоны */
         details {
             background: var(--card-inner-bg); border-radius: 20px; margin-bottom: 14px;
             overflow: hidden; transition: background 0.3s, transform 0.3s, border-color 0.5s, box-shadow 0.5s;
@@ -309,7 +298,6 @@
             transition: border-color 0.5s ease, background 0.8s ease;
         }
 
-        /* FaceID Админка */
         .admin-lock-screen {
             position: absolute; inset: 0; z-index: 50; background: var(--nav-bg);
             backdrop-filter: blur(35px) saturate(200%); -webkit-backdrop-filter: blur(35px) saturate(200%);
@@ -328,14 +316,12 @@
         .admin-unlocked .admin-lock-screen { opacity: 0; pointer-events: none; backdrop-filter: blur(0px); }
         .admin-unlocked .admin-content-blur { filter: blur(0px); opacity: 1; pointer-events: auto; }
 
-        /* Всплывающий Кот и Росатом */
         #wife-container { position: fixed; bottom: calc(env(safe-area-inset-bottom) + 24px); left: 20px; z-index: 10000; }
         #wife-bubble { background: var(--signature-pad-bg); border: 1px solid var(--color-accent-border); box-shadow: 0 20px 50px rgba(0,0,0,0.8); transition: border-color 0.8s, background 0.8s; }
         
         #rosatom-container { position: fixed; bottom: calc(env(safe-area-inset-bottom) + 24px); right: 20px; z-index: 10000; }
         #rosatom-bubble { background: var(--signature-pad-bg); border: 1px solid var(--color-accent-border); box-shadow: 0 20px 50px rgba(0,0,0,0.8); transition: border-color 0.8s, background 0.8s; }
 
-        /* ИНТЕРАКТИВНАЯ ПОДПИСЬ */
         #signature-wrapper { position: relative; perspective: 1200px; width: 100%; max-width: 400px; margin: 0 auto; }
         #signature-container {
             background: var(--signature-pad-bg); border-radius: 20px; padding: 0; box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05);
@@ -348,7 +334,7 @@
         .signature-joke { position: absolute; top: 15px; left: 20px; color: var(--text-muted); font-size: 12px; font-weight: 500; font-style: italic; pointer-events: none; transition: color 0.8s; }
 
         #signature-pad { width: 100%; height: 200px; cursor: crosshair; touch-action: none; position: relative; z-index: 2; }
-        #signature-hint { position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%); color: var(--text-muted); font-weight: 600; pointer-events: none; transition: opacity 0.3s, color 0.8s; font-size: 16px; text-align: center; width: 100%; z-index: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; }
+        #signature-hint { position: absolute; top: 42%; left: 50%; transform: translate(-50%, -50%); color: var(--text-muted); pointer-events: none; transition: opacity 0.3s, color 0.8s; width: 100%; z-index: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; }
 
         .shatter-piece {
             position: absolute; background: var(--signature-pad-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
@@ -360,13 +346,11 @@
         #signature-wrapper.is-shattered #signature-container { opacity: 0; transform: scale(0.9); visibility: hidden; }
         #signature-wrapper.is-shattered #start-bot-btn-wrapper { opacity: 1; transform: translate(-50%, -50%) scale(1); pointer-events: auto; }
 
-        /* Скрытие лишнего в зависимости от режима */
         body:not(.elderly-mode) .hide-in-young { display: none !important; }
         body.elderly-mode .hide-for-elderly { display: none !important; }
         
-        /* Кнопка старта */
         .start-btn-override {
-            background-color: var(--color-accent) !important; color: var(--bg-color) !important; -webkit-text-fill-color: var(--bg-color) !important; text-shadow: none !important;
+            background-color: var(--signature-pad-bg) !important; color: var(--color-accent) !important; -webkit-text-fill-color: var(--color-accent) !important; text-shadow: none !important;
             border: 2px solid var(--color-accent) !important; transition: all 0.5s ease; box-shadow: 0 4px 20px var(--color-accent-shadow);
         }
     </style>
@@ -376,7 +360,6 @@
     <!-- АНИМАЦИЯ ПЕРЕХВАТА СИГНАЛА -->
     <div id="intercept-overlay" class="fixed inset-0 z-[999999] bg-[#0A0A0A] flex flex-col justify-center items-start px-6 sm:px-12 overflow-hidden transition-opacity duration-300">
         <div class="absolute inset-0 opacity-10 pointer-events-none" style="background: repeating-linear-gradient(45deg, #000, #000 20px, #fff 20px, #fff 40px);"></div>
-        
         <div id="terminal-content" class="relative z-10 text-white font-mono text-[13px] sm:text-[15px] font-bold tracking-widest leading-loose drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]">
             <p id="t-line-1" class="opacity-0">> ПЕРЕХВАТ СИГНАЛА...</p>
             <p id="t-line-2" class="opacity-0">> ОБХОД CLOUDFLARE_PROXIES...</p>
@@ -384,7 +367,6 @@
             <p id="t-line-4" class="opacity-0">> ГЕНЕРАЦИЯ ТУМАНА И ШЕРСТИ...</p>
             <p id="t-line-5" class="opacity-0 font-black text-lg mt-4" style="color: var(--color-accent);">> ДОСТУП РАЗРЕШЕН.</p>
         </div>
-
         <div id="ow-flash" class="absolute inset-0 opacity-0 pointer-events-none transition-opacity duration-150 z-20" style="background-color: var(--color-accent);"></div>
     </div>
 
@@ -392,14 +374,12 @@
     <svg style="width:0;height:0;position:absolute;z-index:-1;">
         <filter id="realistic-fur-text" x="-20%" y="-20%" width="140%" height="140%">
             <feTurbulence type="fractalNoise" baseFrequency="0.12 0.35" numOctaves="3" result="noise">
-                <!-- ЗАМЕДЛЕНА АНИМАЦИЯ ШЕРСТИ -->
                 <animate attributeName="baseFrequency" values="0.12 0.35; 0.15 0.4; 0.12 0.35" dur="12s" repeatCount="indefinite"/>
             </feTurbulence>
             <feDisplacementMap in="SourceGraphic" in2="noise" scale="3" xChannelSelector="R" yChannelSelector="G"/>
         </filter>
         <filter id="realistic-fur-paw" x="-20%" y="-20%" width="140%" height="140%">
             <feTurbulence type="fractalNoise" baseFrequency="0.1 0.3" numOctaves="4" result="noise">
-                <!-- ЗАМЕДЛЕНА АНИМАЦИЯ ШЕРСТИ -->
                 <animate attributeName="baseFrequency" values="0.1 0.3; 0.13 0.35; 0.1 0.3" dur="10s" repeatCount="indefinite"/>
             </feTurbulence>
             <feDisplacementMap in="SourceGraphic" in2="noise" scale="8" xChannelSelector="R" yChannelSelector="G"/>
@@ -416,17 +396,17 @@
     <!-- Canvas Фоновой пыльцы -->
     <canvas id="dust-canvas"></canvas>
 
-    <!-- Навигация (Dynamic Island Style) -->
+    <!-- Навигация -->
     <div class="nav-wrapper">
         <div class="max-w-2xl mx-auto w-full flex justify-center relative">
             <div class="segmented-control">
                 <div id="mode-indicator" class="mode-indicator"></div>
                 <div class="magnetic-wrap active" onclick="setMode(0, this)">
-                    <div class="mode-btn">Молодые</div>
+                    <div class="mode-btn">Для молодых</div>
                 </div>
                 <div class="magnetic-wrap" onclick="setMode(1, this)">
-                    <div class="mode-btn">Те, кто постарше</div>
-                    <div id="tech-hint">Кто далек от технологий — вам сюда 👋</div>
+                    <div class="mode-btn">Для тех, кто постарше</div>
+                    <div id="tech-hint">Для тех, кто далек от технологий 👋</div>
                 </div>
             </div>
         </div>
@@ -441,26 +421,26 @@
                 <div class="p-6 text-center">
                     <i class="fa-solid fa-triangle-exclamation text-5xl mb-4 icon-3d-accent"></i>
                     <h2 class="text-3xl font-black mb-3 text-morph" data-id="warning_title" style="color: var(--text-main);">ОЧЕНЬ ВАЖНО!</h2>
-                    <p class="font-bold text-lg sm:text-xl mb-5 text-morph" data-id="warning_text">Чтобы программа начала работать, распишитесь в самом низу и нажмите появившуюся кнопку.</p>
+                    <p class="font-bold text-lg sm:text-xl mb-5 text-morph" data-id="warning_text">Распишитесь внизу, иначе Чубайс сделает кусь, а Настя устроит атата!</p>
                     <div class="start-btn-override font-black py-4 px-10 rounded-xl inline-block uppercase text-2xl mb-3 cursor-pointer" onclick="playUIClick(); tg && tg.close();">СТАРТ</div>
                     <p class="text-[var(--text-muted)] text-[15px] sm:text-lg font-bold text-morph" data-id="warning_subtext">Или напишите вручную команду: /start</p>
                 </div>
             </div>
 
             <div class="mx-auto mb-4 cursor-pointer animate-float hero-element hero-delay-1 hide-for-elderly" onclick="playUIChime(); triggerHaptic('heavy')">
-                <i class="fa-solid fa-paw text-[100px] sm:text-[130px] bwp-gradient fur-heavy"></i>
+                <i class="fa-solid fa-book-open text-[90px] sm:text-[120px] bwp-gradient fur-heavy"></i>
             </div>
             
             <h1 class="text-[32px] sm:text-6xl font-black tracking-tight mb-2 text-morph hero-element hero-delay-2" data-id="main_title">
-                <span class="ai-gradient fur-effect">Пушистый бот Чубайс</span><br>
-                <span class="text-xl sm:text-3xl font-black ai-gradient fur-effect" style="text-shadow: 0 4px 15px rgba(0,0,0,0.1); transform: translateZ(30px); display: inline-block; margin-top: 10px;">Pro (2026)</span>
+                <span class="ai-gradient fur-effect">Пушистый Кодекс</span><br>
+                <span class="text-xl sm:text-3xl font-black ai-gradient fur-effect" style="text-shadow: 0 4px 15px rgba(0,0,0,0.1); transform: translateZ(30px); display: inline-block; margin-top: 10px;">Чубайса (V. 2.0.26)</span>
             </h1>
             <p class="text-[15px] sm:text-[17px] text-[var(--text-muted)] font-medium text-morph max-w-lg mx-auto leading-relaxed mt-4 hero-element hero-delay-3" data-id="main_desc">
-                Ваш цифровой ассистент <span class="note-sticker">🤖</span> по учету заявок. Мурчит, живет по времени Стамбула 🇹🇷 и <mark class="note-highlight">строго подчиняется Насте.</mark>
+                Полнейшая, дотошная и мурчащая инструкция по выживанию. <span class="note-sticker">🤖</span> Читать внимательно. Бот живет по времени <mark class="note-highlight">Стамбула (UTC+3)</mark> и если что не так — Настя устроит вам жесткое "атата".
             </p>
 
             <div class="absolute bottom-6 sm:bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce flex flex-col items-center hide-for-elderly cursor-pointer hero-element hero-delay-4" onclick="window.scrollBy({top: window.innerHeight*0.8, behavior: 'smooth'})">
-                <span class="text-[11px] sm:text-[12px] font-black uppercase tracking-widest mb-1 text-[var(--text-muted)]">Листай</span>
+                <span class="text-[11px] sm:text-[12px] font-black uppercase tracking-widest mb-1 text-[var(--text-muted)]">Листай вниз</span>
                 <i class="fa-solid fa-chevron-down text-[var(--text-muted)] text-lg sm:text-xl drop-shadow-md"></i>
             </div>
         </div>
@@ -476,12 +456,12 @@
                     </div>
                     <div class="min-w-0">
                         <p class="font-bold text-[15px] text-[var(--text-main)]">Внимание, кошачья мафия!</p>
-                        <p class="text-[13px] text-[var(--text-muted)] leading-relaxed mt-1">Бот подчиняется <mark class="note-highlight">только Насте</mark>. Если у неё плохое настроение — всем хана. Сдавайте планы вовремя, иначе Чубайс вас покусает.</p>
+                        <p class="text-[13px] text-[var(--text-muted)] leading-relaxed mt-1">Чубайс — это строгая система. Он ничего не забывает. Если вы пытаетесь его обмануть, добавить левую заявку или не сдаете планы — он перекусит провода и настучит Насте. Сдавайте всё вовремя, и кот будет мурчать.</p>
                     </div>
                 </div>
             </div>
 
-            <h2 class="text-[13px] sm:text-[14px] font-bold text-[var(--text-muted)] uppercase tracking-widest mb-4 ml-4 sm:ml-5 text-morph reveal-on-scroll" data-id="menu_title">Меню (Когтеточка строгого режима) <span class="note-sticker">🐈</span></h2>
+            <h2 class="text-[13px] sm:text-[14px] font-bold text-[var(--text-muted)] uppercase tracking-widest mb-4 ml-4 sm:ml-5 text-morph reveal-on-scroll" data-id="menu_title">Функции бота (От А до Я) <span class="note-sticker">🐈</span></h2>
             
             <!-- Карточка 1: Новая заявка -->
             <div class="liquid-card reveal-on-scroll" onclick="triggerHaptic('light')">
@@ -489,17 +469,35 @@
                     <div class="flex items-center mb-6" style="transform: translateZ(15px);">
                         <div class="apple-app-icon"><i class="fa-solid fa-plus text-[22px] sm:text-[26px] icon-3d-accent"></i></div>
                         <div class="ml-4 sm:ml-5 min-w-0">
-                            <h3 class="text-[24px] sm:text-[28px] font-black text-morph leading-tight" data-id="card1_title"><span class="ai-gradient fur-effect">Новая заявка</span></h3>
-                            <p class="text-[14px] sm:text-[15px] text-[var(--text-muted)] text-morph mt-1" data-id="card1_subtitle">Ленивый бот с хорошей памятью <span class="note-sticker">🐭</span></p>
+                            <h3 class="text-[24px] sm:text-[28px] font-black text-morph leading-tight" data-id="card1_title"><span class="ai-gradient fur-effect">Создание заявки</span></h3>
+                            <p class="text-[14px] sm:text-[15px] text-[var(--text-muted)] text-morph mt-1" data-id="card1_subtitle">Как правильно внести задачу <span class="note-sticker">🛠</span></p>
                         </div>
                     </div>
-                    <details onclick="playUIClick()">
-                        <summary><span class="text-morph" data-id="acc1_title">Алгоритм создания 🤔</span><i class="fa-solid fa-chevron-down chevron"></i></summary>
+                    <details onclick="playUIClick()" open>
+                        <summary><span class="text-morph" data-id="acc1_title">Шаг 1: Ввод номера 🔢</span><i class="fa-solid fa-chevron-down chevron"></i></summary>
                         <div class="details-content">
                             <div class="apple-quote text-morph" data-id="acc1_text">
-                                <p class="mb-3"><strong>1. Ввод номеров:</strong> Пишете номер (можно несколько через запятую). Чубайс бдит: если заявка уже завершена кем-то другим, он скажет, кто это был! Если кто-то работает по ней с таким же составом — он ругнется и не даст создать дубль.</p>
-                                <p class="mb-3"><strong>2. Сбор бригады <span class="note-sticker">👷‍♂️</span>:</strong> Ваше имя уже в списке. Введите пару букв фамилии коллеги — бот найдет его по запаху в базе.</p>
-                                <p><strong>3. Сохранение:</strong> <mark class="note-highlight">Обязательно</mark> нажмите зеленую кнопку «✅ Подтвердить состав». Иначе бот посмотрит на вас как на дурака и выкинет заявку.</p>
+                                Нажмите <strong>«➕ Новая заявка»</strong>. Бот попросит ввести номер. Вы можете написать один номер (например, <code>123456</code>) или сразу несколько через запятую (например, <code>123456, 789012, 345678</code>).<br><br>
+                                <mark class="note-highlight">Защита от хитрецов:</mark><br>
+                                • Бот проверит, не завершена ли эта заявка кем-то другим.<br>
+                                • Если попытаетесь обмануть кота и создать дубль, он покрутит лапой у виска и сдаст вас Насте.
+                            </div>
+                        </div>
+                    </details>
+                    <details onclick="playUIClick()">
+                        <summary><span class="text-morph" data-id="acc1_2_title">Шаг 2: Сбор бригады 👷‍♂️</span><i class="fa-solid fa-chevron-down chevron"></i></summary>
+                        <div class="details-content">
+                            <div class="apple-quote text-morph" data-id="acc1_2_text">
+                                После ввода номера бот предложит собрать бригаду. <strong>Вы уже в списке по умолчанию!</strong><br><br>
+                                Чтобы добавить напарника, просто отправьте боту <strong>первые несколько букв его фамилии</strong>. Например, напишите <code>Ива</code>, и бот сам найдет в базе "Иванов Иван". Вы можете добавить сколько угодно людей. Только не вводите клички, мы тут серьезные люди (почти).
+                            </div>
+                        </div>
+                    </details>
+                    <details onclick="playUIClick()" style="border-color: var(--color-accent-border);">
+                        <summary style="color: var(--color-accent);"><span class="text-morph font-bold" data-id="acc1_3_title">Шаг 3: Сохранение (КРИТИЧНО) 🚨</span><i class="fa-solid fa-chevron-down chevron"></i></summary>
+                        <div class="details-content">
+                            <div class="apple-quote text-morph" data-id="acc1_3_text">
+                                Собрали бригаду? Теперь <strong>ОБЯЗАТЕЛЬНО</strong> нажмите огромную зеленую кнопку <mark class="note-highlight">✅ ПОДТВЕРДИТЬ СОСТАВ</mark> под сообщением. Если вы забыли нажать эту кнопку, заявка улетит в кошачий лоток, а вам придется делать всё заново под смех Чубайса.
                             </div>
                         </div>
                     </details>
@@ -512,15 +510,17 @@
                     <div class="flex items-center mb-6" style="transform: translateZ(15px);">
                         <div class="apple-app-icon"><i class="fa-solid fa-list-ul text-[22px] sm:text-[26px] icon-3d-accent"></i></div>
                         <div class="ml-4 sm:ml-5 min-w-0">
-                            <h3 class="text-[24px] sm:text-[28px] font-black text-morph leading-tight" data-id="card2_title"><span class="ai-gradient fur-effect">Мои заявки</span></h3>
-                            <p class="text-[14px] sm:text-[15px] text-[var(--text-muted)] text-morph mt-1" data-id="card2_subtitle">Ваш рабочий лоток <span class="note-sticker">📦</span>.</p>
+                            <h3 class="text-[24px] sm:text-[28px] font-black text-morph leading-tight" data-id="card2_title"><span class="ai-gradient fur-effect">Управление заявками</span></h3>
+                            <p class="text-[14px] sm:text-[15px] text-[var(--text-muted)] text-morph mt-1" data-id="card2_subtitle">Раздел «Мои заявки / Статусы» <span class="note-sticker">🔄</span></p>
                         </div>
                     </div>
                     <details onclick="playUIClick()">
-                        <summary><span class="flex items-center text-[15px] sm:text-[16px]"><span class="w-3 h-3 rounded-full mr-3 sm:mr-4 shadow-md shrink-0" style="background: var(--color-accent);"></span> Пауза <span class="note-sticker">☕</span></span><i class="fa-solid fa-chevron-down chevron"></i></summary>
+                        <summary><span class="flex items-center text-[15px] sm:text-[16px]"><span class="w-3 h-3 rounded-full mr-3 sm:mr-4 shadow-md shrink-0" style="background: var(--color-accent);"></span> Пауза <span class="note-sticker">⏸</span></span><i class="fa-solid fa-chevron-down chevron"></i></summary>
                         <div class="details-content">
                             <div class="apple-quote text-morph" data-id="acc2_text">
-                                Проблемы на работе? Кончились материалы или мастер ушел пить чай? Жмите <strong>«Пауза»</strong> и пишите причину (Настя всё читает!). Внимание: пауза <mark class="note-highlight">автоматически выкидывает заявку</mark> из планов на завтра! Вернулись? Жмите <strong>«▶️ В работу»</strong>.
+                                Жмите <strong>«Пауза»</strong>, если работа встала. Бот попросит написать причину текстом (например: "Нет кабеля", "Ждем Русас"). Чубайс тут же строчит молниеносный донос Насте и админам: <em>«Внимание! Кожаные прохлаждаются! Причина: ...»</em> Настя видит всё в прямом эфире, так что пишите убедительно, иначе прилетит жесточайшее атата!<br><br>
+                                <mark class="note-highlight">Механика Паузы:</mark> Заявка, поставленная на паузу, <strong>автоматически удаляется из ваших планов на завтра!</strong><br><br>
+                                Когда проблема решена, зайдите в заявку и нажмите <strong>«▶️ Снять с паузы»</strong>.
                             </div>
                         </div>
                     </details>
@@ -528,7 +528,8 @@
                         <summary><span class="flex items-center text-[15px] sm:text-[16px]"><span class="w-3 h-3 rounded-full bg-white mr-3 sm:mr-4 shadow-md shrink-0"></span> Завершить / Архив <span class="note-sticker">✅</span></span><i class="fa-solid fa-chevron-down chevron"></i></summary>
                         <div class="details-content">
                             <div class="apple-quote text-morph" data-id="acc3_text">
-                                Сделал дело — жми <strong>«Завершить»</strong>! Заявка прячется в Архив (Чубайс помнит последние 40 ваших дел). Если промазали кнопкой — идите вниз списка, заходите в Архив и жмите 🔄 Восстановить (заявка снова вернется в работу).
+                                Сделали работу? Жмите <strong>«Завершить»</strong>. Заявка исчезнет из списка активных и из планов на завтра, переместившись в <strong>Архив</strong>.<br><br>
+                                <em>Случайно тыкнули не туда?</em> Не орите, просто идите в самый низ вашего списка заявок, нажмите «📦 Архив». Бот помнит последние 40 ваших дел. Найдите нужную заявку и нажмите <strong>«🔄 Восстановить»</strong>. Она вернется в работу.
                             </div>
                         </div>
                     </details>
@@ -536,28 +537,33 @@
                         <summary style="color: var(--color-accent);"><span class="flex items-center text-morph font-bold text-[15px] sm:text-[16px]" data-id="acc5_title"><i class="fa-solid fa-arrow-right-to-bracket mr-3 sm:mr-4 shrink-0"></i> Перенос «На завтра» <span class="note-sticker">📅</span></span><i class="fa-solid fa-chevron-down chevron"></i></summary>
                         <div class="details-content">
                             <div class="apple-quote text-morph" data-id="acc5_text">
-                                <mark class="note-highlight">Главная фишка перед уходом домой!</mark> Переносит текущую заявку в планы на следующую смену. Бот спросит: оставить текущую бригаду или выгнать лентяев и набрать новых? <br><br><em>Помните: пауза или завершение отменяют перенос на завтра!</em>
+                                Зашли в конкретную активную заявку? Там есть кнопка <strong>«📝 На завтра»</strong>. <br>
+                                Это ваш спасательный круг. Нажмите её, и бот спросит: оставить текущую бригаду или набрать новых людей? Как только вы подтвердите, заявка получит зеленую галочку (✅) — значит, Настя завтра увидит, что вы не просто так хлеб едите.
                             </div>
                         </div>
                     </details>
                 </div>
             </div>
 
-            <!-- На завтра -->
+            <!-- На завтра (Строгие правила) -->
             <div class="liquid-card reveal-on-scroll" onclick="triggerHaptic('light')">
                 <div class="p-5 sm:p-7">
                     <div class="flex items-center mb-6" style="transform: translateZ(15px);">
                         <div class="apple-app-icon"><i class="fa-solid fa-calendar-day text-[22px] sm:text-[26px] icon-3d-accent"></i></div>
                         <div class="ml-4 sm:ml-5 min-w-0">
-                            <h3 class="text-[24px] sm:text-[28px] font-black text-morph leading-tight" data-id="card3_title"><span class="ai-gradient fur-effect">На завтра (Миска)</span></h3>
-                            <p class="text-[14px] sm:text-[15px] text-[var(--text-muted)] text-morph mt-1" data-id="card3_subtitle">Ваш план действий <span class="note-sticker">🔮</span>.</p>
+                            <h3 class="text-[24px] sm:text-[28px] font-black text-morph leading-tight" data-id="card3_title"><span class="ai-gradient fur-effect">Отчет «На завтра»</span></h3>
+                            <p class="text-[14px] sm:text-[15px] text-[var(--text-muted)] text-morph mt-1" data-id="card3_subtitle">Самый важный алгоритм <span class="note-sticker">⏰</span></p>
                         </div>
                     </div>
                     <div class="apple-quote mb-2 text-morph" data-id="card3_rule" style="transform: translateZ(10px);">
-                        <strong class="block mb-2 uppercase tracking-widest text-[12px] sm:text-[13px]" style="color: var(--color-accent);"><i class="fa-solid fa-bolt mr-2"></i> Строгий Тайминг:</strong>
-                        Ровно в <strong>12:00</strong> Чубайс присылает утренний опрос (и вешает закреп). В <strong>16:30</strong> он молча формирует финальный отчет, скидывает его в Google Таблицу и забирает миску (чистит ваши заявки).<br><br>
-                        <span class="font-bold text-sm" style="color: var(--color-accent);">⚠️ Кто не успел:</span> попадает в список 'Вонючек' для Насти и получает позорный стикер.<br><br>
-                        <mark class="note-highlight">Связанные души:</mark> Если напарник записал вас в свою заявку на завтра — Чубайс это увидит и сам снимет с вас позорный закреп! Командная работа!
+                        <strong class="block mb-2 uppercase tracking-widest text-[12px] sm:text-[13px]" style="color: var(--color-accent);"><i class="fa-solid fa-bolt mr-2"></i> Строгое окно: с 12:00 до 16:30</strong>
+                        Функция переноса заявок "На завтра" работает <strong>ТОЛЬКО</strong> в это время. До 12:00 кнопка выдаст ошибку.<br><br>
+                        <strong>⏱ 12:00:</strong> Бот присылает всем сообщение-напоминалку и вешает закреп в чат: "Пора сдавать планы!".<br>
+                        <strong>⏱ 16:30:</strong> Кормушка захлопывается. Бот формирует финальный отчет в Google Таблицу и <em>сбрасывает все зеленые галочки</em> у вас в телефоне. Наступает новый день.<br><br>
+                        <span class="font-bold text-sm" style="color: var(--color-accent);">⚠️ Список 'Вонючек':</span><br>
+                        Если на момент 16:30 у вас в списке не было ни одной заявки с галочкой "На завтра", вы попадаете в специальный позорный список Вонючек. Админ нажмет кнопку, и вам в личку прилетит угрожающее "атата" от Насти.<br><br>
+                        <mark class="note-highlight">Командная работа (Синергия):</mark><br>
+                        Вы можете не тыкать ничего сами! Если ваш напарник Иванов перенес заявку "На завтра" и указал вас в составе бригады, бот просканирует базу, увидит вашу фамилию и поймет, что вы при деле. Вы спасены от списка вонючек!
                     </div>
                 </div>
             </div>
@@ -569,21 +575,27 @@
                         <div class="apple-app-icon"><i class="fa-solid fa-bus text-[22px] sm:text-[26px] icon-3d-accent"></i></div>
                         <div class="ml-4 sm:ml-5 min-w-0">
                             <h3 class="text-[24px] sm:text-[28px] font-black text-morph leading-tight" data-id="card_bus_title"><span class="ai-gradient fur-effect">Развозка (Автобус)</span></h3>
-                            <p class="text-[14px] sm:text-[15px] text-[var(--text-muted)] text-morph mt-1" data-id="card_bus_subtitle">Кто не успел — топает пешком 🚶‍♂️</p>
+                            <p class="text-[14px] sm:text-[15px] text-[var(--text-muted)] text-morph mt-1" data-id="card_bus_subtitle">Уехать домой с комфортом 🚌</p>
                         </div>
                     </div>
                     <details onclick="playUIClick()" style="border-color: var(--color-accent-border);">
                         <summary style="color: var(--color-accent);"><span class="text-morph font-bold" data-id="acc_bus_title"><i class="fa-solid fa-stopwatch mr-2"></i> Дедлайн: строго до 13:45!</span><i class="fa-solid fa-chevron-down chevron"></i></summary>
                         <div class="details-content">
                             <div class="apple-quote text-morph" data-id="acc_bus_text">
-                                <mark class="note-highlight">Железное правило:</mark> Запись закрывается ровно в <strong>13:45</strong>! После этого времени бот умывает лапы и шлет всех лесом к Насте. Не успели записаться? Ваши проблемы, топайте домой пешком или идите кланяться Насте.<br><br><strong>Процесс:</strong> Выбираете здание (00UAC/94VAC). Бот сам вспомнит вашу стандартную остановку из базы! А если сегодня пятница — он заботливо спросит, на какой день вас записать (Пятница вечер, Суббота, Воскресенье).
+                                <mark class="note-highlight">Железное правило:</mark> Запись на автобус закрывается ровно в <strong>13:45</strong>! Ровно в эту секунду бот отправляет список и очищает базу на сегодня. Не успели записаться или передумали после 13:45? Ваши проблемы, топайте пешком или звоните Насте, моля о пощаде.<br><br>
+                                <strong>Как это работает:</strong><br>
+                                1. Жмете "Запись на автобус".<br>
+                                2. Выбираете здание (00UAC или 94VAC).<br>
+                                3. Бот лезет в умную таблицу, ищет вашу фамилию и сам предлагает вашу стандартную остановку! Если он ошибся, вы можете нажать "Изменить остановку".<br><br>
+                                <strong>📅 Пятничная магия:</strong><br>
+                                Если вы записываетесь в пятницу, бот поймет это и спросит, на какой именно день вам нужен автобус: Пятница вечер, Суббота или Воскресенье.
                             </div>
                         </div>
                     </details>
                 </div>
             </div>
 
-            <!-- Карточка РВД (Сигнальная лента) -->
+            <!-- Карточка РВД и Тихий Режим -->
             <div class="liquid-card reveal-on-scroll relative overflow-hidden" onclick="triggerHaptic('light')" style="border-color: var(--color-accent-border); border-width: 2px;">
                 <!-- Сигнальная лента -->
                 <div class="absolute inset-0 z-0 pointer-events-none rvd-decor">
@@ -593,28 +605,26 @@
 
                 <div class="p-5 sm:p-7 relative z-10">
                     <div class="flex items-center mb-6" style="transform: translateZ(15px);">
-                        <div class="apple-app-icon"><i class="fa-solid fa-screwdriver-wrench text-[22px] sm:text-[26px] icon-3d-accent"></i></div>
+                        <div class="apple-app-icon"><i class="fa-solid fa-bell-slash text-[22px] sm:text-[26px] icon-3d-accent"></i></div>
                         <div class="ml-4 sm:ml-5 min-w-0">
-                            <h3 class="text-[24px] sm:text-[28px] font-black text-morph leading-tight" data-id="card_rvd_title"><span class="ai-gradient fur-effect">Вышел в РВД</span></h3>
-                            <p class="text-[14px] sm:text-[15px] text-[var(--text-muted)] text-morph mt-1" data-id="card_rvd_subtitle">Работа в выходные 🛠</p>
+                            <h3 class="text-[24px] sm:text-[28px] font-black text-morph leading-tight" data-id="card_rvd_title"><span class="ai-gradient fur-effect">Тихий Режим и РВД</span></h3>
+                            <p class="text-[14px] sm:text-[15px] text-[var(--text-muted)] text-morph mt-1" data-id="card_rvd_subtitle">Управление уведомлениями 🔕</p>
                         </div>
                     </div>
-                    
-                    <div class="bg-[var(--signature-pad-bg)] border rounded-lg p-3 px-4 text-center transform rotate-[-2deg] shadow-[0_5px_15px_rgba(0,0,0,0.8)] mx-auto w-[90%] sm:max-w-[80%] mt-2 rvd-decor relative" style="border-color: var(--color-accent-border);">
-                        <div class="w-3 h-3 bg-white rounded-full absolute -top-1.5 left-1/2 transform -translate-x-1/2 shadow-sm"></div>
-                        <p class="font-bold text-[13px] sm:text-[14px] leading-tight" style="color: var(--color-accent); font-family: 'Comic Sans MS', cursive, sans-serif;">
-                            В будущем мб что-то тут будет, но мне пока лень 🐾
-                        </p>
-                    </div>
 
-                    <details onclick="playUIClick()" class="mt-5">
+                    <details onclick="playUIClick()" class="mt-5" open>
                         <summary style="color: var(--text-main);">
-                            <span class="text-morph font-bold" data-id="acc_rvd_title"><i class="fa-solid fa-shield-cat mr-2" style="color: var(--color-accent);"></i> Зачем эта кнопка?</span>
+                            <span class="text-morph font-bold" data-id="acc_rvd_title"><i class="fa-solid fa-moon mr-2" style="color: var(--color-accent);"></i> Как бот вас бережет</span>
                             <i class="fa-solid fa-chevron-down chevron"></i>
                         </summary>
                         <div class="details-content">
                             <div class="apple-quote text-morph" data-id="acc_rvd_text">
-                                Бот не отправляет уведомления в выходные. Нажав кнопку <strong>«Вышел в РВД»</strong>, бот поймет, что вы на смене, и <mark class="note-highlight">включит звуковые уведомления</mark> для вас! Иначе Настя не докричится.
+                                У Чубайса встроен алгоритм <strong>Тихого Часа</strong>.<br>
+                                • После 16:30 в будние дни<br>
+                                • В субботу и воскресенье круглосуточно<br>
+                                Бот отправляет сообщения <em>БЕЗ ЗВУКА</em> (disable_notification=True), чтобы не будить вас, если ваш напарник решил поработать ночью.<br><br>
+                                <mark class="note-highlight">Кнопка «Вышел в РВД»:</mark><br>
+                                Если сегодня выходной, но вы вышли на смену — нажмите эту кнопку в главном меню. Бот запишет вас в реестр работающих сегодня, и <strong>только для вас</strong> отключит тихий режим, чтобы вы не пропустили важное сообщение от Насти, когда она будет вас искать. (В 16:30 статус РВД сбросится сам).
                             </div>
                         </div>
                     </details>
@@ -628,12 +638,12 @@
                         <div class="apple-app-icon"><i class="fa-solid fa-life-ring text-[22px] sm:text-[26px] icon-3d-accent"></i></div>
                         <div class="ml-4 sm:ml-5 min-w-0">
                             <h3 class="text-[24px] sm:text-[28px] font-black text-morph leading-tight" data-id="card_sos_title"><span class="ai-gradient fur-effect">Ор мартовского кота</span></h3>
-                            <p class="text-[14px] sm:text-[15px] text-[var(--text-muted)] text-morph mt-1" data-id="card_sos_subtitle">Связь с начальством <span class="note-sticker">🆘</span></p>
+                            <p class="text-[14px] sm:text-[15px] text-[var(--text-muted)] text-morph mt-1" data-id="card_sos_subtitle">Кнопка SOS <span class="note-sticker">🆘</span></p>
                         </div>
                     </div>
 
                     <div class="apple-quote text-morph" data-id="acc_sos_text">
-                        Сломался бот? Кончился корм? Жмите 🆘! Чубайс выдаст список Администраторов. Выбираете жертву, пишете гневный текст, и бот <mark class="note-highlight">анонимно</mark> перешлет вашу боль в личку начальству. Никто не узнает, кто нагадил мимо лотка.
+                        Сломался бот? Не можете что-то нажать? Жмите <strong>«🆘 Сообщить о проблеме»</strong> в главном меню. Бот выдаст список Администраторов. Выбираете жертву, пишете свой гневный текст текстом в чат, и бот перешлет его в личку Насте или админам от вашего имени. А там уже готовьтесь к "атата", если нажали просто так.
                     </div>
                 </div>
             </div>
@@ -644,14 +654,13 @@
                     <div class="flex items-center mb-6" style="transform: translateZ(15px);">
                         <div class="apple-app-icon"><i class="fa-solid fa-heart-pulse text-[22px] sm:text-[26px] icon-3d-accent"></i></div>
                         <div class="ml-4 sm:ml-5 min-w-0">
-                            <!-- ЗАГОЛОВОК С ТЕКСТУРОЙ ШЕРСТИ -->
-                            <h3 class="text-[22px] sm:text-[24px] font-black text-morph leading-tight" data-id="card4_title"><span class="ai-gradient fur-effect">Жизнеобеспечение</span> <span class="note-sticker">🔋</span></h3>
-                            <p class="text-[14px] sm:text-[15px] text-[var(--text-muted)] font-medium text-morph mt-1" data-id="card4_subtitle">Почему кот не спит на посту.</p>
+                            <h3 class="text-[22px] sm:text-[24px] font-black text-morph leading-tight" data-id="card4_title"><span class="ai-gradient fur-effect">Жизнеобеспечение (Под капотом)</span> <span class="note-sticker">🔋</span></h3>
+                            <p class="text-[14px] sm:text-[15px] text-[var(--text-muted)] font-medium text-morph mt-1" data-id="card4_subtitle">Техническая часть для шаманов и техномагов.</p>
                         </div>
                     </div>
 
                     <details onclick="playUIClick()">
-                        <summary class="text-[15px] sm:text-[16px]"><span class="text-[var(--text-main)] flex items-center"><i class="fa-solid fa-shield-cat mr-2 sm:mr-3 shrink-0" style="color: var(--color-accent);"></i> Как он выживает?</span><i class="fa-solid fa-chevron-down chevron"></i></summary>
+                        <summary class="text-[15px] sm:text-[16px]"><span class="text-[var(--text-main)] flex items-center"><i class="fa-solid fa-shield-cat mr-2 sm:mr-3 shrink-0" style="color: var(--color-accent);"></i> Что делает его бессмертным?</span><i class="fa-solid fa-chevron-down chevron"></i></summary>
                         <div class="details-content">
                             <!-- JS HTML goes here -->
                             <div class="space-y-3" id="life_support_content"></div>
@@ -679,11 +688,11 @@
                         <h3 class="font-black text-xl sm:text-2xl ai-gradient fur-effect text-morph" data-id="admin_main_title" style="padding: 0; margin: 0;">Панель Управления</h3>
                     </div>
                     
-                    <p class="text-[var(--text-muted)] text-[13px] sm:text-[14px] mb-6 font-medium leading-relaxed text-morph" data-id="admin_main_desc">Секретные настройки, таблицы и управление пушистым демоном.</p>
+                    <p class="text-[var(--text-muted)] text-[13px] sm:text-[14px] mb-6 font-medium leading-relaxed text-morph" data-id="admin_main_desc">Раздел доступен только тем, чей ID есть на Листе "Админы" в Google Таблице. И самой Насте.</p>
 
                     <details onclick="playUIClick()">
                         <summary class="text-[15px] sm:text-[16px]">
-                            <span class="flex items-center text-[var(--text-main)] text-morph" data-id="admin_db_title"><i class="fa-solid fa-table w-6 sm:w-8 text-center shrink-0" style="color: var(--color-accent);"></i> Google Таблицы</span>
+                            <span class="flex items-center text-[var(--text-main)] text-morph" data-id="admin_db_title"><i class="fa-solid fa-table w-6 sm:w-8 text-center shrink-0" style="color: var(--color-accent);"></i> Структура Базы Данных</span>
                             <i class="fa-solid fa-chevron-down chevron"></i>
                         </summary>
                         <div class="details-content" style="padding-top: 5px;" id="admin_db_content">
@@ -693,7 +702,7 @@
 
                     <details onclick="playUIClick()">
                         <summary class="text-[15px] sm:text-[16px]">
-                            <span class="flex items-center text-[var(--text-main)] text-morph" data-id="admin_cmd_title"><i class="fa-solid fa-gamepad w-6 sm:w-8 text-center shrink-0" style="color: var(--color-accent);"></i> Команды админа</span>
+                            <span class="flex items-center text-[var(--text-main)] text-morph" data-id="admin_cmd_title"><i class="fa-solid fa-gamepad w-6 sm:w-8 text-center shrink-0" style="color: var(--color-accent);"></i> Кнопки Админа</span>
                             <i class="fa-solid fa-chevron-down chevron"></i>
                         </summary>
                         <div class="details-content" id="admin_cmd_content">
@@ -711,35 +720,35 @@
                 <div id="signature-wrapper" class="mx-auto max-w-md">
                     <div id="signature-container">
                         <div class="paper-lines"></div>
-                        <div class="signature-joke">Обвести контуром... Шучу.</div>
-                        <div class="signature-line"></div>
-                        <div class="signature-date" id="current-date"></div>
-                        
-                        <div id="signature-hint">
-                            <div class="w-12 h-12 flex flex-col items-center justify-center mb-2 shadow-sm rounded-full border" style="background: var(--card-inner-bg); border-color: var(--liquid-glass-border); color: var(--text-muted);"><i class="fa-solid fa-pen-nib text-xl"></i></div>
-                            <span class="text-sm text-[var(--text-muted)]">Распишитесь пальцем,<br>чтобы разбудить кота</span>
-                        </div>
-                        <canvas id="signature-pad"></canvas>
+                        <div class="signature-joke">Подтверждаю, что прочитал(а) всю эту простыню и готов(а) к последствиям...</div>
+                    <div class="signature-line"></div>
+                    <div class="signature-date" id="current-date"></div>
+                    
+                    <div id="signature-hint">
+                        <div class="w-14 h-14 flex items-center justify-center shadow-sm rounded-full border" style="background: var(--card-inner-bg); border-color: var(--liquid-glass-border); color: var(--text-muted);"><i class="fa-solid fa-pen-nib text-2xl"></i></div>
+                        <span class="text-[14px] sm:text-[15px] font-bold text-[var(--text-muted)] leading-snug">Распишитесь пальцем,<br>чтобы разбудить кота</span>
                     </div>
+                    <canvas id="signature-pad"></canvas>
+                </div>
 
                     <div id="start-bot-btn-wrapper">
                         <div class="inline-flex items-center gap-2 mb-4 px-4 py-1.5 rounded-full font-bold text-xs border" style="background: var(--color-accent-light); color: var(--color-accent); border-color: var(--color-accent-border);">
                             <i class="fa-solid fa-check-double"></i> Одобрено Настей
                         </div><br>
-                        <div class="start-btn-override ai-gradient font-black py-4 px-8 sm:px-12 rounded-2xl inline-block uppercase text-xl sm:text-3xl cursor-pointer hover:scale-105 transition-transform" onclick="playUIChime(); triggerHaptic('success'); tg && tg.close();">
-                            🚀 СТАРТ
+                        <div class="start-btn-override font-black py-4 px-8 sm:px-12 rounded-2xl inline-block uppercase text-xl sm:text-3xl cursor-pointer hover:scale-105 transition-transform" onclick="playUIChime(); triggerHaptic('success'); tg && tg.close();">
+                            🚀 ПОЕХАЛИ
                         </div>
-                        <p class="text-[13px] sm:text-sm text-[var(--text-muted)] mt-4 font-bold">Или отправьте команду /start в боте</p>
+                        <p class="text-[13px] sm:text-sm text-[var(--text-muted)] mt-4 font-bold">Закройте это окно и напишите боту /start</p>
                     </div>
                 </div>
                 
-                <p class="text-[13px] sm:text-[14px] text-[var(--text-muted)] font-medium mt-8 leading-relaxed px-4 max-w-md mx-auto" id="sig-promise">Обязуюсь кормить кота, сдавать планы вовремя и не трогать пушистого за шкирку.</p>
+                <p class="text-[13px] sm:text-[14px] text-[var(--text-muted)] font-medium mt-8 leading-relaxed px-4 max-w-md mx-auto" id="sig-promise">Обязуюсь кормить кота, не тупить с автобусом до 13:45, и сдавать планы вовремя, чтобы Настя не делала атата.</p>
             </div>
 
         </div> <!-- End max-w-2xl -->
     </div> <!-- End content-layer -->
 
-    <!-- Всплывающее окно Сыкухи -->
+    <!-- Всплывающее окно Сыкухи / Жены -->
     <div id="wife-container">
         <div class="relative">
             <div id="wife-badge" class="absolute -top-1 -right-1 w-4 h-4 rounded-full border-2 z-10 animate-pulse" style="background: var(--color-accent); border-color: var(--bg-color);"></div>
@@ -754,22 +763,22 @@
         <div id="wife-bubble" class="absolute bottom-16 sm:bottom-20 left-0 w-72 sm:w-80 liquid-card p-5 sm:p-6 opacity-0 pointer-events-none transform scale-90 translate-y-4 transition-all duration-500 origin-bottom-left" style="margin-bottom:0; background: var(--signature-pad-bg); border: 1px solid var(--color-accent-border); box-shadow: 0 20px 50px rgba(0,0,0,0.8); border-radius: 20px sm:border-radius: 24px;">
             <p class="font-black text-[15px] sm:text-[16px] mb-2 text-morph" data-id="wife_title">Служба Спасения <span class="note-sticker">🚑</span></p>
             <p class="text-[13px] sm:text-[14px] leading-relaxed text-morph font-medium" style="color: var(--text-muted);" data-id="wife_text">
-                Если бот молчит 5 минут — значит сервер завис. Я его пну, у нас 14 котят! <mark class="note-highlight">Ни одна заявка не пропадет.</mark>
+                Если меню бота "заморозилось" (ну упал облачный сервак, бывает): не паникуйте. Я пну Чубайса и он всё вспомнит! В крайнем случае, просто напишите админу.
             </p>
         </div>
     </div>
 
-    <!-- Кнопка Росатом -->
+    <!-- Кнопка Росатом (Теперь Режим Душнилы) -->
     <div id="rosatom-container" class="fixed bottom-6 right-6 z-50">
         <div class="relative">
             <div id="rosatom-btn" class="w-14 h-14 sm:w-16 sm:h-16 rounded-full border-2 flex items-center justify-center cursor-pointer hover:scale-110 transition-transform duration-300 relative z-0" style="background: var(--icon-bg); border-color: var(--icon-border); box-shadow: var(--icon-shadow);" onclick="toggleRosatom()">
-                <i class="fa-solid fa-atom text-2xl sm:text-3xl icon-3d-accent"></i>
+                <i class="fa-solid fa-user-tie text-2xl sm:text-3xl icon-3d-accent"></i>
             </div>
         </div>
         <div id="rosatom-bubble" class="absolute bottom-16 sm:bottom-20 right-0 w-64 p-4 sm:p-5 opacity-0 pointer-events-none transform scale-90 translate-y-4 transition-all duration-500 origin-bottom-right" style="background: var(--signature-pad-bg); border-radius: 20px; border: 1px solid var(--color-accent-border); box-shadow: 0 20px 50px var(--color-accent-shadow);">
-            <p class="font-black text-[14px] sm:text-[15px] mb-1" style="color: var(--color-accent);">ПСР Росатом ⚛️</p>
+            <p class="font-black text-[14px] sm:text-[15px] mb-1" style="color: var(--color-accent);">Режим "На шаг впереди" 👔</p>
             <p class="text-[12px] sm:text-[13px] leading-relaxed font-medium" style="color: var(--text-muted);">
-                Бережливое производство активировано. Эффективность 100%.
+                Включает строгую бело-синюю палитру. Чтобы Настя думала, что мы читаем серьезный документ, а не гладим кота.
             </p>
         </div>
     </div>
@@ -951,22 +960,22 @@
         }
 
         // --- Signature Pad ---
-        const sigCanvas = document.getElementById('signature-pad');
-        const sigCtx = sigCanvas.getContext('2d');
-        let isDrawing = false; let lastX = 0; let lastY = 0; let drawLength = 0; let isSigned = false;
+    const sigCanvas = document.getElementById('signature-pad');
+    const sigCtx = sigCanvas.getContext('2d');
+    let isDrawing = false; let lastX = 0; let lastY = 0; let drawLength = 0; let isSigned = false;
 
-        function resizeCanvas() {
-            const rect = sigCanvas.parentElement.getBoundingClientRect();
-            sigCanvas.width = rect.width; sigCanvas.height = 200; 
-            sigCtx.lineWidth = 3; sigCtx.lineCap = 'round'; sigCtx.lineJoin = 'round'; 
-            
-            let strokeCol = '#FFFFFF';
-            if (document.body.classList.contains('elderly-mode') && !isRosatom) strokeCol = '#000000';
-            if (isRosatom) strokeCol = '#0055CC';
-            sigCtx.strokeStyle = strokeCol;
-        }
+    function resizeCanvas() {
+        const rect = sigCanvas.parentElement.getBoundingClientRect();
+        sigCanvas.width = rect.width; sigCanvas.height = 200; 
+        sigCtx.lineWidth = 6; sigCtx.lineCap = 'round'; sigCtx.lineJoin = 'round'; 
+        
+        let strokeCol = '#FFFFFF';
+        if (document.body.classList.contains('elderly-mode') && !isRosatom) strokeCol = '#000000';
+        if (isRosatom) strokeCol = '#0055CC';
+        sigCtx.strokeStyle = strokeCol;
+    }
 
-        function startDrawing(e) {
+    function startDrawing(e) {
             if(isSigned) return;
             isDrawing = true;
             document.getElementById('signature-hint').style.opacity = '0';
@@ -1095,68 +1104,72 @@
         }
         animateDustLoop();
 
-        // --- Описания и тексты ---
+        // --- РАСШИРЕННЫЕ ТЕКСТОВЫЕ БЛОКИ ДЛЯ ПОДКАПОТНОГО ПРОСТРАНСТВА ---
         const htmlLifeSupportNormal = `
             <div class="rounded-2xl p-3 sm:p-4 border shadow-sm flex items-start gap-3 sm:gap-4 mb-3" style="background: var(--card-inner-bg); border-color: var(--liquid-glass-border);">
-                <div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0 border" style="background: var(--color-accent-light); border-color: var(--color-accent-border);"><i class="fa-solid fa-brain icon-3d-accent"></i></div>
+                <div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0 border" style="background: var(--color-accent-light); border-color: var(--color-accent-border);"><i class="fa-solid fa-clock icon-3d-accent"></i></div>
                 <div class="min-w-0">
-                    <p class="font-bold text-[14px] leading-tight" style="color: var(--text-main);">Восстановление Памяти</p>
-                    <p class="text-[12px] sm:text-[13px] mt-1 leading-snug" style="color: var(--text-muted);">Сервер упал? Не беда. При запуске бот шерстит свои логи и <mark class="note-highlight">восстанавливает списки на автобус и отчеты</mark>. Ни одна мышь не пропадет!</p>
+                    <p class="font-bold text-[14px] leading-tight" style="color: var(--text-main);">Часовой пояс сервера</p>
+                    <p class="text-[12px] sm:text-[13px] mt-1 leading-snug" style="color: var(--text-muted);">Бот принудительно работает в таймзоне <code>Europe/Istanbul</code>. Все дедлайны (13:45 для автобуса, 16:30 для отчетов) вычисляются строго по этому времени. И не пытайтесь обмануть время.</p>
                 </div>
             </div>
             <div class="rounded-2xl p-3 sm:p-4 border shadow-sm flex items-start gap-3 sm:gap-4 mb-3" style="background: var(--card-inner-bg); border-color: var(--liquid-glass-border);">
-                <div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0 border" style="background: var(--color-accent-light); border-color: var(--color-accent-border);"><i class="fa-solid fa-moon icon-3d-accent"></i></div>
+                <div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0 border" style="background: var(--color-accent-light); border-color: var(--color-accent-border);"><i class="fa-solid fa-brain icon-3d-accent"></i></div>
                 <div class="min-w-0">
-                    <p class="font-bold text-[14px] leading-tight" style="color: var(--text-main);">Тихий Час и РВД</p>
-                    <p class="text-[12px] sm:text-[13px] mt-1 leading-snug" style="color: var(--text-muted);">После 16:30 и в выходные бот уходит в спячку: <mark class="note-highlight">никаких уведомлений со звуком</mark>, чтобы не будить. Но если вы нажали <strong>«Вышел в РВД»</strong> — он поймет, что вы на смене, и включит сирену!</p>
+                    <p class="font-bold text-[14px] leading-tight" style="color: var(--text-main);">JSON-Память и Восстановление</p>
+                    <p class="text-[12px] sm:text-[13px] mt-1 leading-snug" style="color: var(--text-muted);">Если сервер выключается (например, упал облачный сервак), при запуске бот проверяет файл <code>bot_state.json</code> и Google Таблицы. Он <strong>автоматически воссоздаст</strong> списки автобусов и статусы заявок. Потерь данных не будет.</p>
                 </div>
             </div>
             <div class="rounded-2xl p-3 sm:p-4 border shadow-sm flex items-start gap-3 sm:gap-4 mb-3" style="background: var(--card-inner-bg); border-color: var(--liquid-glass-border);">
                 <div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0 border" style="background: var(--color-accent-light); border-color: var(--color-accent-border);"><i class="fa-solid fa-satellite-dish icon-3d-accent"></i></div>
                 <div class="min-w-0">
-                    <p class="font-bold text-[14px] leading-tight" style="color: var(--text-main);">Система Анти-Сон</p>
-                    <p class="text-[12px] sm:text-[13px] mt-1 leading-snug" style="color: var(--text-muted);">Чтобы не уснуть на посту, Чубайс пингует сам себя через прокси Cloudflare раз в 5 минут. Вечный двигатель на кошачьей тяге.</p>
+                    <p class="font-bold text-[14px] leading-tight" style="color: var(--text-main);">Система Анти-Сон и Прокси</p>
+                    <p class="text-[12px] sm:text-[13px] mt-1 leading-snug" style="color: var(--text-muted);">Бот работает через кастомные прокси Cloudflare Workers. Чтобы прокси не уснул, внутри крутится поток <code>keep_awake()</code>, который пингует сам себя раз в 5 минут.</p>
                 </div>
             </div>
             <div class="rounded-2xl p-3 sm:p-4 border shadow-sm flex items-start gap-3 sm:gap-4 mt-3" style="background: var(--card-inner-bg); border-color: var(--liquid-glass-border);">
                 <div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0 border" style="background: var(--color-accent-light); border-color: var(--color-accent-border);"><i class="fa-solid fa-shield-halved icon-3d-accent"></i></div>
                 <div class="min-w-0">
-                    <p class="font-bold text-[14px] leading-tight" style="color: var(--text-main);">Броня от Google API</p>
-                    <p class="text-[12px] sm:text-[13px] mt-1 leading-snug" style="color: var(--text-muted);">Google часто банит за частые запросы (Error 429). Бот не сдается: он <mark class="note-highlight">делает 5 попыток</mark> с паузами 2с, 4с, 8с, пока не пробьет стену.</p>
+                    <p class="font-bold text-[14px] leading-tight" style="color: var(--text-main);">Броня от Google API (Error 429)</p>
+                    <p class="text-[12px] sm:text-[13px] mt-1 leading-snug" style="color: var(--text-muted);">Если много людей одновременно тыкают кнопки, Google выдает ошибку превышения квоты. Бот использует декоратор <code>@retry_google_api</code>: он поймает ошибку, подождет 2с, потом 4с, потом 8с, пока пакет данных не пройдет успешно.</p>
+                </div>
+            </div>
+            <div class="rounded-2xl p-3 sm:p-4 border shadow-sm flex items-start gap-3 sm:gap-4 mt-3" style="background: var(--card-inner-bg); border-color: var(--liquid-glass-border);">
+                <div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0 border" style="background: var(--color-accent-light); border-color: var(--color-accent-border);"><i class="fa-solid fa-bullhorn icon-3d-accent"></i></div>
+                <div class="min-w-0">
+                    <p class="font-bold text-[14px] leading-tight" style="color: var(--text-main);">Стукач-Модуль (Доносы Насте)</p>
+                    <p class="text-[12px] sm:text-[13px] mt-1 leading-snug" style="color: var(--text-muted);">Чубайс — идеальный ябеда. Встали на паузу? Насте летит пуш: <em>«А вот эти товарищи отдыхают. Причина: ждем Русас»</em>. Кто-то нажал SOS? Админы получают воющую сирену. Наступило 13:45? Начальству улетает готовый список на автобус. Наступило 16:30? Формируется досье: кто молодец, а кому готовить <strong>жесткое атата</strong>.</p>
                 </div>
             </div>
         `;
         
-        const htmlLifeSupportElderly = `<div class="apple-quote text-[13px] sm:text-[14px]"><strong>Случайно выключили интернет? Не паникуем!</strong> Внутри кота крутятся надежные шестеренки. Программа сама помнит всех, кто записался на автобус и сдал отчеты, даже если выключится.<br><br>В нерабочее время (после 16:30 и в выходные) уведомления приходят без звука. Но если вы нажали <strong>«Работа в выходные»</strong>, звук включится, чтобы вы не пропустили важное.</div>`;
+        const htmlLifeSupportElderly = `<div class="apple-quote text-[13px] sm:text-[14px]"><strong>Случайно выключили интернет? Не паникуем!</strong> Внутри кота крутятся надежные шестеренки. Программа сама помнит всех, кто записался на автобус и сдал отчеты, даже если сервер временно выключится.<br><br>Программа автоматически переподключается к серверам Google, если те заняты, поэтому ни одна заявка не потеряется по дороге. Просто доверьтесь технике.</div>`;
 
         const htmlAdminDbNormal = `
             <div class="rounded-2xl border overflow-hidden shadow-sm admin-inner-card" style="background: var(--liquid-glass-bg); border-color: var(--liquid-glass-border);">
                 <div class="flex p-3 sm:p-4 border-b gap-3 items-start" style="border-color: var(--liquid-glass-border);">
-                    <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0 border" style="background: var(--color-accent-light); border-color: var(--color-accent-border);"><i class="fa-solid fa-users text-[13px] icon-3d-accent"></i></div>
-                    <div class="min-w-0"><p class="font-bold text-[14px] leading-tight" style="color: var(--text-main);">Сотрудники / Админы (Листы 1-2)</p><p class="text-[12px] mt-1 leading-snug" style="color: var(--text-muted);">Белый список. Нет ID? Бот поцарапает и проигнорирует.</p></div>
-                </div>
-                <div class="flex p-3 sm:p-4 border-b gap-3 items-start" style="border-color: var(--liquid-glass-border);">
-                    <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0 border" style="background: var(--color-accent-light); border-color: var(--color-accent-border);"><i class="fa-solid fa-satellite text-[13px] icon-3d-accent"></i></div>
-                    <div class="min-w-0"><p class="font-bold text-[14px] leading-tight" style="color: var(--text-main);">Live / Завершенные (Листы 3-4)</p><p class="text-[12px] mt-1 leading-snug" style="color: var(--text-muted);">Живой лоток. Бот пишет сюда сам, <mark class="note-highlight">руками не трогать!</mark></p></div>
-                </div>
-                <div class="flex p-3 sm:p-4 border-b gap-3 items-start" style="border-color: var(--liquid-glass-border);">
-                    <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0 border" style="background: var(--color-accent-light); border-color: var(--color-accent-border);"><i class="fa-solid fa-calendar-check text-[13px] icon-3d-accent"></i></div>
-                    <div class="min-w-0"><p class="font-bold text-[14px] leading-tight" style="color: var(--text-main);">На завтра / Отчеты (Листы 5-6)</p><p class="text-[12px] mt-1 leading-snug" style="color: var(--text-muted);">5 лист - черновик для подглядывания. 6 лист - финальная кладовка.</p></div>
-                </div>
-                <div class="flex p-3 sm:p-4 border-b gap-3 items-start" style="background: var(--color-accent-light); border-color: var(--liquid-glass-border);">
-                    <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0 border" style="background: var(--color-accent-light); border-color: var(--color-accent-border);"><i class="fa-solid fa-bus text-[13px] icon-3d-accent"></i></div>
-                    <div class="min-w-0"><p class="font-bold text-[14px] leading-tight" style="color: var(--color-accent);">Автобус</p><p class="text-[12px] mt-1 leading-snug opacity-80" style="color: var(--color-accent);">Список на выезд. В 13:45 бот присылает отчет и очищает лист до следующего дня.</p></div>
+                <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0 border" style="background: var(--color-accent-light); border-color: var(--color-accent-border);"><i class="fa-solid fa-satellite text-[13px] icon-3d-accent"></i></div>
+                <div class="min-w-0"><p class="font-bold text-[14px] leading-tight" style="color: var(--text-main);">Лист 3-4: Live и Завершенные</p><p class="text-[12px] mt-1 leading-snug" style="color: var(--text-muted);">Текущая картина дня. Обновляется моментально при любом нажатии кнопок сотрудниками. <mark class="note-highlight">Руками не редактировать!</mark></p></div>
+            </div>
+            <div class="flex p-3 sm:p-4 border-b gap-3 items-start" style="border-color: var(--liquid-glass-border);">
+                <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0 border" style="background: var(--color-accent-light); border-color: var(--color-accent-border);"><i class="fa-solid fa-calendar-check text-[13px] icon-3d-accent"></i></div>
+                <div class="min-w-0"><p class="font-bold text-[14px] leading-tight" style="color: var(--text-main);">Лист 5-6: На завтра / Отчеты</p><p class="text-[12px] mt-1 leading-snug" style="color: var(--text-muted);">Лист 5 — это черновик. Заявки туда сами по себе не падают! Админ должен нажать кнопку на панели, чтобы бот просканировал базу и собрал все планы на завтра в этот черновик. В 16:30 бот сам сформирует финальный отчет и занесет его на Лист 6 для Насти.</p></div>
+            </div>
+            <div class="flex p-3 sm:p-4 border-b gap-3 items-start" style="background: var(--color-accent-light); border-color: var(--liquid-glass-border);">
+                <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0 border" style="background: var(--color-accent-light); border-color: var(--color-accent-border);"><i class="fa-solid fa-bus text-[13px] icon-3d-accent"></i></div>
+                    <div class="min-w-0"><p class="font-bold text-[14px] leading-tight" style="color: var(--color-accent);">Лист Автобус</p><p class="text-[12px] mt-1 leading-snug opacity-80" style="color: var(--color-accent);">Хранит записи. Ровно в 13:45 бот присылает отчет админам и стирает все данные с этого листа под ноль.</p></div>
                 </div>
                 <div class="flex p-3 sm:p-4 gap-3 items-start" style="background: var(--color-accent-light);">
                     <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0 border" style="background: var(--color-accent-light); border-color: var(--color-accent-border);"><i class="fa-solid fa-skull text-[13px] icon-3d-accent"></i></div>
-                    <div class="min-w-0"><p class="font-bold text-[14px] leading-tight" style="color: var(--color-accent);">Память Матрицы (JSON - Лист 7)</p><p class="text-[12px] mt-1 leading-snug opacity-80" style="color: var(--color-accent);">Если зависло меню — удалите строку с ID наладчика. Произойдет сброс. Чубайс забудет все его дела.</p></div>
+                    <div class="min-w-0"><p class="font-bold text-[14px] leading-tight" style="color: var(--color-accent);">Лист 7: Память Матрицы (JSON)</p><p class="text-[12px] mt-1 leading-snug opacity-80" style="color: var(--color-accent);">Здесь хранятся последние 40 заявок каждого юзера в JSON. Если у кого-то "зависли" меню в телеграме, просто удалите строчку с его фамилией отсюда. Произойдет магия, и кота отпустит.</p></div>
                 </div>
             </div>
         `;
         
         const htmlAdminDbElderly = `
             <div class="apple-quote text-[13px] sm:text-[14px]">
-                <strong>Листы 1-2:</strong> Списки сотрудников и начальников.<br><br>
+                Вся база данных находится в Google Таблицах. Доступ по ссылке из панели управления в боте.<br><br>
+                <strong>Листы 1-2:</strong> Списки сотрудников и начальников. Добавляйте новых людей сюда.<br><br>
                 <strong>Листы 3-6:</strong> Текущие задания, архивы и планы на завтра. Программа заполняет их сама.<br><br>
                 <strong>Лист Автобус:</strong> Записи на развозку.<br><br>
                 <strong>Лист 7 (Техническая память):</strong> Если у кого-то намертво зависла программа, удалите строку с его фамилией отсюда. Программа перезапустится с чистого листа.
@@ -1165,100 +1178,112 @@
 
         const htmlAdminCmdNormal = `
             <div class="apple-quote text-[13px] sm:text-[14px]">
-                <p class="mb-3"><strong>Управление подачей:</strong> По умолчанию <mark class="note-highlight">Авто (12:00-16:30)</mark>. Форс-мажор? Жмите "Открыть" или "Закрыть" (кормушка захлопнется) прямо в боте.</p>
-                <p class="mb-3"><strong>Опрос:</strong> Кинуть всем гудок <span class="note-sticker">📢</span> с напоминанием в обход таймера 12:00.</p>
-                <p><strong>Вонючки:</strong> Показывает список тех, кто отлынивает. Кнопка "Напомнить всем" кинет им угрозу в личку.</p>
+                <p class="mb-3"><strong>Управление подачей:</strong> По умолчанию отчеты принимаются строго в окно <mark class="note-highlight">Авто (12:00-16:30)</mark>. Форс-мажор? Жмите "Открыть" (разрешит подачу хоть ночью) или "Закрыть" (кормушка захлопнется) прямо в боте.</p>
+                <p class="mb-3"><strong>Утренний Опрос:</strong> Принудительно кинуть всем гудок <span class="note-sticker">📢</span> с напоминанием "сдаем планы!" в обход таймера.</p>
+                <p><strong>Кто не записался (Вонючки):</strong> Показывает список тех, кто отлынивает от сдачи планов на завтра. Нажатие "Напомнить всем" отправит им угрожающий пуш в личку, чтобы жизнь медом не казалась.</p>
             </div>
         `;
         
         const htmlAdminCmdElderly = `
             <div class="apple-quote text-[13px] sm:text-[14px]">
-                <p class="mb-3"><strong>Управление таймером:</strong> Вы можете вручную разрешить или запретить запись планов на завтра.</p>
-                <p class="mb-3"><strong>Опрос:</strong> Разослать всем напоминание о сдаче планов.</p>
-                <p><strong>Должники:</strong> Узнать, кто еще не сдал планы, и отправить им предупреждение.</p>
+                Внутри бота, если у вас есть права Администратора, есть специальная кнопка "⚙️ Админ-панель".<br><br>
+                <p class="mb-3"><strong>Управление таймером:</strong> Вы можете вручную разрешить или запретить запись планов на завтра, минуя правило 12:00-16:30.</p>
+                <p class="mb-3"><strong>Опрос:</strong> Разослать всем напоминание о сдаче планов прямо сейчас.</p>
+                <p><strong>Должники:</strong> Узнать, кто еще не сдал планы, и отправить им предупреждение одним нажатием.</p>
             </div>
         `;
 
+        // ДИНАМИЧЕСКИЕ ТЕКСТЫ (Обновлены для подробной инструкции)
         const texts = {
             main_title: { 
-                normal: "<span class='ai-gradient fur-effect'>Пушистый бот Чубайс</span><br><span class='text-2xl sm:text-3xl font-black ai-gradient fur-effect' style='text-shadow: 0 4px 15px rgba(0,0,0,0.1); transform: translateZ(30px); display: inline-block; margin-top: 10px;'>Pro (2026)</span>", 
-                elderly: "Кнопочный Чубайс <br><span class='text-xl sm:text-2xl mt-2 block'>(Инструкция для старших)</span>" 
+                normal: "<span class='ai-gradient fur-effect'>Пушистый Кодекс</span><br><span class='text-2xl sm:text-3xl font-black ai-gradient fur-effect' style='text-shadow: 0 4px 15px rgba(0,0,0,0.1); transform: translateZ(30px); display: inline-block; margin-top: 10px;'>Чубайса (V. 2.0.26)</span>", 
+                elderly: "Кнопочный Чубайс <br><span class='text-xl sm:text-2xl mt-2 block'>(Краткая инструкция)</span>" 
             },
             main_desc: { 
-                normal: "Ваш цифровой ассистент <span class='note-sticker'>🤖</span> по учету заявок. Мурчит, живет по времени Стамбула 🇹🇷 и <mark class='note-highlight'>строго подчиняется Насте.</mark>", 
-                elderly: "Чубайс — это программа, которая заменяет все бумажки. Работает надежно, ничего не потеряет. Слушается только Настю." 
+                normal: "Полнейшая, дотошная и мурчащая инструкция по выживанию. <span class='note-sticker'>🤖</span> Читать внимательно. Бот живет по времени <mark class='note-highlight'>Стамбула (UTC+3)</mark> и если что не так — Настя устроит вам жесткое 'атата'.", 
+                elderly: "Чубайс — это программа в Телеграме, которая заменяет все бумажные отчеты. Работает надежно. Всё, что вам нужно — нажимать большие кнопки." 
             },
-            menu_title: { normal: "Меню (Когтеточка строгого режима) <span class='note-sticker'>🐈</span>", elderly: "Кнопки управления (нажимать пальцем)" },
+            menu_title: { normal: "Функции бота (От А до Я) <span class='note-sticker'>🐈</span>", elderly: "Кнопки управления (нажимать пальцем)" },
             
-            card1_title: { normal: "<span class='ai-gradient fur-effect'>Новая заявка</span>", elderly: "Новая заявка" },
-            card1_subtitle: { normal: "Ленивый бот с хорошей памятью <span class='note-sticker'>🐭</span>", elderly: "Начинаем работу. Главное — не тыкать дважды." },
-            acc1_title: { normal: "Алгоритм создания 🤔", elderly: "Как это работает? (Без паники)" },
+            card1_title: { normal: "<span class='ai-gradient fur-effect'>Создание заявки</span>", elderly: "Новая заявка" },
+            card1_subtitle: { normal: "Как правильно внести задачу <span class='note-sticker'>🛠</span>", elderly: "Начинаем работу. Главное — не тыкать дважды." },
+            acc1_title: { normal: "Шаг 1: Ввод номера 🔢", elderly: "Как это работает? (Без паники)" },
             acc1_text: { 
-                normal: "<p class='mb-3'><strong>1. Ввод номеров:</strong> Пишете номер (можно несколько через запятую). Чубайс бдит: если заявка уже завершена кем-то другим, он скажет, кто это был! Если кто-то работает по ней с таким же составом — он ругнется и не даст создать дубль.</p><p class='mb-3'><strong>2. Сбор бригады <span class='note-sticker'>👷‍♂️</span>:</strong> Ваше имя уже в списке. Введите пару букв фамилии коллеги — бот найдет его по запаху в базе.</p><p><strong>3. Сохранение:</strong> <mark class='note-highlight'>Обязательно</mark> нажмите зеленую кнопку «✅ Подтвердить состав». Иначе бот посмотрит на вас как на дурака и выкинет заявку.</p>",
+                normal: "Нажмите <strong>«➕ Новая заявка»</strong>. Бот попросит ввести номер. Вы можете написать один номер (например, <code>123456</code>) или сразу несколько через запятую (например, <code>123456, 789012, 345678</code>).<br><br><mark class='note-highlight'>Защита от хитрецов:</mark><br>• Бот проверит, не завершена ли эта заявка кем-то другим.<br>• Если попытаетесь обмануть кота и создать дубль, он покрутит лапой у виска и сдаст вас Насте.",
                 elderly: "<p class='mb-3'><strong>1. Пишем цифры:</strong> Жмем кнопку и вводим номер задания. Два номера? Пишите через запятую.</p><p class='mb-3'><strong>2. Ищем напарника:</strong> Напишите первые пару букв его фамилии, эта шайтан-машина сама его вспомнит и найдет в базе.</p><p><strong>3. САМОЕ ВАЖНОЕ:</strong> Нажмите огромную зеленую кнопку <strong>«Подтвердить»</strong>. Забыли нажать — программа ничего не запомнит, а вы будете переделывать работу зря!</p>"
             },
+            acc1_2_title: { normal: "Шаг 2: Сбор бригады 👷‍♂️", elderly: "Добавление людей" },
+            acc1_2_text: {
+                normal: "После ввода номера бот предложит собрать бригаду. <strong>Вы уже в списке по умолчанию!</strong><br><br>Чтобы добавить напарника, просто отправьте боту <strong>первые несколько букв его фамилии</strong>. Например, напишите <code>Ива</code>, и бот сам найдет в базе 'Иванов Иван'. Вы можете добавить сколько угодно людей. Только не вводите клички, мы тут серьезные люди (почти).",
+                elderly: "Программа уже знает, что вы работаете. Если с вами напарник — просто напишите первые три буквы его фамилии в чат, и программа сама добавит его в бригаду."
+            },
+            acc1_3_title: { normal: "Шаг 3: Сохранение (КРИТИЧНО) 🚨", elderly: "Обязательно к прочтению" },
+            acc1_3_text: {
+                normal: "Собрали бригаду? Теперь <strong>ОБЯЗАТЕЛЬНО</strong> нажмите огромную зеленую кнопку <mark class='note-highlight'>✅ ПОДТВЕРДИТЬ СОСТАВ</mark> под сообщением. Если вы забыли нажать эту кнопку, заявка улетит в кошачий лоток, а вам придется делать всё заново под смех Чубайса.",
+                elderly: "Всегда нажимайте зеленую кнопку <strong>«Подтвердить состав»</strong>. Без неё заявка просто исчезнет в никуда."
+            },
 
-            card2_title: { normal: "<span class='ai-gradient fur-effect'>Мои заявки</span>", elderly: "Мои заявки" },
-            card2_subtitle: { normal: "Ваш рабочий лоток <span class='note-sticker'>📦</span>.", elderly: "То, над чем сейчас пыхтим." },
+            card2_title: { normal: "<span class='ai-gradient fur-effect'>Управление заявками</span>", elderly: "Мои заявки" },
+            card2_subtitle: { normal: "Раздел «Мои заявки / Статусы» <span class='note-sticker'>🔄</span>", elderly: "То, над чем сейчас пыхтим." },
             acc2_text: {
-                normal: "Проблемы на работе? Кончились материалы или наладчик ушел пить чай? Жмите <strong>«Пауза»</strong> и пишите причину (Настя всё читает!). Внимание: пауза <mark class='note-highlight'>автоматически выкидывает заявку</mark> из планов на завтра! Вернулись? Жмите <strong>«▶️ В работу»</strong>.",
-                elderly: "Возникли проблемы на работе? Нет запчастей или наладчик ушел на перекур? Жмите <strong>«Пауза»</strong> и укажите причину (чтобы начальство видело). Время простоя в отчет не идет.<br><br>Вернулись? Жмите <strong>«В работу»</strong>, и таймер снова затикает."
+                normal: "Жмите <strong>«Пауза»</strong>, если работа встала. Бот попросит написать причину текстом (например: 'Нет кабеля', 'Ждем Русас'). Чубайс тут же строчит молниеносный донос Насте и админам: <em>«Внимание! Кожаные прохлаждаются! Причина: ...»</em> Настя видит всё в прямом эфире, так что пишите убедительно, иначе прилетит жесточайшее атата!<br><br><mark class='note-highlight'>Механика Паузы:</mark> Заявка, поставленная на паузу, <strong>автоматически удаляется из ваших планов на завтра!</strong><br><br>Когда проблема решена, зайдите в заявку и нажмите <strong>«▶️ Снять с паузы»</strong>.",
+                elderly: "Возникли проблемы на работе? Нет запчастей или ждем Русас? Жмите <strong>«Пауза»</strong> и укажите причину. Чубайс моментально доложит об этом Насте, так что всё прозрачно. Время простоя в отчет не идет.<br><br>Вернулись? Жмите <strong>«Снять с паузы»</strong>, и таймер снова затикает."
             },
             acc3_text: {
-                normal: "Сделал дело — жми <strong>«Завершить»</strong>! Заявка прячется в Архив (Чубайс помнит последние 40 ваших дел). Если промазали кнопкой — идите вниз списка, заходите в Архив и жмите 🔄 Восстановить (заявка снова вернется в работу).",
+                normal: "Сделали работу? Жмите <strong>«Завершить»</strong>. Заявка исчезнет из списка активных и из планов на завтра, переместившись в <strong>Архив</strong>.<br><br><em>Случайно тыкнули не туда?</em> Не орите, просто идите в самый низ вашего списка заявок, нажмите «📦 Архив». Бот помнит последние 40 ваших дел. Найдите нужную заявку и нажмите <strong>«🔄 Восстановить»</strong>. Она вернется в работу.",
                 elderly: "Мышь поймана, работа сделана? Жмите <strong>«Завершить»</strong>. Задание уйдет в Архив.<br><br><em>Промазали пальцем мимо экрана?</em> Не паникуем и <strong>не зовем внука!</strong> Просто спуститесь в самый низ списка, зайдите в 'Архив' и нажмите 'Восстановить'. Заявка вернется."
             },
             acc5_title: { normal: "<i class='fa-solid fa-arrow-right-to-bracket mr-3 sm:mr-4 shrink-0'></i> Перенос «На завтра» <span class='note-sticker'>📅</span>", elderly: "Перенос «На завтра»" },
             acc5_text: {
-                normal: "<mark class='note-highlight'>Главная фишка перед уходом домой!</mark> Переносит текущую заявку в планы на следующую смену. Бот спросит: оставить текущую бригаду или выгнать лентяев и набрать новых? <br><br><em>Помните: пауза или завершение отменяют перенос на завтра!</em>",
+                normal: "Зашли в конкретную активную заявку? Там есть кнопка <strong>«📝 На завтра»</strong>. <br>Это ваш спасательный круг. Нажмите её, и бот спросит: оставить текущую бригаду или набрать новых людей? Как только вы подтвердите, заявка получит зеленую галочку (✅) — значит, Настя завтра увидит, что вы не просто так хлеб едите.",
                 elderly: "Не успели доделать сегодня? <strong>Жмите эту кнопку перед уходом домой.</strong> Программа перенесет ваше текущее задание прямиком в планы на завтрашнюю смену. Очень удобно!"
             },
 
-            card3_title: { normal: "<span class='ai-gradient fur-effect'>На завтра (Миска)</span>", elderly: "На завтра (Ваши планы)" },
-            card3_subtitle: { normal: "Ваш план действий <span class='note-sticker'>🔮</span>.", elderly: "Что делаем в следующую смену." },
+            card3_title: { normal: "<span class='ai-gradient fur-effect'>Отчет «На завтра»</span>", elderly: "На завтра (Ваши планы)" },
+            card3_subtitle: { normal: "Самый важный алгоритм <span class='note-sticker'>⏰</span>", elderly: "Что делаем в следующую смену." },
             card3_rule: {
-                normal: "<strong class='block mb-2 uppercase tracking-widest text-[12px] sm:text-[13px]' style='color: var(--color-accent);'><i class='fa-solid fa-bolt mr-2'></i> Строгий Тайминг:</strong> Ровно в <strong>12:00</strong> Чубайс присылает утренний опрос (и вешает закреп). В <strong>16:30</strong> он молча формирует финальный отчет, скидывает его в Google Таблицу и забирает миску (чистит ваши заявки).<br><br><span class='font-bold text-sm' style='color: var(--color-accent);'>⚠️ Кто не успел:</span> попадает в список 'Вонючек' для Насти и получает позорный стикер.<br><br><mark class='note-highlight'>Связанные души:</mark> Если напарник записал вас в свою заявку на завтра — Чубайс это увидит и сам снимет с вас позорный закреп! Командная работа!",
-                elderly: "<strong>Запомните как Отче наш:</strong> Добавить планы нужно строго <strong>до 16:30</strong>! Ровно в 16:30 программа автоматически отправляет рапорт руководству и стирает ваши данные с телефона.<br><br>Кто забудет и останется с 0 заявок — программа виртуально повесит на вас позорную табличку 'Лентяй' прямо в чате. Техника ошибок не прощает!<br><br><em>Хитрость:</em> Если ваш напарник запишет вас в свою бригаду на завтра, программа сама поймет, что вы при деле, и перестанет вам надоедать."
+                normal: "<strong class='block mb-2 uppercase tracking-widest text-[12px] sm:text-[13px]' style='color: var(--color-accent);'><i class='fa-solid fa-bolt mr-2'></i> Строгое окно: с 12:00 до 16:30</strong>Функция переноса заявок 'На завтра' работает <strong>ТОЛЬКО</strong> в это время. До 12:00 кнопка выдаст ошибку.<br><br><strong>⏱ 12:00:</strong> Бот присылает всем сообщение-напоминалку и вешает закреп в чат.<br><strong>⏱ 16:30:</strong> Кормушка захлопывается. Бот формирует финальный отчет в Google Таблицу и <em>сбрасывает все зеленые галочки</em> у вас в телефоне. Наступает новый день.<br><br><span class='font-bold text-sm' style='color: var(--color-accent);'>⚠️ Список 'Вонючек':</span><br>Если на момент 16:30 у вас в списке не было ни одной заявки с галочкой 'На завтра', вы попадаете в специальный позорный список Вонючек. Админ нажмет кнопку, и вам в личку прилетит угрожающее 'атата' от Насти.<br><br><mark class='note-highlight'>Командная работа (Синергия):</mark><br>Вы можете не тыкать ничего сами! Если ваш напарник Иванов перенес заявку 'На завтра' и указал вас в составе бригады, бот просканирует базу, увидит вашу фамилию и поймет, что вы при деле. Вы спасены от списка вонючек!",
+                elderly: "<strong>Запомните как Отче наш:</strong> Добавить планы нужно строго <strong>между 12:00 и 16:30</strong>! Ровно в 16:30 программа автоматически отправляет рапорт руководству и стирает ваши данные с телефона. Кто не успел - тот опоздал.<br><br>Кто забудет и останется с 0 заявок — программа виртуально повесит на вас позорную табличку 'Лентяй' прямо в чате. Техника ошибок не прощает!<br><br><em>Хитрость:</em> Если ваш напарник запишет вас в свою бригаду на завтра, программа сама поймет, что вы при деле, и перестанет вам надоедать."
             },
 
             card_bus_title: { normal: "<span class='ai-gradient fur-effect'>Развозка (Автобус)</span>", elderly: "Запись на Автобус 🚌" },
-            card_bus_subtitle: { normal: "Кто не успел — топает пешком 🚶‍♂️", elderly: "Едем домой с комфортом." },
+            card_bus_subtitle: { normal: "Уехать домой с комфортом 🚌", elderly: "Едем домой с комфортом." },
             acc_bus_title: { normal: "<i class='fa-solid fa-stopwatch mr-2'></i> Дедлайн: строго до 13:45!", elderly: "Как записаться?" },
             acc_bus_text: { 
-                normal: "<mark class='note-highlight'>Железное правило:</mark> Запись закрывается ровно в <strong>13:45</strong>! После этого времени бот умывает лапы и шлет всех лесом к Насте. Не успели записаться? Ваши проблемы, топайте домой пешком или идите кланяться Насте.<br><br><strong>Процесс:</strong> Выбираете здание (00UAC/94VAC). Бот сам вспомнит вашу стандартную остановку из базы! А если сегодня пятница — он заботливо спросит, на какой день вас записать.",
+                normal: "<mark class='note-highlight'>Железное правило:</mark> Запись на автобус закрывается ровно в <strong>13:45</strong>! Ровно в эту секунду бот отправляет список и очищает базу на сегодня. Не успели записаться или передумали после 13:45? Ваши проблемы, топайте пешком или звоните Насте, моля о пощаде.<br><br><strong>Как это работает:</strong><br>1. Жмете 'Запись на автобус'.<br>2. Выбираете здание (00UAC или 94VAC).<br>3. Бот лезет в умную таблицу, ищет вашу фамилию и сам предлагает вашу стандартную остановку! Если он ошибся, вы можете нажать 'Изменить остановку'.<br><br><strong>📅 Пятничная магия:</strong><br>Если вы записываетесь в пятницу, бот поймет это и спросит, на какой именно день вам нужен автобус: Пятница вечер, Суббота или Воскресенье.",
                 elderly: "Нажмите 'Запись на автобус' в меню. Выберите свое здание и остановку. <br><br><strong>Очень важно:</strong> Записаться нужно строго <strong>до 13:45</strong>! Если опоздали — программа закроет списки, и придется идти домой пешком или звонить руководству."
             },
             
-            card_rvd_title: { normal: "<span class='ai-gradient fur-effect'>Вышел в РВД</span>", elderly: "Работа в выходные" },
-            card_rvd_subtitle: { normal: "Работа в выходные 🛠", elderly: "Оповещение о выходе на работу." },
-            acc_rvd_title: { normal: "<i class='fa-solid fa-shield-cat mr-2'></i> Зачем эта кнопка?", elderly: "Для чего нужно?" },
+            card_rvd_title: { normal: "<span class='ai-gradient fur-effect'>Тихий Режим и РВД</span>", elderly: "Работа в выходные" },
+            card_rvd_subtitle: { normal: "Управление уведомлениями 🔕", elderly: "Оповещение о выходе на работу." },
+            acc_rvd_title: { normal: "<i class='fa-solid fa-moon mr-2'></i> Как бот вас бережет", elderly: "Для чего нужно?" },
             acc_rvd_text: { 
-                normal: "Бот не отправляет уведомления в выходные. Нажав кнопку <strong>«Вышел в РВД»</strong>, бот поймет, что вы на смене, и <mark class='note-highlight'>включит звуковые уведомления</mark> для вас! Иначе Настя не докричится.",
-                elderly: "Программа не беспокоит сотрудников в субботу и воскресенье. Если вы вышли на работу в свой выходной, нажмите эту кнопку. Программа поймет, что вы на смене, и будет присылать вам важные сообщения."
+                normal: "У Чубайса встроен алгоритм <strong>Тихого Часа</strong>.<br>• После 16:30 в будние дни<br>• В субботу и воскресенье круглосуточно<br>Бот отправляет сообщения <em>БЕЗ ЗВУКА</em> (disable_notification=True), чтобы не будить вас, если ваш напарник решил поработать ночью.<br><br><mark class='note-highlight'>Кнопка «Вышел в РВД»:</mark><br>Если сегодня выходной, но вы вышли на смену — нажмите эту кнопку в главном меню. Бот запишет вас в реестр работающих сегодня, и <strong>только для вас</strong> отключит тихий режим, чтобы вы не пропустили важное сообщение от Насти, когда она будет вас искать. (В 16:30 статус РВД сбросится сам).",
+                elderly: "Программа не беспокоит сотрудников со звуком в субботу и воскресенье. Если вы вышли на работу в свой выходной, нажмите эту кнопку. Программа поймет, что вы на смене, и будет присылать вам важные сообщения со звуком."
             },
 
             card_sos_title: { normal: "<span class='ai-gradient fur-effect'>Ор мартовского кота</span>", elderly: "Кнопка Паники" },
-            card_sos_subtitle: { normal: "Связь с начальством <span class='note-sticker'>🆘</span>", elderly: "Если всё сломалось 🆘" },
+            card_sos_subtitle: { normal: "Кнопка SOS <span class='note-sticker'>🆘</span>", elderly: "Если всё сломалось 🆘" },
             acc_sos_text: { 
-                normal: "Сломался бот? Кончился корм? Жмите 🆘! Чубайс выдаст список Администраторов. Выбираете жертву, пишете гневный текст, и бот <mark class='note-highlight'>анонимно</mark> перешлет вашу боль в личку начальству. Никто не узнает, кто нагадил мимо лотка.",
-                elderly: "Программа не отвечает? Всё пропало? Нажмите 🆘, выберите начальника из списка и напишите, что случилось. Кот сам донесет вашу жалобу.<br><br><em>P.S. Нет, мы не можем 'просто починить интернет во всем районе'.</em>"
+                normal: "Сломался бот? Не можете что-то нажать? Жмите <strong>«🆘 Сообщить о проблеме»</strong> в главном меню. Бот выдаст список Администраторов. Выбираете жертву, пишете свой гневный текст текстом в чат, и бот перешлет его в личку Насте или админам от вашего имени. А там уже готовьтесь к 'атата', если нажали просто так.",
+                elderly: "Программа не отвечает? Всё пропало? Нажмите 🆘, выберите начальника из списка и напишите текстовое сообщение прямо в чат. Кот сам донесет вашу жалобу начальству.<br><br><em>P.S. Нет, мы не можем 'просто починить интернет во всем районе'.</em>"
             },
 
-            card4_title: { normal: "Жизнеобеспечение <span class='note-sticker'>🔋</span>", elderly: "Работа шайтан-машины" },
-            card4_subtitle: { normal: "Почему кот не спит на посту.", elderly: "Почему оно работает без вас." },
+            card4_title: { normal: "<span class='ai-gradient fur-effect'>Жизнеобеспечение (Под капотом)</span> <span class='note-sticker'>🔋</span>", elderly: "Работа шайтан-машины" },
+            card4_subtitle: { normal: "Техническая часть для шаманов и техномагов.", elderly: "Почему оно работает без вас и громко ябедничает." },
 
             wife_title: { normal: "Служба Спасения <span class='note-sticker'>🚑</span>", elderly: "Советы (Кошка)" },
             wife_text: {
-                normal: "Если бот молчит 5 минут — значит сервер завис. Я его пну, у нас 14 котят! <mark class='note-highlight'>Ни одна заявка не пропадет.</mark>",
+                normal: "Если меню бота 'заморозилось' (ну упал облачный сервак, бывает): не паникуйте. Я пну Чубайса и он всё вспомнит! В крайнем случае, просто напишите админу.",
                 elderly: "Увидели, что кот 'завис'? <strong>Не надо тыкать в экран со всей силы сто раз подряд!</strong> Просто подождите 5 минут. Сервер подумает и сам ответит. Не волнуйтесь, ваши труды никуда не исчезнут."
             },
 
             admin_lock_title: { normal: "Зона Вожаков", elderly: "Зона Администраторов" },
             admin_lock_sub: { normal: "Коснись, чтобы открыть <span class='note-sticker'>🔓</span>", elderly: "Нажмите для входа 🔓" },
             admin_main_title: { normal: "Панель Управления", elderly: "Настройки Программы" },
-            admin_main_desc: { normal: "Секретные настройки, таблицы и управление пушистым демоном.", elderly: "Доступ к базе данных и управление рассылками." },
-            admin_db_title: { normal: "<i class='fa-solid fa-table w-6 sm:w-8 text-center shrink-0 icon-3d-accent'></i> Google Таблицы", elderly: "<i class='fa-solid fa-table w-6 sm:w-8 text-center shrink-0 icon-3d-accent'></i> База данных" },
-            admin_cmd_title: { normal: "<i class='fa-solid fa-gamepad w-6 sm:w-8 text-center shrink-0 icon-3d-accent'></i> Команды админа", elderly: "<i class='fa-solid fa-sliders w-6 sm:w-8 text-center shrink-0 icon-3d-accent'></i> Управление" }
+            admin_main_desc: { normal: "Раздел доступен только тем, чей ID есть на Листе 'Админы' в Google Таблице. И самой Насте.", elderly: "Доступ к базе данных и управление рассылками." },
+            admin_db_title: { normal: "<i class='fa-solid fa-table w-6 sm:w-8 text-center shrink-0 icon-3d-accent'></i> Структура Базы Данных", elderly: "<i class='fa-solid fa-table w-6 sm:w-8 text-center shrink-0 icon-3d-accent'></i> База данных" },
+            admin_cmd_title: { normal: "<i class='fa-solid fa-gamepad w-6 sm:w-8 text-center shrink-0 icon-3d-accent'></i> Кнопки Админа", elderly: "<i class='fa-solid fa-sliders w-6 sm:w-8 text-center shrink-0 icon-3d-accent'></i> Управление" }
         };
 
         function setMode(index, btnWrapElement) {
