@@ -579,16 +579,10 @@
                         </div>
                     </div>
                     <details onclick="playUIClick()" style="border-color: var(--color-accent-border);">
-                        <summary style="color: var(--color-accent);"><span class="text-morph font-bold" data-id="acc_bus_title"><i class="fa-solid fa-stopwatch mr-2"></i> Дедлайн: строго до 13:45!</span><i class="fa-solid fa-chevron-down chevron"></i></summary>
+                        <summary style="color: var(--color-accent);"><span class="text-morph font-bold" data-id="acc_bus_title"><i class="fa-solid fa-stopwatch mr-2"></i> Дедлайн: 13:45 (по умолчанию)</span><i class="fa-solid fa-chevron-down chevron"></i></summary>
                         <div class="details-content">
                             <div class="apple-quote text-morph" data-id="acc_bus_text">
-                                <mark class="note-highlight">Железное правило:</mark> Запись на автобус закрывается ровно в <strong>13:45</strong>! Ровно в эту секунду бот отправляет список и очищает базу на сегодня. Не успели записаться или передумали после 13:45? Ваши проблемы, топайте пешком или звоните Насте, моля о пощаде.<br><br>
-                                <strong>Как это работает:</strong><br>
-                                1. Жмете "Запись на автобус".<br>
-                                2. Выбираете здание (00UAC или 94VAC).<br>
-                                3. Бот лезет в умную таблицу, ищет вашу фамилию и сам предлагает вашу стандартную остановку! Если он ошибся, вы можете нажать "Изменить остановку".<br><br>
-                                <strong>📅 Пятничная магия:</strong><br>
-                                Если вы записываетесь в пятницу, бот поймет это и спросит, на какой именно день вам нужен автобус: Пятница вечер, Суббота или Воскресенье.
+                                <mark class='note-highlight'>Дедлайн плавающий!</mark> По умолчанию запись закрывается ровно в <strong>13:45</strong>! После этого времени бот шлет всех лесом. НО! Если админы сжалятся, они могут продлить дедлайн, и бот громко оповестит об этом всех в чате.<br><br><strong>Процесс:</strong> Выбираете здание (00UAC/94VAC). Бот сам вспомнит вашу стандартную остановку из базы! А если сегодня пятница — он заботливо спросит, на какой день вас записать.
                             </div>
                         </div>
                     </details>
@@ -770,6 +764,12 @@
 
     <!-- Кнопка Росатом (Теперь Режим Душнилы) -->
     <div id="rosatom-container" class="fixed bottom-6 right-6 z-50">
+        <!-- Прыгающая подсказка-приманка -->
+        <div id="rosatom-hint" class="absolute bottom-[calc(100%+16px)] right-0 w-52 p-3 rounded-2xl text-[12px] sm:text-[13px] font-black text-center pointer-events-none opacity-0 transition-opacity duration-500 z-50 animate-bounce" style="background: var(--color-accent); color: var(--bg-color); box-shadow: 0 10px 25px var(--color-accent-shadow);">
+            Жми сюда, чтоб Чубайс надел галстук и перекрасил всё в Росатом-стайл! 👔
+            <div class="absolute -bottom-1.5 right-6 w-3 h-3 rotate-45" style="background: var(--color-accent);"></div>
+        </div>
+
         <div class="relative">
             <div id="rosatom-btn" class="w-14 h-14 sm:w-16 sm:h-16 rounded-full border-2 flex items-center justify-center cursor-pointer hover:scale-110 transition-transform duration-300 relative z-0" style="background: var(--icon-bg); border-color: var(--icon-border); box-shadow: var(--icon-shadow);" onclick="toggleRosatom()">
                 <i class="fa-solid fa-user-tie text-2xl sm:text-3xl icon-3d-accent"></i>
@@ -1104,46 +1104,46 @@
         }
         animateDustLoop();
 
-        // --- РАСШИРЕННЫЕ ТЕКСТОВЫЕ БЛОКИ ДЛЯ ПОДКАПОТНОГО ПРОСТРАНСТВА ---
+        // --- Описания и тексты ---
         const htmlLifeSupportNormal = `
             <div class="rounded-2xl p-3 sm:p-4 border shadow-sm flex items-start gap-3 sm:gap-4 mb-3" style="background: var(--card-inner-bg); border-color: var(--liquid-glass-border);">
                 <div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0 border" style="background: var(--color-accent-light); border-color: var(--color-accent-border);"><i class="fa-solid fa-clock icon-3d-accent"></i></div>
                 <div class="min-w-0">
                     <p class="font-bold text-[14px] leading-tight" style="color: var(--text-main);">Часовой пояс сервера</p>
-                    <p class="text-[12px] sm:text-[13px] mt-1 leading-snug" style="color: var(--text-muted);">Бот принудительно работает в таймзоне <code>Europe/Istanbul</code>. Все дедлайны (13:45 для автобуса, 16:30 для отчетов) вычисляются строго по этому времени. И не пытайтесь обмануть время.</p>
+                    <p class="text-[12px] sm:text-[13px] mt-1 leading-snug" style="color: var(--text-muted);">Бот принудительно работает в таймзоне <code>Europe/Istanbul</code>. Все дедлайны (по умолчанию 13:45 для автобуса, 16:30 для отчетов) вычисляются строго по этому времени. И не пытайтесь обмануть время.</p>
                 </div>
             </div>
             <div class="rounded-2xl p-3 sm:p-4 border shadow-sm flex items-start gap-3 sm:gap-4 mb-3" style="background: var(--card-inner-bg); border-color: var(--liquid-glass-border);">
-                <div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0 border" style="background: var(--color-accent-light); border-color: var(--color-accent-border);"><i class="fa-solid fa-brain icon-3d-accent"></i></div>
+                <div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0 border" style="background: var(--color-accent-light); border-color: var(--color-accent-border);"><i class="fa-solid fa-broom icon-3d-accent"></i></div>
                 <div class="min-w-0">
-                    <p class="font-bold text-[14px] leading-tight" style="color: var(--text-main);">JSON-Память и Восстановление</p>
-                    <p class="text-[12px] sm:text-[13px] mt-1 leading-snug" style="color: var(--text-muted);">Если сервер выключается (например, упал облачный сервак), при запуске бот проверяет файл <code>bot_state.json</code> и Google Таблицы. Он <strong>автоматически воссоздаст</strong> списки автобусов и статусы заявок. Потерь данных не будет.</p>
+                    <p class="font-bold text-[14px] leading-tight" style="color: var(--text-main);">Утренняя зачистка хвостов</p>
+                    <p class="text-[12px] sm:text-[13px] mt-1 leading-snug" style="color: var(--text-muted);">Ровно в 12:00 перед сбором новых планов бот проводит инспекцию. Если со вчерашнего дня зависли данные (кто-то не выгрузил автобусы или отчеты) — он бьет тревогу, выгружает их админам аварийно и жестко зачищает базу для нового дня.</p>
+                </div>
+            </div>
+            <div class="rounded-2xl p-3 sm:p-4 border shadow-sm flex items-start gap-3 sm:gap-4 mb-3" style="background: var(--card-inner-bg); border-color: var(--liquid-glass-border);">
+                <div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0 border" style="background: var(--color-accent-light); border-color: var(--color-accent-border);"><i class="fa-solid fa-moon icon-3d-accent"></i></div>
+                <div class="min-w-0">
+                    <p class="font-bold text-[14px] leading-tight" style="color: var(--text-main);">Тихий Час и РВД</p>
+                    <p class="text-[12px] sm:text-[13px] mt-1 leading-snug" style="color: var(--text-muted);">После 16:30 и в выходные бот уходит в спячку: <mark class="note-highlight">никаких уведомлений со звуком</mark>, чтобы не будить. Но если вы нажали <strong>«Вышел в РВД»</strong> — он поймет, что вы на смене, и включит сирену!</p>
                 </div>
             </div>
             <div class="rounded-2xl p-3 sm:p-4 border shadow-sm flex items-start gap-3 sm:gap-4 mb-3" style="background: var(--card-inner-bg); border-color: var(--liquid-glass-border);">
                 <div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0 border" style="background: var(--color-accent-light); border-color: var(--color-accent-border);"><i class="fa-solid fa-satellite-dish icon-3d-accent"></i></div>
                 <div class="min-w-0">
-                    <p class="font-bold text-[14px] leading-tight" style="color: var(--text-main);">Система Анти-Сон и Прокси</p>
-                    <p class="text-[12px] sm:text-[13px] mt-1 leading-snug" style="color: var(--text-muted);">Бот работает через кастомные прокси Cloudflare Workers. Чтобы прокси не уснул, внутри крутится поток <code>keep_awake()</code>, который пингует сам себя раз в 5 минут.</p>
-                </div>
-            </div>
-            <div class="rounded-2xl p-3 sm:p-4 border shadow-sm flex items-start gap-3 sm:gap-4 mt-3" style="background: var(--card-inner-bg); border-color: var(--liquid-glass-border);">
-                <div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0 border" style="background: var(--color-accent-light); border-color: var(--color-accent-border);"><i class="fa-solid fa-shield-halved icon-3d-accent"></i></div>
-                <div class="min-w-0">
-                    <p class="font-bold text-[14px] leading-tight" style="color: var(--text-main);">Броня от Google API (Error 429)</p>
-                    <p class="text-[12px] sm:text-[13px] mt-1 leading-snug" style="color: var(--text-muted);">Если много людей одновременно тыкают кнопки, Google выдает ошибку превышения квоты. Бот использует декоратор <code>@retry_google_api</code>: он поймает ошибку, подождет 2с, потом 4с, потом 8с, пока пакет данных не пройдет успешно.</p>
+                    <p class="font-bold text-[14px] leading-tight" style="color: var(--text-main);">Система Анти-Сон</p>
+                    <p class="text-[12px] sm:text-[13px] mt-1 leading-snug" style="color: var(--text-muted);">Чтобы не уснуть на посту, Чубайс пингует сам себя через прокси Cloudflare раз в 5 минут. Вечный двигатель на кошачьей тяге.</p>
                 </div>
             </div>
             <div class="rounded-2xl p-3 sm:p-4 border shadow-sm flex items-start gap-3 sm:gap-4 mt-3" style="background: var(--card-inner-bg); border-color: var(--liquid-glass-border);">
                 <div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0 border" style="background: var(--color-accent-light); border-color: var(--color-accent-border);"><i class="fa-solid fa-bullhorn icon-3d-accent"></i></div>
                 <div class="min-w-0">
                     <p class="font-bold text-[14px] leading-tight" style="color: var(--text-main);">Стукач-Модуль (Доносы Насте)</p>
-                    <p class="text-[12px] sm:text-[13px] mt-1 leading-snug" style="color: var(--text-muted);">Чубайс — идеальный ябеда. Встали на паузу? Насте летит пуш: <em>«А вот эти товарищи отдыхают. Причина: ждем Русас»</em>. Кто-то нажал SOS? Админы получают воющую сирену. Наступило 13:45? Начальству улетает готовый список на автобус. Наступило 16:30? Формируется досье: кто молодец, а кому готовить <strong>жесткое атата</strong>.</p>
+                    <p class="text-[12px] sm:text-[13px] mt-1 leading-snug" style="color: var(--text-muted);">Чубайс — идеальный ябеда. Встали на паузу? Насте летит пуш. Кто-то нажал SOS? Админы получают сирену. Наступил дедлайн автобуса? Начальству улетает готовый список. Наступило 16:30? Формируется досье: кто молодец, а кому готовить <strong>жесткое атата</strong>.</p>
                 </div>
             </div>
         `;
         
-        const htmlLifeSupportElderly = `<div class="apple-quote text-[13px] sm:text-[14px]"><strong>Случайно выключили интернет? Не паникуем!</strong> Внутри кота крутятся надежные шестеренки. Программа сама помнит всех, кто записался на автобус и сдал отчеты, даже если сервер временно выключится.<br><br>Программа автоматически переподключается к серверам Google, если те заняты, поэтому ни одна заявка не потеряется по дороге. Просто доверьтесь технике.</div>`;
+        const htmlLifeSupportElderly = `<div class="apple-quote text-[13px] sm:text-[14px]"><strong>Случайно выключили интернет? Не паникуем!</strong> Внутри кота крутятся надежные шестеренки. Программа сама помнит всех, кто записался на автобус и сдал отчеты, даже если выключится.<br><br>В нерабочее время (после 16:30 и в выходные) уведомления приходят без звука. Но если вы нажали <strong>«Работа в выходные»</strong>, звук включится, чтобы вы не пропустили важное.</div>`;
 
         const htmlAdminDbNormal = `
             <div class="rounded-2xl border overflow-hidden shadow-sm admin-inner-card" style="background: var(--liquid-glass-bg); border-color: var(--liquid-glass-border);">
@@ -1153,11 +1153,11 @@
             </div>
             <div class="flex p-3 sm:p-4 border-b gap-3 items-start" style="border-color: var(--liquid-glass-border);">
                 <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0 border" style="background: var(--color-accent-light); border-color: var(--color-accent-border);"><i class="fa-solid fa-calendar-check text-[13px] icon-3d-accent"></i></div>
-                <div class="min-w-0"><p class="font-bold text-[14px] leading-tight" style="color: var(--text-main);">Лист 5-6: На завтра / Отчеты</p><p class="text-[12px] mt-1 leading-snug" style="color: var(--text-muted);">Лист 5 — это черновик. Заявки туда сами по себе не падают! Админ должен нажать кнопку на панели, чтобы бот просканировал базу и собрал все планы на завтра в этот черновик. В 16:30 бот сам сформирует финальный отчет и занесет его на Лист 6 для Насти.</p></div>
-            </div>
-            <div class="flex p-3 sm:p-4 border-b gap-3 items-start" style="background: var(--color-accent-light); border-color: var(--liquid-glass-border);">
-                <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0 border" style="background: var(--color-accent-light); border-color: var(--color-accent-border);"><i class="fa-solid fa-bus text-[13px] icon-3d-accent"></i></div>
-                    <div class="min-w-0"><p class="font-bold text-[14px] leading-tight" style="color: var(--color-accent);">Лист Автобус</p><p class="text-[12px] mt-1 leading-snug opacity-80" style="color: var(--color-accent);">Хранит записи. Ровно в 13:45 бот присылает отчет админам и стирает все данные с этого листа под ноль.</p></div>
+                    <div class="min-w-0"><p class="font-bold text-[14px] leading-tight" style="color: var(--text-main);">На завтра / Отчеты (Листы 5-6)</p><p class="text-[12px] mt-1 leading-snug" style="color: var(--text-muted);">5 лист - черновик для подглядывания. Заявки туда сами по себе не падают! Админ должен нажать кнопку на панели, чтобы бот просканировал базу. 6 лист - финальная кладовка.</p></div>
+                </div>
+                <div class="flex p-3 sm:p-4 border-b gap-3 items-start" style="background: var(--color-accent-light); border-color: var(--liquid-glass-border);">
+                    <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0 border" style="background: var(--color-accent-light); border-color: var(--color-accent-border);"><i class="fa-solid fa-bus text-[13px] icon-3d-accent"></i></div>
+                    <div class="min-w-0"><p class="font-bold text-[14px] leading-tight" style="color: var(--color-accent);">Автобус</p><p class="text-[12px] mt-1 leading-snug opacity-80" style="color: var(--color-accent);">Список на выезд. Выгружается админам в момент дедлайна, а окончательно очищается ровно в 19:00.</p></div>
                 </div>
                 <div class="flex p-3 sm:p-4 gap-3 items-start" style="background: var(--color-accent-light);">
                     <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0 border" style="background: var(--color-accent-light); border-color: var(--color-accent-border);"><i class="fa-solid fa-skull text-[13px] icon-3d-accent"></i></div>
@@ -1178,22 +1178,22 @@
 
         const htmlAdminCmdNormal = `
             <div class="apple-quote text-[13px] sm:text-[14px]">
-                <p class="mb-3"><strong>Управление подачей:</strong> По умолчанию отчеты принимаются строго в окно <mark class="note-highlight">Авто (12:00-16:30)</mark>. Форс-мажор? Жмите "Открыть" (разрешит подачу хоть ночью) или "Закрыть" (кормушка захлопнется) прямо в боте.</p>
-                <p class="mb-3"><strong>Утренний Опрос:</strong> Принудительно кинуть всем гудок <span class="note-sticker">📢</span> с напоминанием "сдаем планы!" в обход таймера.</p>
-                <p><strong>Кто не записался (Вонючки):</strong> Показывает список тех, кто отлынивает от сдачи планов на завтра. Нажатие "Напомнить всем" отправит им угрожающий пуш в личку, чтобы жизнь медом не казалась.</p>
+                <p class="mb-3"><strong>⏲ Управление подачей планов:</strong> По умолчанию <mark class="note-highlight">Авто (12:00-16:30)</mark>. Форс-мажор? Жмите "Открыть" (разрешает сдачу вне графика) или "Закрыть" (кормушка захлопнется принудительно) прямо в боте.</p>
+                <p class="mb-3"><strong>🚌 Управление Автобусами:</strong><br>• <em>Выгрузить (мониторинг)</em>: присылает админу текущий список в личку без удаления базы. Настя может смотреть промежуточные данные.<br>• <em>Продлить дедлайн</em>: если кто-то ноет, что не успел, админ может задать новое время (например, 14:30). Бот заорет на весь завод: "Внимание, дедлайн автобуса продлен!".</p>
+                <p class="mb-3"><strong>📢 Опрос:</strong> Кинуть всем гудок с напоминанием сдавать планы в обход таймера.</p>
+                <p><strong>💩 Вонючки:</strong> Показывает список тех, кто отлынивает от сдачи планов на завтра. Кнопка "Напомнить всем" кинет им угрозу в личку.</p>
             </div>
         `;
         
         const htmlAdminCmdElderly = `
             <div class="apple-quote text-[13px] sm:text-[14px]">
-                Внутри бота, если у вас есть права Администратора, есть специальная кнопка "⚙️ Админ-панель".<br><br>
-                <p class="mb-3"><strong>Управление таймером:</strong> Вы можете вручную разрешить или запретить запись планов на завтра, минуя правило 12:00-16:30.</p>
-                <p class="mb-3"><strong>Опрос:</strong> Разослать всем напоминание о сдаче планов прямо сейчас.</p>
-                <p><strong>Должники:</strong> Узнать, кто еще не сдал планы, и отправить им предупреждение одним нажатием.</p>
+                <p class="mb-3"><strong>Управление таймером:</strong> Вы можете вручную разрешить или запретить запись планов на завтра вне графика.</p>
+                <p class="mb-3"><strong>Автобусы:</strong> Можно посмотреть промежуточный список на автобус прямо сейчас или продлить людям время на запись (программа всех оповестит об этом).</p>
+                <p class="mb-3"><strong>Опрос:</strong> Разослать всем напоминание о сдаче планов.</p>
+                <p><strong>Должники:</strong> Узнать, кто еще не сдал планы, и отправить им предупреждение.</p>
             </div>
         `;
 
-        // ДИНАМИЧЕСКИЕ ТЕКСТЫ (Обновлены для подробной инструкции)
         const texts = {
             main_title: { 
                 normal: "<span class='ai-gradient fur-effect'>Пушистый Кодекс</span><br><span class='text-2xl sm:text-3xl font-black ai-gradient fur-effect' style='text-shadow: 0 4px 15px rgba(0,0,0,0.1); transform: translateZ(30px); display: inline-block; margin-top: 10px;'>Чубайса (V. 2.0.26)</span>", 
@@ -1247,14 +1247,14 @@
             },
 
             card_bus_title: { normal: "<span class='ai-gradient fur-effect'>Развозка (Автобус)</span>", elderly: "Запись на Автобус 🚌" },
-            card_bus_subtitle: { normal: "Уехать домой с комфортом 🚌", elderly: "Едем домой с комфортом." },
-            acc_bus_title: { normal: "<i class='fa-solid fa-stopwatch mr-2'></i> Дедлайн: строго до 13:45!", elderly: "Как записаться?" },
+            card_bus_subtitle: { normal: "Кто не успел — топает пешком 🚶‍♂️", elderly: "Едем домой с комфортом." },
+            acc_bus_title: { normal: "<i class='fa-solid fa-stopwatch mr-2'></i> Дедлайн: 13:45 (по умолчанию)", elderly: "Как записаться?" },
             acc_bus_text: { 
-                normal: "<mark class='note-highlight'>Железное правило:</mark> Запись на автобус закрывается ровно в <strong>13:45</strong>! Ровно в эту секунду бот отправляет список и очищает базу на сегодня. Не успели записаться или передумали после 13:45? Ваши проблемы, топайте пешком или звоните Насте, моля о пощаде.<br><br><strong>Как это работает:</strong><br>1. Жмете 'Запись на автобус'.<br>2. Выбираете здание (00UAC или 94VAC).<br>3. Бот лезет в умную таблицу, ищет вашу фамилию и сам предлагает вашу стандартную остановку! Если он ошибся, вы можете нажать 'Изменить остановку'.<br><br><strong>📅 Пятничная магия:</strong><br>Если вы записываетесь в пятницу, бот поймет это и спросит, на какой именно день вам нужен автобус: Пятница вечер, Суббота или Воскресенье.",
-                elderly: "Нажмите 'Запись на автобус' в меню. Выберите свое здание и остановку. <br><br><strong>Очень важно:</strong> Записаться нужно строго <strong>до 13:45</strong>! Если опоздали — программа закроет списки, и придется идти домой пешком или звонить руководству."
+                normal: "<mark class='note-highlight'>Дедлайн плавающий!</mark> По умолчанию запись закрывается ровно в <strong>13:45</strong>! После этого времени бот шлет всех лесом. НО! Если админы сжалятся, они могут продлить дедлайн, и бот громко оповестит об этом всех в чате.<br><br><strong>Процесс:</strong> Выбираете здание (00UAC/94VAC). Бот сам вспомнит вашу стандартную остановку из базы! А если сегодня пятница — он заботливо спросит, на какой день вас записать.",
+                elderly: "Нажмите 'Запись на автобус' в меню. Выберите свое здание и остановку. <br><br><strong>Очень важно:</strong> Записаться нужно до дедлайна (обычно 13:45)! Если начальство продлит время — программа пришлет вам уведомление. Если опоздали совсем — придется идти домой пешком."
             },
             
-            card_rvd_title: { normal: "<span class='ai-gradient fur-effect'>Тихий Режим и РВД</span>", elderly: "Работа в выходные" },
+            card_rvd_title: { normal: "<span class='ai-gradient fur-effect'>Вышел в РВД</span>", elderly: "Работа в выходные" },
             card_rvd_subtitle: { normal: "Управление уведомлениями 🔕", elderly: "Оповещение о выходе на работу." },
             acc_rvd_title: { normal: "<i class='fa-solid fa-moon mr-2'></i> Как бот вас бережет", elderly: "Для чего нужно?" },
             acc_rvd_text: { 
@@ -1263,7 +1263,7 @@
             },
 
             card_sos_title: { normal: "<span class='ai-gradient fur-effect'>Ор мартовского кота</span>", elderly: "Кнопка Паники" },
-            card_sos_subtitle: { normal: "Кнопка SOS <span class='note-sticker'>🆘</span>", elderly: "Если всё сломалось 🆘" },
+            card_sos_subtitle: { normal: "Связь с начальством <span class='note-sticker'>🆘</span>", elderly: "Если всё сломалось 🆘" },
             acc_sos_text: { 
                 normal: "Сломался бот? Не можете что-то нажать? Жмите <strong>«🆘 Сообщить о проблеме»</strong> в главном меню. Бот выдаст список Администраторов. Выбираете жертву, пишете свой гневный текст текстом в чат, и бот перешлет его в личку Насте или админам от вашего имени. А там уже готовьтесь к 'атата', если нажали просто так.",
                 elderly: "Программа не отвечает? Всё пропало? Нажмите 🆘, выберите начальника из списка и напишите текстовое сообщение прямо в чат. Кот сам донесет вашу жалобу начальству.<br><br><em>P.S. Нет, мы не можем 'просто починить интернет во всем районе'.</em>"
@@ -1390,6 +1390,15 @@
                 if (hint && !hint.classList.contains('hidden-forever')) {
                     hint.classList.add('show');
                     setTimeout(() => { hint.classList.remove('show'); }, 10000);
+                }
+                
+                // Запуск прыгающей подсказки про Росатом
+                const rosatomHint = document.getElementById('rosatom-hint');
+                if (rosatomHint) {
+                    rosatomHint.style.opacity = '1';
+                    setTimeout(() => { 
+                        rosatomHint.style.opacity = '0'; 
+                    }, 5000); // Исчезает ровно через 5 секунд
                 }
             }, 1500);
             
