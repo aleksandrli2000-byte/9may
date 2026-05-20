@@ -477,10 +477,11 @@
                         <summary><span class="text-morph" data-id="acc1_title">Шаг 1: Ввод номера 🔢</span><i class="fa-solid fa-chevron-down chevron"></i></summary>
                         <div class="details-content">
                             <div class="apple-quote text-morph" data-id="acc1_text">
-                                Нажмите <strong>«➕ Новая заявка»</strong>. Бот попросит ввести номер. Вы можете написать один номер (например, <code>123456</code>) или сразу несколько через запятую (например, <code>123456, 789012, 345678</code>).<br><br>
+                                Нажмите <strong>«➕ Новая заявка»</strong>. Бот попросит ввести номер. Можно написать один номер (например, <code>123456</code>) или сразу пачку через запятую/пробел: <code>123456, 789012, 345678</code>. За один заход Чубайс переварит до <strong>20 заявок</strong>, дальше начнет фыркать и лишнее не обработает.<br><br>
                                 <mark class="note-highlight">Защита от хитрецов:</mark><br>
-                                • Бот проверит, не завершена ли эта заявка кем-то другим.<br>
-                                • Если попытаетесь обмануть кота и создать дубль, он покрутит лапой у виска и сдаст вас Насте.
+                                • Если заявка уже есть у вас в активных — дубль не пройдет.<br>
+                                • Если заявка уже завершена кем-то другим — кот покажет, кто закрыл добычу.<br>
+                                • Если заявка стоит на паузе у коллег — Чубайс честно покажет причину, чтобы вы не наступали в ту же лужу.
                             </div>
                         </div>
                     </details>
@@ -489,7 +490,7 @@
                         <div class="details-content">
                             <div class="apple-quote text-morph" data-id="acc1_2_text">
                                 После ввода номера бот предложит собрать бригаду. <strong>Вы уже в списке по умолчанию!</strong><br><br>
-                                Чтобы добавить напарника, просто отправьте боту <strong>первые несколько букв его фамилии</strong>. Например, напишите <code>Ива</code>, и бот сам найдет в базе "Иванов Иван". Вы можете добавить сколько угодно людей. Только не вводите клички, мы тут серьезные люди (почти).
+                                Чтобы добавить напарника, просто отправьте боту <strong>первые несколько букв его фамилии</strong>. Например, напишите <code>Ива</code>, и бот сам найдет в базе "Иванов Иван". Можно добавлять людей по одному или пачкой. Если вы пытаетесь создать такую же заявку с таким же составом, как у другого сотрудника, Чубайс ловит дубль за хвост и не дает размножаться бумажной нечисти.
                             </div>
                         </div>
                     </details>
@@ -497,7 +498,7 @@
                         <summary style="color: var(--color-accent);"><span class="text-morph font-bold" data-id="acc1_3_title">Шаг 3: Сохранение (КРИТИЧНО) 🚨</span><i class="fa-solid fa-chevron-down chevron"></i></summary>
                         <div class="details-content">
                             <div class="apple-quote text-morph" data-id="acc1_3_text">
-                                Собрали бригаду? Теперь <strong>ОБЯЗАТЕЛЬНО</strong> нажмите огромную зеленую кнопку <mark class="note-highlight">✅ ПОДТВЕРДИТЬ СОСТАВ</mark> под сообщением. Если вы забыли нажать эту кнопку, заявка улетит в кошачий лоток, а вам придется делать всё заново под смех Чубайса.
+                                Собрали бригаду? Теперь <strong>ОБЯЗАТЕЛЬНО</strong> нажмите огромную зеленую кнопку <mark class="note-highlight">✅ ПОДТВЕРДИТЬ СОСТАВ</mark> под сообщением. После этого заявка сразу попадает в оперативную память, а таблица досохраняется фоном. Если забыли нажать кнопку — это не заявка, а сон Чубайса после обеда.
                             </div>
                         </div>
                     </details>
@@ -528,8 +529,16 @@
                         <summary><span class="flex items-center text-[15px] sm:text-[16px]"><span class="w-3 h-3 rounded-full bg-white mr-3 sm:mr-4 shadow-md shrink-0"></span> Завершить / Архив <span class="note-sticker">✅</span></span><i class="fa-solid fa-chevron-down chevron"></i></summary>
                         <div class="details-content">
                             <div class="apple-quote text-morph" data-id="acc3_text">
-                                Сделали работу? Жмите <strong>«Завершить»</strong>. Заявка исчезнет из списка активных и из планов на завтра, переместившись в <strong>Архив</strong>.<br><br>
-                                <em>Случайно тыкнули не туда?</em> Не орите, просто идите в самый низ вашего списка заявок, нажмите «📦 Архив». Бот помнит последние 40 ваших дел. Найдите нужную заявку и нажмите <strong>«🔄 Восстановить»</strong>. Она вернется в работу.
+                                Сделали работу? Жмите <strong>«Завершить»</strong>. Если заявка была отмечена на завтра, бот сначала предупредит, что она уйдет из отчета. Подтвердили — заявка исчезнет из активных и переедет в <strong>Архив</strong>.<br><br>
+                                <em>Случайно тыкнули не туда?</em> Не орите, просто идите в «📦 Архив». Бот помнит последние 40 завершенных дел на каждого пользователя. Найдите нужную заявку и нажмите <strong>«🔄 Восстановить»</strong>. Она вернется в работу, как будто просто лежала на батарее.
+                            </div>
+                        </div>
+                    </details>
+                    <details onclick="playUIClick()">
+                        <summary><span class="flex items-center text-morph text-[15px] sm:text-[16px]" data-id="acc2_tools_title"><i class="fa-solid fa-magnifying-glass mr-3 sm:mr-4 shrink-0" style="color: var(--color-accent);"></i> Поиск и удаление <span class="note-sticker">🧹</span></span><i class="fa-solid fa-chevron-down chevron"></i></summary>
+                        <div class="details-content">
+                            <div class="apple-quote text-morph" data-id="acc2_tools_text">
+                                В активных заявках и архиве есть <strong>«🔍 Поиск»</strong>: вводите номер, и Чубайс быстро вытащит нужную бумажку из стопки. А кнопка <strong>«🗑 Удалить»</strong> убирает заявку только из вашего списка: глобально она не закрывается и записи других сотрудников не трогает. Это не кнопка “стереть историю”, это аккуратная метелка.
                             </div>
                         </div>
                     </details>
@@ -557,11 +566,11 @@
                     </div>
                     <div class="apple-quote mb-2 text-morph" data-id="card3_rule" style="transform: translateZ(10px);">
                         <strong class="block mb-2 uppercase tracking-widest text-[12px] sm:text-[13px]" style="color: var(--color-accent);"><i class="fa-solid fa-bolt mr-2"></i> Строгое окно: с 12:00 до 16:30</strong>
-                        Функция переноса заявок "На завтра" работает <strong>ТОЛЬКО</strong> в это время. До 12:00 кнопка выдаст ошибку.<br><br>
+                        Функция переноса заявок "На завтра" работает <strong>ТОЛЬКО</strong> в это время, если админ вручную не открыл или не закрыл подачу. До 12:00 пользовательские кнопки заявки, автобуса и РВД вежливо, но твердо показывают шлагбаум.<br><br>
                         <strong>⏱ 12:00:</strong> Бот присылает всем сообщение-напоминалку и вешает закреп в чат: "Пора сдавать планы!".<br>
-                        <strong>⏱ 16:30:</strong> Кормушка захлопывается. Бот формирует финальный отчет в Google Таблицу и <em>сбрасывает все зеленые галочки</em> у вас в телефоне. Наступает новый день.<br><br>
+                        <strong>⏱ 16:30:</strong> Кормушка захлопывается. Бот формирует финальный отчет в Google Таблицу, сохраняет досье и <em>сбрасывает все зеленые галочки</em> у вас в телефоне. Наступает новый день.<br><br>
                         <span class="font-bold text-sm" style="color: var(--color-accent);">⚠️ Список 'Вонючек':</span><br>
-                        Если на момент 16:30 у вас в списке не было ни одной заявки с галочкой "На завтра", вы попадаете в специальный позорный список Вонючек. Админ нажмет кнопку, и вам в личку прилетит угрожающее "атата" от Насти.<br><br>
+                        Пока идет сбор, Чубайс следит за нулями и может закрепить личное предупреждение: "у вас 0 заявок на завтра". Если на момент отчета вы так и остались без планов, попадаете в специальный список Вонючек. Админ нажмет кнопку, и вам в личку прилетит угрожающее "атата" от Насти.<br><br>
                         <mark class="note-highlight">Командная работа (Синергия):</mark><br>
                         Вы можете не тыкать ничего сами! Если ваш напарник Иванов перенес заявку "На завтра" и указал вас в составе бригады, бот просканирует базу, увидит вашу фамилию и поймет, что вы при деле. Вы спасены от списка вонючек!
                     </div>
@@ -582,7 +591,7 @@
                         <summary style="color: var(--color-accent);"><span class="text-morph font-bold" data-id="acc_bus_title"><i class="fa-solid fa-stopwatch mr-2"></i> Дедлайн: 13:45 (по умолчанию)</span><i class="fa-solid fa-chevron-down chevron"></i></summary>
                         <div class="details-content">
                             <div class="apple-quote text-morph" data-id="acc_bus_text">
-                                <mark class='note-highlight'>Дедлайн плавающий!</mark> По умолчанию запись закрывается ровно в <strong>13:45</strong>! После этого времени бот шлет всех лесом. НО! Если админы сжалятся, они могут продлить дедлайн, и бот громко оповестит об этом всех в чате.<br><br><strong>Процесс:</strong> Выбираете здание (00UAC/94VAC). Бот сам вспомнит вашу стандартную остановку из базы! А если сегодня пятница — он заботливо спросит, на какой день вас записать.
+                                <mark class='note-highlight'>Дедлайн плавающий!</mark> По умолчанию запись закрывается ровно в <strong>13:45</strong>! После этого времени бот шлет всех лесом. НО! Если админы сжалятся, они могут продлить дедлайн, и Чубайс громко оповестит всех в чате.<br><br><strong>Процесс:</strong> выбираете здание (00UAC/94VAC), бот ищет вашу стандартную остановку в отдельной базе. Не нашел — даст список остановок, без истерик и шаманского бубна. Если вы уже записаны, покажет текущую запись и даст удалить ее. А если сегодня пятница — заботливо спросит, на какой день вас записать: пятница вечер, суббота или воскресенье.<br><br><strong>Отчет:</strong> в дедлайн начальству уходит готовый список. Если дедлайн продлили, повторно улетают только свежие записи, чтобы людей не записали дважды.
                             </div>
                         </div>
                     </details>
@@ -618,7 +627,7 @@
                                 • В субботу и воскресенье круглосуточно<br>
                                 Бот отправляет сообщения <em>БЕЗ ЗВУКА</em> (disable_notification=True), чтобы не будить вас, если ваш напарник решил поработать ночью.<br><br>
                                 <mark class="note-highlight">Кнопка «Вышел в РВД»:</mark><br>
-                                Если сегодня выходной, но вы вышли на смену — нажмите эту кнопку в главном меню. Бот запишет вас в реестр работающих сегодня, и <strong>только для вас</strong> отключит тихий режим, чтобы вы не пропустили важное сообщение от Насти, когда она будет вас искать. (В 16:30 статус РВД сбросится сам).
+                                Если сегодня выходной, но вы вышли на смену — нажмите эту кнопку в главном меню. Бот запишет вас в реестр работающих сегодня, сообщит админам и <strong>только для вас</strong> отключит тихий режим, чтобы вы не пропустили важное сообщение от Насти, когда она будет вас искать. Передумали до 16:30? Можно нажать отмену, и Чубайс снова уйдет на мягких лапах. После 16:30 регулирование статуса закрывается.
                             </div>
                         </div>
                     </details>
@@ -649,7 +658,7 @@
                         <div class="apple-app-icon"><i class="fa-solid fa-heart-pulse text-[22px] sm:text-[26px] icon-3d-accent"></i></div>
                         <div class="ml-4 sm:ml-5 min-w-0">
                             <h3 class="text-[22px] sm:text-[24px] font-black text-morph leading-tight" data-id="card4_title"><span class="ai-gradient fur-effect">Жизнеобеспечение (Под капотом)</span> <span class="note-sticker">🔋</span></h3>
-                            <p class="text-[14px] sm:text-[15px] text-[var(--text-muted)] font-medium text-morph mt-1" data-id="card4_subtitle">Техническая часть для шаманов и техномагов.</p>
+                            <p class="text-[14px] sm:text-[15px] text-[var(--text-muted)] font-medium text-morph mt-1" data-id="card4_subtitle">Техническая броня для шаманов и техномагов.</p>
                         </div>
                     </div>
 
@@ -700,6 +709,16 @@
                             <i class="fa-solid fa-chevron-down chevron"></i>
                         </summary>
                         <div class="details-content" id="admin_cmd_content">
+                            <!-- Injected by JS -->
+                        </div>
+                    </details>
+
+                    <details onclick="playUIClick()">
+                        <summary class="text-[15px] sm:text-[16px]">
+                            <span class="flex items-center text-[var(--text-main)] text-morph" data-id="admin_signal_title"><i class="fa-solid fa-bell w-6 sm:w-8 text-center shrink-0" style="color: var(--color-accent);"></i> Что шлет админу</span>
+                            <i class="fa-solid fa-chevron-down chevron"></i>
+                        </summary>
+                        <div class="details-content" id="admin_signal_content">
                             <!-- Injected by JS -->
                         </div>
                     </details>
@@ -757,7 +776,7 @@
         <div id="wife-bubble" class="absolute bottom-16 sm:bottom-20 left-0 w-72 sm:w-80 liquid-card p-5 sm:p-6 opacity-0 pointer-events-none transform scale-90 translate-y-4 transition-all duration-500 origin-bottom-left" style="margin-bottom:0; background: var(--signature-pad-bg); border: 1px solid var(--color-accent-border); box-shadow: 0 20px 50px rgba(0,0,0,0.8); border-radius: 20px sm:border-radius: 24px;">
             <p class="font-black text-[15px] sm:text-[16px] mb-2 text-morph" data-id="wife_title">Служба Спасения <span class="note-sticker">🚑</span></p>
             <p class="text-[13px] sm:text-[14px] leading-relaxed text-morph font-medium" style="color: var(--text-muted);" data-id="wife_text">
-                Если меню бота "заморозилось" (ну упал облачный сервак, бывает): не паникуйте. Я пну Чубайса и он всё вспомнит! В крайнем случае, просто напишите админу.
+                Если меню бота "заморозилось" (ну прилег облачный сервис, бывает): не паникуйте. Я пну Чубайса и он всё вспомнит! В крайнем случае, просто напишите админу.
             </p>
         </div>
     </div>
@@ -1114,24 +1133,38 @@
                 </div>
             </div>
             <div class="rounded-2xl p-3 sm:p-4 border shadow-sm flex items-start gap-3 sm:gap-4 mb-3" style="background: var(--card-inner-bg); border-color: var(--liquid-glass-border);">
-                <div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0 border" style="background: var(--color-accent-light); border-color: var(--color-accent-border);"><i class="fa-solid fa-broom icon-3d-accent"></i></div>
+                <div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0 border" style="background: var(--color-accent-light); border-color: var(--color-accent-border);"><i class="fa-solid fa-floppy-disk icon-3d-accent"></i></div>
                 <div class="min-w-0">
-                    <p class="font-bold text-[14px] leading-tight" style="color: var(--text-main);">Утренняя зачистка хвостов</p>
-                    <p class="text-[12px] sm:text-[13px] mt-1 leading-snug" style="color: var(--text-muted);">Ровно в 12:00 перед сбором новых планов бот проводит инспекцию. Если со вчерашнего дня зависли данные (кто-то не выгрузил автобусы или отчеты) — он бьет тревогу, выгружает их админам аварийно и жестко зачищает базу для нового дня.</p>
+                    <p class="font-bold text-[14px] leading-tight" style="color: var(--text-main);">Оперативка + фоновый писарь</p>
+                    <p class="text-[12px] sm:text-[13px] mt-1 leading-snug" style="color: var(--text-muted);">Заявки и автобус сначала попадают в оперативную память Чубайса, а потом отдельные фоновые потоки досохраняют их в таблицу. Пользователь уже видит результат, пока табличный писарь шуршит бумагами в кладовке.</p>
                 </div>
             </div>
             <div class="rounded-2xl p-3 sm:p-4 border shadow-sm flex items-start gap-3 sm:gap-4 mb-3" style="background: var(--card-inner-bg); border-color: var(--liquid-glass-border);">
-                <div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0 border" style="background: var(--color-accent-light); border-color: var(--color-accent-border);"><i class="fa-solid fa-moon icon-3d-accent"></i></div>
+                <div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0 border" style="background: var(--color-accent-light); border-color: var(--color-accent-border);"><i class="fa-solid fa-gauge-high icon-3d-accent"></i></div>
                 <div class="min-w-0">
-                    <p class="font-bold text-[14px] leading-tight" style="color: var(--text-main);">Тихий Час и РВД</p>
-                    <p class="text-[12px] sm:text-[13px] mt-1 leading-snug" style="color: var(--text-muted);">После 16:30 и в выходные бот уходит в спячку: <mark class="note-highlight">никаких уведомлений со звуком</mark>, чтобы не будить. Но если вы нажали <strong>«Вышел в РВД»</strong> — он поймет, что вы на смене, и включит сирену!</p>
+                    <p class="font-bold text-[14px] leading-tight" style="color: var(--text-main);">Защита от табличного переедания</p>
+                    <p class="text-[12px] sm:text-[13px] mt-1 leading-snug" style="color: var(--text-muted);">Если таблицы начинают кричать “слишком много запросов”, Чубайс берет паузу примерно на минуту, предупреждает админов и продолжает принимать действия в память. Потом сам досохраняет очередь. Без паники, без ритуального перезапуска.</p>
+                </div>
+            </div>
+            <div class="rounded-2xl p-3 sm:p-4 border shadow-sm flex items-start gap-3 sm:gap-4 mb-3" style="background: var(--card-inner-bg); border-color: var(--liquid-glass-border);">
+                <div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0 border" style="background: var(--color-accent-light); border-color: var(--color-accent-border);"><i class="fa-solid fa-rotate icon-3d-accent"></i></div>
+                <div class="min-w-0">
+                    <p class="font-bold text-[14px] leading-tight" style="color: var(--text-main);">Самовосстановление после рестарта</p>
+                    <p class="text-[12px] sm:text-[13px] mt-1 leading-snug" style="color: var(--text-muted);">После перезапуска бот поднимает состояние из облака, проверяет, не пропущены ли отчет или автобус, чистит старые закрепы вне смены и честно пишет: с <strong>08:00 до 20:00 всем сотрудникам</strong>, ночью — только админам. Текст простой: “я вернулся, проверьте последние изменения за 7 минут”. Чубайс драматичен, но ответственен.</p>
+                </div>
+            </div>
+            <div class="rounded-2xl p-3 sm:p-4 border shadow-sm flex items-start gap-3 sm:gap-4 mb-3" style="background: var(--card-inner-bg); border-color: var(--liquid-glass-border);">
+                <div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0 border" style="background: var(--color-accent-light); border-color: var(--color-accent-border);"><i class="fa-solid fa-broom icon-3d-accent"></i></div>
+                <div class="min-w-0">
+                    <p class="font-bold text-[14px] leading-tight" style="color: var(--text-main);">Зачистка хвостов</p>
+                    <p class="text-[12px] sm:text-[13px] mt-1 leading-snug" style="color: var(--text-muted);">В 12:00 бот проводит утреннюю инспекцию: если вчерашний автобус или отчет застрял в дверях, он аварийно выгружает данные и приводит базу в порядок. В воскресенье в 23:59 чистится лист системы, чтобы новая неделя не пахла старыми носками.</p>
                 </div>
             </div>
             <div class="rounded-2xl p-3 sm:p-4 border shadow-sm flex items-start gap-3 sm:gap-4 mb-3" style="background: var(--card-inner-bg); border-color: var(--liquid-glass-border);">
                 <div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0 border" style="background: var(--color-accent-light); border-color: var(--color-accent-border);"><i class="fa-solid fa-satellite-dish icon-3d-accent"></i></div>
                 <div class="min-w-0">
-                    <p class="font-bold text-[14px] leading-tight" style="color: var(--text-main);">Система Анти-Сон</p>
-                    <p class="text-[12px] sm:text-[13px] mt-1 leading-snug" style="color: var(--text-muted);">Чтобы не уснуть на посту, Чубайс пингует сам себя через прокси Cloudflare раз в 5 минут. Вечный двигатель на кошачьей тяге.</p>
+                    <p class="font-bold text-[14px] leading-tight" style="color: var(--text-main);">Система анти-сон</p>
+                    <p class="text-[12px] sm:text-[13px] mt-1 leading-snug" style="color: var(--text-muted);">Облачный сервис раз в 5 минут получает пинок, а служебный маячок подтверждает, что бот живой. Плюс отдельная контрольная страница отвечает “Online”, чтобы Чубайс не изображал спящую батарею.</p>
                 </div>
             </div>
             <div class="rounded-2xl p-3 sm:p-4 border shadow-sm flex items-start gap-3 sm:gap-4 mt-3" style="background: var(--card-inner-bg); border-color: var(--liquid-glass-border);">
@@ -1143,25 +1176,37 @@
             </div>
         `;
         
-        const htmlLifeSupportElderly = `<div class="apple-quote text-[13px] sm:text-[14px]"><strong>Случайно выключили интернет? Не паникуем!</strong> Внутри кота крутятся надежные шестеренки. Программа сама помнит всех, кто записался на автобус и сдал отчеты, даже если выключится.<br><br>В нерабочее время (после 16:30 и в выходные) уведомления приходят без звука. Но если вы нажали <strong>«Работа в выходные»</strong>, звук включится, чтобы вы не пропустили важное.</div>`;
+        const htmlLifeSupportElderly = `<div class="apple-quote text-[13px] sm:text-[14px]"><strong>Случайно выключили интернет? Не паникуем!</strong> Программа хранит данные в облаке и в рабочей памяти. Если сервис перезапустится, Чубайс поднимется, проверит отчеты и автобус, а потом попросит сверить последние изменения: с <strong>08:00 до 20:00 всех сотрудников</strong>, ночью — только администраторов.<br><br>В нерабочее время (после 16:30 и в выходные) уведомления приходят без звука. Но если вы нажали <strong>«Работа в выходные»</strong>, звук включится, чтобы вы не пропустили важное.</div>`;
 
         const htmlAdminDbNormal = `
             <div class="rounded-2xl border overflow-hidden shadow-sm admin-inner-card" style="background: var(--liquid-glass-bg); border-color: var(--liquid-glass-border);">
                 <div class="flex p-3 sm:p-4 border-b gap-3 items-start" style="border-color: var(--liquid-glass-border);">
-                <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0 border" style="background: var(--color-accent-light); border-color: var(--color-accent-border);"><i class="fa-solid fa-satellite text-[13px] icon-3d-accent"></i></div>
-                <div class="min-w-0"><p class="font-bold text-[14px] leading-tight" style="color: var(--text-main);">Лист 3-4: Live и Завершенные</p><p class="text-[12px] mt-1 leading-snug" style="color: var(--text-muted);">Текущая картина дня. Обновляется моментально при любом нажатии кнопок сотрудниками. <mark class="note-highlight">Руками не редактировать!</mark></p></div>
-            </div>
-            <div class="flex p-3 sm:p-4 border-b gap-3 items-start" style="border-color: var(--liquid-glass-border);">
-                <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0 border" style="background: var(--color-accent-light); border-color: var(--color-accent-border);"><i class="fa-solid fa-calendar-check text-[13px] icon-3d-accent"></i></div>
-                    <div class="min-w-0"><p class="font-bold text-[14px] leading-tight" style="color: var(--text-main);">На завтра / Отчеты (Листы 5-6)</p><p class="text-[12px] mt-1 leading-snug" style="color: var(--text-muted);">5 лист - черновик для подглядывания. Заявки туда сами по себе не падают! Админ должен нажать кнопку на панели, чтобы бот просканировал базу. 6 лист - финальная кладовка.</p></div>
+                    <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0 border" style="background: var(--color-accent-light); border-color: var(--color-accent-border);"><i class="fa-solid fa-users text-[13px] icon-3d-accent"></i></div>
+                    <div class="min-w-0"><p class="font-bold text-[14px] leading-tight" style="color: var(--text-main);">Сотрудники и Админы</p><p class="text-[12px] mt-1 leading-snug" style="color: var(--text-muted);">Трогать можно: добавлять/удалять людей в <strong>Сотрудниках</strong> и Telegram ID в <strong>Админах</strong>. Главное — не переименовывать колонки <code>ID</code> и <code>ФИО</code>. Нет ID в листе — Чубайс смотрит строго и снимает клавиатуру.</p></div>
+                </div>
+                <div class="flex p-3 sm:p-4 border-b gap-3 items-start" style="border-color: var(--liquid-glass-border);">
+                    <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0 border" style="background: var(--color-accent-light); border-color: var(--color-accent-border);"><i class="fa-solid fa-database text-[13px] icon-3d-accent"></i></div>
+                    <div class="min-w-0"><p class="font-bold text-[14px] leading-tight" style="color: var(--text-main);">Заявки — новая память</p><p class="text-[12px] mt-1 leading-snug" style="color: var(--text-muted);">Руками лучше не трогать. Один ряд = одна заявка одного пользователя: ID, номер, состав JSON, статус, галка “на завтра”, причина, даты и порядок. Это мозг Чубайса, а мозг коту чесать опасно.</p></div>
+                </div>
+                <div class="flex p-3 sm:p-4 border-b gap-3 items-start" style="border-color: var(--liquid-glass-border);">
+                    <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0 border" style="background: var(--color-accent-light); border-color: var(--color-accent-border);"><i class="fa-solid fa-satellite text-[13px] icon-3d-accent"></i></div>
+                    <div class="min-w-0"><p class="font-bold text-[14px] leading-tight" style="color: var(--text-main);">Live и Завершенные</p><p class="text-[12px] mt-1 leading-snug" style="color: var(--text-muted);">Только смотреть. <strong>Live</strong> показывает активные заявки и паузы, <strong>Завершенные</strong> — что закрыто. Бот сам полностью пересобирает эти листы, так что ручная правка проживет до следующего кошачьего взмаха лапой.</p></div>
+                </div>
+                <div class="flex p-3 sm:p-4 border-b gap-3 items-start" style="border-color: var(--liquid-glass-border);">
+                    <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0 border" style="background: var(--color-accent-light); border-color: var(--color-accent-border);"><i class="fa-solid fa-calendar-check text-[13px] icon-3d-accent"></i></div>
+                    <div class="min-w-0"><p class="font-bold text-[14px] leading-tight" style="color: var(--text-main);">Просмотр на завтра / Отчеты</p><p class="text-[12px] mt-1 leading-snug" style="color: var(--text-muted);"><strong>Отчеты</strong> — официальный итог, смотреть в первую очередь; ручные правки допустимы, но аккуратно. <strong>Просмотр на завтра</strong> — черновик, только смотреть: бот очищает и пересобирает его по кнопке “Просмотр на завтра”.</p></div>
                 </div>
                 <div class="flex p-3 sm:p-4 border-b gap-3 items-start" style="background: var(--color-accent-light); border-color: var(--liquid-glass-border);">
                     <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0 border" style="background: var(--color-accent-light); border-color: var(--color-accent-border);"><i class="fa-solid fa-bus text-[13px] icon-3d-accent"></i></div>
-                    <div class="min-w-0"><p class="font-bold text-[14px] leading-tight" style="color: var(--color-accent);">Автобус</p><p class="text-[12px] mt-1 leading-snug opacity-80" style="color: var(--color-accent);">Список на выезд. Выгружается админам в момент дедлайна, а окончательно очищается ровно в 19:00.</p></div>
+                    <div class="min-w-0"><p class="font-bold text-[14px] leading-tight" style="color: var(--color-accent);">Автобус</p><p class="text-[12px] mt-1 leading-snug opacity-80" style="color: var(--color-accent);">Можно смотреть текущую запись: дата, ФИО, здание, остановка и день. Бот сам обновляет лист, выгружает список в дедлайн, свежие записи после продления шлет отдельным добавочным отчетом и чистит лист после 19:00.</p></div>
+                </div>
+                <div class="flex p-3 sm:p-4 border-b gap-3 items-start" style="background: var(--color-accent-light); border-color: var(--liquid-glass-border);">
+                    <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0 border" style="background: var(--color-accent-light); border-color: var(--color-accent-border);"><i class="fa-solid fa-gear text-[13px] icon-3d-accent"></i></div>
+                    <div class="min-w-0"><p class="font-bold text-[14px] leading-tight" style="color: var(--color-accent);">Система</p><p class="text-[12px] mt-1 leading-snug opacity-80" style="color: var(--color-accent);">Руками лучше не трогать. Там служебные ключи: последние отчеты, дедлайн автобуса, РВД, кто уже был выгружен, состояние перезапуска и прочая кошачья бухгалтерия.</p></div>
                 </div>
                 <div class="flex p-3 sm:p-4 gap-3 items-start" style="background: var(--color-accent-light);">
-                    <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0 border" style="background: var(--color-accent-light); border-color: var(--color-accent-border);"><i class="fa-solid fa-skull text-[13px] icon-3d-accent"></i></div>
-                    <div class="min-w-0"><p class="font-bold text-[14px] leading-tight" style="color: var(--color-accent);">Лист 7: Память Матрицы (JSON)</p><p class="text-[12px] mt-1 leading-snug opacity-80" style="color: var(--color-accent);">Здесь хранятся последние 40 заявок каждого юзера в JSON. Если у кого-то "зависли" меню в телеграме, просто удалите строчку с его фамилией отсюда. Произойдет магия, и кота отпустит.</p></div>
+                    <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0 border" style="background: var(--color-accent-light); border-color: var(--color-accent-border);"><i class="fa-solid fa-box-archive text-[13px] icon-3d-accent"></i></div>
+                    <div class="min-w-0"><p class="font-bold text-[14px] leading-tight" style="color: var(--color-accent);">Память</p><p class="text-[12px] mt-1 leading-snug opacity-80" style="color: var(--color-accent);">Старый legacy-лист. Новый код туда не пишет: он нужен только как старый резерв/миграция. Считайте, это чердак с древними свитками, а не рабочий стол.</p></div>
                 </div>
             </div>
         `;
@@ -1169,28 +1214,69 @@
         const htmlAdminDbElderly = `
             <div class="apple-quote text-[13px] sm:text-[14px]">
                 Вся база данных находится в Google Таблицах. Доступ по ссылке из панели управления в боте.<br><br>
-                <strong>Листы 1-2:</strong> Списки сотрудников и начальников. Добавляйте новых людей сюда.<br><br>
-                <strong>Листы 3-6:</strong> Текущие задания, архивы и планы на завтра. Программа заполняет их сама.<br><br>
-                <strong>Лист Автобус:</strong> Записи на развозку.<br><br>
-                <strong>Лист 7 (Техническая память):</strong> Если у кого-то намертво зависла программа, удалите строку с его фамилией отсюда. Программа перезапустится с чистого листа.
+                <strong>Сотрудники:</strong> можно добавлять и удалять людей, но не менять названия колонок ID и ФИО.<br><br>
+                <strong>Админы:</strong> можно добавлять Telegram ID админов. Колонку ID не переименовывать.<br><br>
+                <strong>Отчеты:</strong> официальный итог. Смотреть сюда; править можно только аккуратно.<br><br>
+                <strong>Просмотр на завтра, Live, Завершенные:</strong> только смотреть, программа пересобирает их сама.<br><br>
+                <strong>Автобус:</strong> текущие записи на развозку, после 19:00 бот сам чистит.<br><br>
+                <strong>Заявки и Система:</strong> служебные листы, туда не лезть без необходимости.<br><br>
+                <strong>Память:</strong> старый резервный лист для миграции.
             </div>
         `;
 
         const htmlAdminCmdNormal = `
             <div class="apple-quote text-[13px] sm:text-[14px]">
-                <p class="mb-3"><strong>⏲ Управление подачей планов:</strong> По умолчанию <mark class="note-highlight">Авто (12:00-16:30)</mark>. Форс-мажор? Жмите "Открыть" (разрешает сдачу вне графика) или "Закрыть" (кормушка захлопнется принудительно) прямо в боте.</p>
-                <p class="mb-3"><strong>🚌 Управление Автобусами:</strong><br>• <em>Выгрузить (мониторинг)</em>: присылает админу текущий список в личку без удаления базы. Настя может смотреть промежуточные данные.<br>• <em>Продлить дедлайн</em>: если кто-то ноет, что не успел, админ может задать новое время (например, 14:30). Бот заорет на весь завод: "Внимание, дедлайн автобуса продлен!".</p>
-                <p class="mb-3"><strong>📢 Опрос:</strong> Кинуть всем гудок с напоминанием сдавать планы в обход таймера.</p>
-                <p><strong>💩 Вонючки:</strong> Показывает список тех, кто отлынивает от сдачи планов на завтра. Кнопка "Напомнить всем" кинет им угрозу в личку.</p>
+                <p class="mb-3"><strong>🚀 Утренний опрос:</strong> принудительно рассылает всем меню активных заявок и закрепляет напоминание. Полезно, когда Чубайс должен громко кашлянуть в 12:00 еще раз.</p>
+                <p class="mb-3"><strong>💾 Просмотр на завтра:</strong> собирает черновой лист без финального закрытия дня. Можно подглядеть, кто уже при деле, а кто делает вид, что он мебель.</p>
+                <p class="mb-3"><strong>💩 Кто не записался:</strong> показывает список нулевых героев. Кнопка <em>«Напомнить всем»</em> шлет им личное предупреждение.</p>
+                <p class="mb-3"><strong>🟢 Live-отчет:</strong> включает/выключает фоновое обновление листов Live и Завершенные. Если таблицы устали, можно дать им воды и тишины.</p>
+                <p class="mb-3"><strong>⏲ Подача планов:</strong> Авто (12:00-16:30), Открыть или Закрыть. Это админский ломик для форс-мажоров.</p>
+                <p class="mb-3"><strong>🚌 Автобусы:</strong> мониторинг присылает текущий список в личку без очистки, продление дедлайна задает новое время и оповещает сотрудников.</p>
+                <p><strong>🔗 Ссылка на таблицу:</strong> быстро выдает администратору дверь в табличное подземелье.</p>
             </div>
         `;
         
         const htmlAdminCmdElderly = `
             <div class="apple-quote text-[13px] sm:text-[14px]">
-                <p class="mb-3"><strong>Управление таймером:</strong> Вы можете вручную разрешить или запретить запись планов на завтра вне графика.</p>
-                <p class="mb-3"><strong>Автобусы:</strong> Можно посмотреть промежуточный список на автобус прямо сейчас или продлить людям время на запись (программа всех оповестит об этом).</p>
-                <p class="mb-3"><strong>Опрос:</strong> Разослать всем напоминание о сдаче планов.</p>
-                <p><strong>Должники:</strong> Узнать, кто еще не сдал планы, и отправить им предупреждение.</p>
+                <p class="mb-3"><strong>Опрос:</strong> разослать всем напоминание о сдаче планов.</p>
+                <p class="mb-3"><strong>Просмотр на завтра:</strong> посмотреть черновик без закрытия дня.</p>
+                <p class="mb-3"><strong>Управление таймером:</strong> вручную разрешить или запретить запись планов вне графика.</p>
+                <p class="mb-3"><strong>Автобусы:</strong> посмотреть промежуточный список или продлить людям время на запись.</p>
+                <p><strong>Должники:</strong> узнать, кто еще не сдал планы, и отправить им предупреждение.</p>
+            </div>
+        `;
+
+        const htmlAdminSignalNormal = `
+            <div class="space-y-3">
+                <div class="apple-quote text-[13px] sm:text-[14px]">
+                    <p class="mb-3"><strong>📨 Что прилетает админу в Telegram:</strong></p>
+                    <p class="mb-2">• <strong>Перезапуск:</strong> “Чубайс на позиции, память восстановлена”. В рабочее время, с <strong>08:00 до 20:00</strong>, сообщение улетает <strong>всем сотрудникам</strong>; ночью кот не орет на весь завод и пишет только админам. После такого не крестимся на монитор, а сверяем последние изменения за 7 минут: заявки, автобус, поздние добавления.</p>
+                    <p class="mb-2">• <strong>Google Sheets уперся в лимит:</strong> бот сообщает, что продолжает принимать действия в оперативную память и досохранит очередь. Админу делать нечего, кроме как не паниковать и не бить таблицу ложкой.</p>
+                    <p class="mb-2">• <strong>16:30:</strong> “Отчет по заявкам на завтра готов”. Официальный лист — <strong>Отчеты</strong>.</p>
+                    <p class="mb-2">• <strong>Дополнение после дедлайна:</strong> если после 16:30 были поздние добавления, Чубайс пишет, сколько новых строк догрузил. Это не второй отчет, а хвостик к основному.</p>
+                    <p class="mb-2">• <strong>Автобус:</strong> админу приходит готовый текст на трансфер; при продлении дедлайна сотрудники получают отдельное уведомление.</p>
+                    <p class="mb-2">• <strong>РВД / отмена РВД:</strong> админам приходит уведомление, кто вышел или передумал.</p>
+                    <p class="mb-2">• <strong>SOS:</strong> текст обращения сотрудника приходит выбранному админу в личку. Если это “у меня все пропало”, сначала дышим, потом читаем.</p>
+                    <p>• <strong>Ручное напоминание:</strong> сотрудники получают пинок, админ видит подтверждение отправки.</p>
+                </div>
+
+                <div class="rounded-2xl p-3 sm:p-4 border shadow-sm" style="background: var(--card-inner-bg); border-color: var(--liquid-glass-border);">
+                    <p class="font-bold text-[14px] leading-tight mb-2" style="color: var(--text-main);"><i class="fa-solid fa-door-open mr-2 icon-3d-accent"></i>Если открыли подачу после 16:30</p>
+                    <p class="text-[12px] sm:text-[13px] leading-snug" style="color: var(--text-muted);">Обычный день: с 12:00 до 16:30 люди ставят галки “на завтра”, в 16:30 бот делает основной финальный отчет и очищает галки, чтобы завтра не получить кашу с проводами. Если после 16:30 админ нажал <strong>«Открыть»</strong>, люди снова могут добавиться. Когда админ жмет <strong>«Закрыть»</strong> или <strong>«Авто»</strong>, Чубайс понимает: “продление закончено”, дозаписывает новые поздние строки в <strong>Отчеты</strong>, не трогая основной отчет, и снова чистит поздние галки. Дубли не пролезают: проверка идет по дата работ + бригада + заявка. Если бот перезапустился и ручной режим упал обратно в “Авто”, но поздние галки остались, планировщик сам догрузит их как extension. Кот мог прилечь, но бухгалтерию не бросил.</p>
+                </div>
+
+                <div class="rounded-2xl p-3 sm:p-4 border shadow-sm" style="background: var(--color-accent-light); border-color: var(--color-accent-border);">
+                    <p class="font-bold text-[14px] leading-tight mb-2" style="color: var(--color-accent);"><i class="fa-solid fa-map-location-dot mr-2"></i>Куда смотреть, когда все пищит</p>
+                    <p class="text-[12px] sm:text-[13px] leading-snug" style="color: var(--color-accent);"><strong>Отчеты</strong> — официальный итог. <strong>Просмотр на завтра</strong> — черновик до финала. <strong>Live</strong> — активные заявки и паузы. <strong>Завершенные</strong> — что закрыто. <strong>Автобус</strong> — текущие записи на трансфер. <strong>Сотрудники</strong> и <strong>Админы</strong> — доступы. <strong>Заявки</strong> и <strong>Система</strong> — служебные, туда без нужды не лезем, а то Чубайс начнет смотреть поверх очков.</p>
+                </div>
+            </div>
+        `;
+
+        const htmlAdminSignalElderly = `
+            <div class="apple-quote text-[13px] sm:text-[14px]">
+                <p class="mb-3"><strong>Что приходит администратору:</strong> перезапуск программы (с 08:00 до 20:00 он также уходит всем сотрудникам, ночью только админам), лимиты Google Таблиц, готовый отчет в 16:30, дополнения после продления, автобус, выход/отмена РВД, обращения через SOS и подтверждение ручных напоминаний.</p>
+                <p class="mb-3"><strong>Если подачу открыли после 16:30:</strong> люди снова добавляют заявки. Когда администратор нажмет “Закрыть” или “Авто”, программа дозапишет новые строки в лист “Отчеты”, не удаляя основной отчет, и снова очистит галочки.</p>
+                <p><strong>Куда смотреть:</strong> “Отчеты” — итог, “Просмотр на завтра” — черновик, “Live” — активные заявки, “Завершенные” — закрытые, “Автобус” — трансфер, “Сотрудники” и “Админы” — доступы. “Заявки” и “Система” не трогать без необходимости.</p>
             </div>
         `;
 
@@ -1209,17 +1295,17 @@
             card1_subtitle: { normal: "Как правильно внести задачу <span class='note-sticker'>🛠</span>", elderly: "Начинаем работу. Главное — не тыкать дважды." },
             acc1_title: { normal: "Шаг 1: Ввод номера 🔢", elderly: "Как это работает? (Без паники)" },
             acc1_text: { 
-                normal: "Нажмите <strong>«➕ Новая заявка»</strong>. Бот попросит ввести номер. Вы можете написать один номер (например, <code>123456</code>) или сразу несколько через запятую (например, <code>123456, 789012, 345678</code>).<br><br><mark class='note-highlight'>Защита от хитрецов:</mark><br>• Бот проверит, не завершена ли эта заявка кем-то другим.<br>• Если попытаетесь обмануть кота и создать дубль, он покрутит лапой у виска и сдаст вас Насте.",
-                elderly: "<p class='mb-3'><strong>1. Пишем цифры:</strong> Жмем кнопку и вводим номер задания. Два номера? Пишите через запятую.</p><p class='mb-3'><strong>2. Ищем напарника:</strong> Напишите первые пару букв его фамилии, эта шайтан-машина сама его вспомнит и найдет в базе.</p><p><strong>3. САМОЕ ВАЖНОЕ:</strong> Нажмите огромную зеленую кнопку <strong>«Подтвердить»</strong>. Забыли нажать — программа ничего не запомнит, а вы будете переделывать работу зря!</p>"
+                normal: "Нажмите <strong>«➕ Новая заявка»</strong>. Бот попросит ввести номер. Можно написать один номер (например, <code>123456</code>) или сразу пачку через запятую/пробел: <code>123456, 789012, 345678</code>. За один заход Чубайс переварит до <strong>20 заявок</strong>, дальше начнет фыркать и лишнее не обработает.<br><br><mark class='note-highlight'>Защита от хитрецов:</mark><br>• Если заявка уже есть у вас в активных — дубль не пройдет.<br>• Если заявка уже завершена кем-то другим — кот покажет, кто закрыл добычу.<br>• Если заявка стоит на паузе у коллег — Чубайс честно покажет причину, чтобы вы не наступали в ту же лужу.",
+                elderly: "<p class='mb-3'><strong>1. Пишем цифры:</strong> Жмем кнопку и вводим номер задания. Можно несколько номеров через запятую или пробел, но не больше 20 за раз.</p><p class='mb-3'><strong>2. Ищем напарника:</strong> Напишите первые пару букв его фамилии, эта шайтан-машина сама его вспомнит и найдет в базе.</p><p><strong>3. САМОЕ ВАЖНОЕ:</strong> Нажмите огромную зеленую кнопку <strong>«Подтвердить»</strong>. Забыли нажать — программа ничего не запомнит, а вы будете переделывать работу зря!</p>"
             },
             acc1_2_title: { normal: "Шаг 2: Сбор бригады 👷‍♂️", elderly: "Добавление людей" },
             acc1_2_text: {
-                normal: "После ввода номера бот предложит собрать бригаду. <strong>Вы уже в списке по умолчанию!</strong><br><br>Чтобы добавить напарника, просто отправьте боту <strong>первые несколько букв его фамилии</strong>. Например, напишите <code>Ива</code>, и бот сам найдет в базе 'Иванов Иван'. Вы можете добавить сколько угодно людей. Только не вводите клички, мы тут серьезные люди (почти).",
+                normal: "После ввода номера бот предложит собрать бригаду. <strong>Вы уже в списке по умолчанию!</strong><br><br>Чтобы добавить напарника, просто отправьте боту <strong>первые несколько букв его фамилии</strong>. Например, напишите <code>Ива</code>, и бот сам найдет в базе 'Иванов Иван'. Можно добавлять людей по одному или пачкой. Если вы пытаетесь создать такую же заявку с таким же составом, как у другого сотрудника, Чубайс ловит дубль за хвост и не дает размножаться бумажной нечисти.",
                 elderly: "Программа уже знает, что вы работаете. Если с вами напарник — просто напишите первые три буквы его фамилии в чат, и программа сама добавит его в бригаду."
             },
             acc1_3_title: { normal: "Шаг 3: Сохранение (КРИТИЧНО) 🚨", elderly: "Обязательно к прочтению" },
             acc1_3_text: {
-                normal: "Собрали бригаду? Теперь <strong>ОБЯЗАТЕЛЬНО</strong> нажмите огромную зеленую кнопку <mark class='note-highlight'>✅ ПОДТВЕРДИТЬ СОСТАВ</mark> под сообщением. Если вы забыли нажать эту кнопку, заявка улетит в кошачий лоток, а вам придется делать всё заново под смех Чубайса.",
+                normal: "Собрали бригаду? Теперь <strong>ОБЯЗАТЕЛЬНО</strong> нажмите огромную зеленую кнопку <mark class='note-highlight'>✅ ПОДТВЕРДИТЬ СОСТАВ</mark> под сообщением. После этого заявка сразу попадает в оперативную память, а таблица досохраняется фоном. Если забыли нажать кнопку — это не заявка, а сон Чубайса после обеда.",
                 elderly: "Всегда нажимайте зеленую кнопку <strong>«Подтвердить состав»</strong>. Без неё заявка просто исчезнет в никуда."
             },
 
@@ -1230,8 +1316,13 @@
                 elderly: "Возникли проблемы на работе? Нет запчастей или ждем Русас? Жмите <strong>«Пауза»</strong> и укажите причину. Чубайс моментально доложит об этом Насте, так что всё прозрачно. Время простоя в отчет не идет.<br><br>Вернулись? Жмите <strong>«Снять с паузы»</strong>, и таймер снова затикает."
             },
             acc3_text: {
-                normal: "Сделали работу? Жмите <strong>«Завершить»</strong>. Заявка исчезнет из списка активных и из планов на завтра, переместившись в <strong>Архив</strong>.<br><br><em>Случайно тыкнули не туда?</em> Не орите, просто идите в самый низ вашего списка заявок, нажмите «📦 Архив». Бот помнит последние 40 ваших дел. Найдите нужную заявку и нажмите <strong>«🔄 Восстановить»</strong>. Она вернется в работу.",
+                normal: "Сделали работу? Жмите <strong>«Завершить»</strong>. Если заявка была отмечена на завтра, бот сначала предупредит, что она уйдет из отчета. Подтвердили — заявка исчезнет из активных и переедет в <strong>Архив</strong>.<br><br><em>Случайно тыкнули не туда?</em> Не орите, просто идите в «📦 Архив». Бот помнит последние 40 завершенных дел на каждого пользователя. Найдите нужную заявку и нажмите <strong>«🔄 Восстановить»</strong>. Она вернется в работу, как будто просто лежала на батарее.",
                 elderly: "Мышь поймана, работа сделана? Жмите <strong>«Завершить»</strong>. Задание уйдет в Архив.<br><br><em>Промазали пальцем мимо экрана?</em> Не паникуем и <strong>не зовем внука!</strong> Просто спуститесь в самый низ списка, зайдите в 'Архив' и нажмите 'Восстановить'. Заявка вернется."
+            },
+            acc2_tools_title: { normal: "<i class='fa-solid fa-magnifying-glass mr-3 sm:mr-4 shrink-0' style='color: var(--color-accent);'></i> Поиск и удаление <span class='note-sticker'>🧹</span>", elderly: "Поиск и удаление" },
+            acc2_tools_text: {
+                normal: "В активных заявках и архиве есть <strong>«🔍 Поиск»</strong>: вводите номер, и Чубайс быстро вытащит нужную бумажку из стопки. А кнопка <strong>«🗑 Удалить»</strong> убирает заявку только из вашего списка: глобально она не закрывается и записи других сотрудников не трогает. Это не кнопка “стереть историю”, это аккуратная метелка.",
+                elderly: "Если заявок много, нажмите <strong>«Поиск»</strong> и введите номер. Кнопка <strong>«Удалить»</strong> убирает задание только из вашего списка и не портит данные других людей."
             },
             acc5_title: { normal: "<i class='fa-solid fa-arrow-right-to-bracket mr-3 sm:mr-4 shrink-0'></i> Перенос «На завтра» <span class='note-sticker'>📅</span>", elderly: "Перенос «На завтра»" },
             acc5_text: {
@@ -1242,24 +1333,24 @@
             card3_title: { normal: "<span class='ai-gradient fur-effect'>Отчет «На завтра»</span>", elderly: "На завтра (Ваши планы)" },
             card3_subtitle: { normal: "Самый важный алгоритм <span class='note-sticker'>⏰</span>", elderly: "Что делаем в следующую смену." },
             card3_rule: {
-                normal: "<strong class='block mb-2 uppercase tracking-widest text-[12px] sm:text-[13px]' style='color: var(--color-accent);'><i class='fa-solid fa-bolt mr-2'></i> Строгое окно: с 12:00 до 16:30</strong>Функция переноса заявок 'На завтра' работает <strong>ТОЛЬКО</strong> в это время. До 12:00 кнопка выдаст ошибку.<br><br><strong>⏱ 12:00:</strong> Бот присылает всем сообщение-напоминалку и вешает закреп в чат.<br><strong>⏱ 16:30:</strong> Кормушка захлопывается. Бот формирует финальный отчет в Google Таблицу и <em>сбрасывает все зеленые галочки</em> у вас в телефоне. Наступает новый день.<br><br><span class='font-bold text-sm' style='color: var(--color-accent);'>⚠️ Список 'Вонючек':</span><br>Если на момент 16:30 у вас в списке не было ни одной заявки с галочкой 'На завтра', вы попадаете в специальный позорный список Вонючек. Админ нажмет кнопку, и вам в личку прилетит угрожающее 'атата' от Насти.<br><br><mark class='note-highlight'>Командная работа (Синергия):</mark><br>Вы можете не тыкать ничего сами! Если ваш напарник Иванов перенес заявку 'На завтра' и указал вас в составе бригады, бот просканирует базу, увидит вашу фамилию и поймет, что вы при деле. Вы спасены от списка вонючек!",
-                elderly: "<strong>Запомните как Отче наш:</strong> Добавить планы нужно строго <strong>между 12:00 и 16:30</strong>! Ровно в 16:30 программа автоматически отправляет рапорт руководству и стирает ваши данные с телефона. Кто не успел - тот опоздал.<br><br>Кто забудет и останется с 0 заявок — программа виртуально повесит на вас позорную табличку 'Лентяй' прямо в чате. Техника ошибок не прощает!<br><br><em>Хитрость:</em> Если ваш напарник запишет вас в свою бригаду на завтра, программа сама поймет, что вы при деле, и перестанет вам надоедать."
+                normal: "<strong class='block mb-2 uppercase tracking-widest text-[12px] sm:text-[13px]' style='color: var(--color-accent);'><i class='fa-solid fa-bolt mr-2'></i> Строгое окно: с 12:00 до 16:30</strong>Функция переноса заявок 'На завтра' работает <strong>ТОЛЬКО</strong> в это время, если админ вручную не открыл или не закрыл подачу. До 12:00 пользовательские кнопки заявки, автобуса и РВД вежливо, но твердо показывают шлагбаум.<br><br><strong>⏱ 12:00:</strong> Бот присылает всем сообщение-напоминалку и вешает закреп в чат.<br><strong>⏱ 16:30:</strong> Кормушка захлопывается. Бот формирует финальный отчет в Google Таблицу, сохраняет досье и <em>сбрасывает все зеленые галочки</em> у вас в телефоне. Наступает новый день.<br><br><span class='font-bold text-sm' style='color: var(--color-accent);'>⚠️ Список 'Вонючек':</span><br>Пока идет сбор, Чубайс следит за нулями и может закрепить личное предупреждение: 'у вас 0 заявок на завтра'. Если на момент отчета вы так и остались без планов, попадаете в специальный список Вонючек. Админ нажмет кнопку, и вам в личку прилетит угрожающее 'атата' от Насти.<br><br><mark class='note-highlight'>Командная работа (Синергия):</mark><br>Вы можете не тыкать ничего сами! Если ваш напарник Иванов перенес заявку 'На завтра' и указал вас в составе бригады, бот просканирует базу, увидит вашу фамилию и поймет, что вы при деле. Вы спасены от списка вонючек!",
+                elderly: "<strong>Запомните как Отче наш:</strong> добавить планы нужно между <strong>12:00 и 16:30</strong>, если администратор не открыл подачу вручную. Ровно в 16:30 программа автоматически отправляет рапорт руководству и стирает ваши галочки с телефона.<br><br>Если у вас 0 заявок, программа может закрепить личное предупреждение. Кто забудет и останется с 0 заявок — попадет в список должников, а начальство отправит напоминание.<br><br><em>Хитрость:</em> Если ваш напарник запишет вас в свою бригаду на завтра, программа сама поймет, что вы при деле."
             },
 
             card_bus_title: { normal: "<span class='ai-gradient fur-effect'>Развозка (Автобус)</span>", elderly: "Запись на Автобус 🚌" },
             card_bus_subtitle: { normal: "Кто не успел — топает пешком 🚶‍♂️", elderly: "Едем домой с комфортом." },
             acc_bus_title: { normal: "<i class='fa-solid fa-stopwatch mr-2'></i> Дедлайн: 13:45 (по умолчанию)", elderly: "Как записаться?" },
             acc_bus_text: { 
-                normal: "<mark class='note-highlight'>Дедлайн плавающий!</mark> По умолчанию запись закрывается ровно в <strong>13:45</strong>! После этого времени бот шлет всех лесом. НО! Если админы сжалятся, они могут продлить дедлайн, и бот громко оповестит об этом всех в чате.<br><br><strong>Процесс:</strong> Выбираете здание (00UAC/94VAC). Бот сам вспомнит вашу стандартную остановку из базы! А если сегодня пятница — он заботливо спросит, на какой день вас записать.",
-                elderly: "Нажмите 'Запись на автобус' в меню. Выберите свое здание и остановку. <br><br><strong>Очень важно:</strong> Записаться нужно до дедлайна (обычно 13:45)! Если начальство продлит время — программа пришлет вам уведомление. Если опоздали совсем — придется идти домой пешком."
+                normal: "<mark class='note-highlight'>Дедлайн плавающий!</mark> По умолчанию запись закрывается ровно в <strong>13:45</strong>! После этого времени бот шлет всех лесом. НО! Если админы сжалятся, они могут продлить дедлайн, и Чубайс громко оповестит всех в чате.<br><br><strong>Процесс:</strong> выбираете здание (00UAC/94VAC), бот ищет вашу стандартную остановку в отдельной базе. Не нашел — даст список остановок, без истерик и шаманского бубна. Если вы уже записаны, покажет текущую запись и даст удалить ее. А если сегодня пятница — заботливо спросит, на какой день вас записать: пятница вечер, суббота или воскресенье.<br><br><strong>Отчет:</strong> в дедлайн начальству уходит готовый список. Если дедлайн продлили, повторно улетают только свежие записи, чтобы людей не записали дважды.",
+                elderly: "Нажмите 'Запись на автобус' в меню. Выберите свое здание. Программа сама попробует найти вашу остановку, а если не найдет — даст список.<br><br><strong>Очень важно:</strong> записаться нужно до дедлайна (обычно 13:45). Если начальство продлит время — программа пришлет уведомление. Если вы уже записались, можно посмотреть запись и удалить ее."
             },
             
             card_rvd_title: { normal: "<span class='ai-gradient fur-effect'>Вышел в РВД</span>", elderly: "Работа в выходные" },
             card_rvd_subtitle: { normal: "Управление уведомлениями 🔕", elderly: "Оповещение о выходе на работу." },
             acc_rvd_title: { normal: "<i class='fa-solid fa-moon mr-2'></i> Как бот вас бережет", elderly: "Для чего нужно?" },
             acc_rvd_text: { 
-                normal: "У Чубайса встроен алгоритм <strong>Тихого Часа</strong>.<br>• После 16:30 в будние дни<br>• В субботу и воскресенье круглосуточно<br>Бот отправляет сообщения <em>БЕЗ ЗВУКА</em> (disable_notification=True), чтобы не будить вас, если ваш напарник решил поработать ночью.<br><br><mark class='note-highlight'>Кнопка «Вышел в РВД»:</mark><br>Если сегодня выходной, но вы вышли на смену — нажмите эту кнопку в главном меню. Бот запишет вас в реестр работающих сегодня, и <strong>только для вас</strong> отключит тихий режим, чтобы вы не пропустили важное сообщение от Насти, когда она будет вас искать. (В 16:30 статус РВД сбросится сам).",
-                elderly: "Программа не беспокоит сотрудников со звуком в субботу и воскресенье. Если вы вышли на работу в свой выходной, нажмите эту кнопку. Программа поймет, что вы на смене, и будет присылать вам важные сообщения со звуком."
+                normal: "У Чубайса встроен алгоритм <strong>Тихого Часа</strong>.<br>• После 16:30 в будние дни<br>• В субботу и воскресенье круглосуточно<br>Бот отправляет сообщения <em>БЕЗ ЗВУКА</em> (disable_notification=True), чтобы не будить вас, если ваш напарник решил поработать ночью.<br><br><mark class='note-highlight'>Кнопка «Вышел в РВД»:</mark><br>Если сегодня выходной, но вы вышли на смену — нажмите эту кнопку в главном меню. Бот запишет вас в реестр работающих сегодня, сообщит админам и <strong>только для вас</strong> отключит тихий режим, чтобы вы не пропустили важное сообщение от Насти, когда она будет вас искать. Передумали до 16:30? Можно нажать отмену, и Чубайс снова уйдет на мягких лапах. После 16:30 регулирование статуса закрывается.",
+                elderly: "Программа не беспокоит сотрудников со звуком после 16:30 и в выходные. Если вы вышли на работу в свой выходной, нажмите эту кнопку. Программа поймет, что вы на смене, сообщит начальству и будет присылать вам важные сообщения со звуком. До 16:30 можно отменить статус."
             },
 
             card_sos_title: { normal: "<span class='ai-gradient fur-effect'>Ор мартовского кота</span>", elderly: "Кнопка Паники" },
@@ -1270,11 +1361,11 @@
             },
 
             card4_title: { normal: "<span class='ai-gradient fur-effect'>Жизнеобеспечение (Под капотом)</span> <span class='note-sticker'>🔋</span>", elderly: "Работа шайтан-машины" },
-            card4_subtitle: { normal: "Техническая часть для шаманов и техномагов.", elderly: "Почему оно работает без вас и громко ябедничает." },
+            card4_subtitle: { normal: "Техническая броня для шаманов и техномагов.", elderly: "Почему оно работает без вас и громко ябедничает." },
 
             wife_title: { normal: "Служба Спасения <span class='note-sticker'>🚑</span>", elderly: "Советы (Кошка)" },
             wife_text: {
-                normal: "Если меню бота 'заморозилось' (ну упал облачный сервак, бывает): не паникуйте. Я пну Чубайса и он всё вспомнит! В крайнем случае, просто напишите админу.",
+                normal: "Если меню бота 'заморозилось' (ну прилег облачный сервис, бывает): не паникуйте. Я пну Чубайса и он всё вспомнит! В крайнем случае, просто напишите админу.",
                 elderly: "Увидели, что кот 'завис'? <strong>Не надо тыкать в экран со всей силы сто раз подряд!</strong> Просто подождите 5 минут. Сервер подумает и сам ответит. Не волнуйтесь, ваши труды никуда не исчезнут."
             },
 
@@ -1283,7 +1374,8 @@
             admin_main_title: { normal: "Панель Управления", elderly: "Настройки Программы" },
             admin_main_desc: { normal: "Раздел доступен только тем, чей ID есть на Листе 'Админы' в Google Таблице. И самой Насте.", elderly: "Доступ к базе данных и управление рассылками." },
             admin_db_title: { normal: "<i class='fa-solid fa-table w-6 sm:w-8 text-center shrink-0 icon-3d-accent'></i> Структура Базы Данных", elderly: "<i class='fa-solid fa-table w-6 sm:w-8 text-center shrink-0 icon-3d-accent'></i> База данных" },
-            admin_cmd_title: { normal: "<i class='fa-solid fa-gamepad w-6 sm:w-8 text-center shrink-0 icon-3d-accent'></i> Кнопки Админа", elderly: "<i class='fa-solid fa-sliders w-6 sm:w-8 text-center shrink-0 icon-3d-accent'></i> Управление" }
+            admin_cmd_title: { normal: "<i class='fa-solid fa-gamepad w-6 sm:w-8 text-center shrink-0 icon-3d-accent'></i> Кнопки Админа", elderly: "<i class='fa-solid fa-sliders w-6 sm:w-8 text-center shrink-0 icon-3d-accent'></i> Управление" },
+            admin_signal_title: { normal: "<i class='fa-solid fa-bell w-6 sm:w-8 text-center shrink-0 icon-3d-accent'></i> Что шлет админу", elderly: "<i class='fa-solid fa-bell w-6 sm:w-8 text-center shrink-0 icon-3d-accent'></i> Уведомления админа" }
         };
 
         function setMode(index, btnWrapElement) {
@@ -1346,6 +1438,15 @@
                 }, 300);
             }
 
+            const adminSignalContent = document.getElementById('admin_signal_content');
+            if(adminSignalContent) {
+                adminSignalContent.style.opacity = '0';
+                setTimeout(() => {
+                    adminSignalContent.innerHTML = index === 0 ? htmlAdminSignalNormal : htmlAdminSignalElderly;
+                    adminSignalContent.style.opacity = '1';
+                }, 300);
+            }
+
             if(tg && tg.setHeaderColor) {
                 let col = isRosatom ? '#F4F7FB' : (index === 0 ? '#050505' : '#FFFFFF');
                 tg.setHeaderColor(col);
@@ -1373,7 +1474,7 @@
             }, 400);
         }
 
-        window.onload = () => {
+        function initPage() {
             const firstWrap = document.querySelector('.magnetic-wrap.active');
             if (firstWrap) {
                 setTimeout(() => {
@@ -1430,7 +1531,16 @@
 
             const adminCmd = document.getElementById('admin_cmd_content');
             if(adminCmd) { adminCmd.innerHTML = htmlAdminCmdNormal; adminCmd.style.transition = 'opacity 0.3s ease'; }
-        };
+
+            const adminSignal = document.getElementById('admin_signal_content');
+            if(adminSignal) { adminSignal.innerHTML = htmlAdminSignalNormal; adminSignal.style.transition = 'opacity 0.3s ease'; }
+        }
+
+        if (document.readyState === 'loading') {
+            window.addEventListener('DOMContentLoaded', initPage, { once: true });
+        } else {
+            initPage();
+        }
     </script>
 </body>
 </html>
