@@ -694,6 +694,18 @@
             outline-color: rgba(255, 159, 67, 0.78);
             box-shadow: 0 24px 54px rgba(255,159,67,0.18), 0 12px 32px rgba(31,111,178,0.14), var(--inner-light);
         }
+        .search-mark {
+            padding: 0 2px;
+            border-radius: 5px;
+            background: rgba(255, 214, 102, 0.72);
+            color: inherit;
+            box-shadow: 0 0 0 1px rgba(255, 159, 67, 0.22);
+        }
+        .search-current-mark {
+            background: rgba(255, 159, 67, 0.95);
+            color: #102033;
+            box-shadow: 0 0 0 2px rgba(255,255,255,0.84), 0 7px 16px rgba(255,159,67,0.28);
+        }
         .search-empty {
             display: none;
             margin: 0 0 18px;
@@ -1730,7 +1742,7 @@
             <form class="search-shell" role="search">
                 <label for="pageSearch">
                     <i class="fa-solid fa-magnifying-glass"></i>
-                    <input id="pageSearch" type="search" placeholder="Найти: ECOM, автобус, заявка..." autocomplete="off">
+                    <input id="pageSearch" type="search" placeholder="Слово или буквы: ECOM, автобус..." autocomplete="off">
                     <span class="search-count" id="searchCount">Поиск</span>
                 </label>
             </form>
@@ -1827,7 +1839,7 @@
 
             <div class="search-empty" id="searchEmpty">
                 <i class="fa-solid fa-circle-exclamation"></i>
-                Ничего не нашлось. Попробуй другое слово: заявка, ECOM, автобус, РВД, админ.
+                Ничего не нашлось. Попробуй другое слово или часть слова: заявка, ECOM, автобус, РВД, админ.
             </div>
 
             <section class="section" id="quick">
@@ -2213,14 +2225,75 @@
             console.warn("Emoji animation skipped", error);
         }
         const searchableBlocks = Array.from(document.querySelectorAll(".section, .feature-tile"));
-        const normalize = (value) => value.toLocaleLowerCase("ru-RU").replace(/\s+/g, " ").trim();
+        const normalize = (value) => value.toLocaleLowerCase("ru-RU").replace(/ё/g, "е").replace(/\s+/g, " ").trim();
         searchableBlocks.forEach((block) => {
-            block.dataset.searchText = normalize(block.innerText);
+            block.dataset.searchText = normalize(block.textContent || "");
         });
         let searchHits = [];
         let searchIndex = 0;
         let searchQuery = "";
         let searchScrollTimer = 0;
+        const searchTextFilter = window.NodeFilter || {
+            SHOW_TEXT: 4,
+            FILTER_ACCEPT: 1,
+            FILTER_REJECT: 2
+        };
+        const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        const termToPattern = (term) => escapeRegExp(term).replace(/е/g, "[её]");
+        const createSearchPattern = (terms) => {
+            const uniqueTerms = Array.from(new Set(terms))
+                .filter(Boolean)
+                .sort((a, b) => b.length - a.length);
+            if (!uniqueTerms.length) return null;
+            return new RegExp(uniqueTerms.map(termToPattern).join("|"), "gi");
+        };
+        const clearSearchMarks = () => {
+            document.querySelectorAll(".search-mark").forEach((mark) => {
+                const parent = mark.parentNode;
+                if (!parent) return;
+                parent.replaceChild(document.createTextNode(mark.textContent || ""), mark);
+                parent.normalize();
+            });
+        };
+        const highlightSearchTerms = (block, pattern) => {
+            if (!pattern) return;
+            const skipTags = new Set(["SCRIPT", "STYLE", "CODE", "INPUT", "TEXTAREA", "NOSCRIPT", "MARK"]);
+            const walker = document.createTreeWalker(block, searchTextFilter.SHOW_TEXT, {
+                acceptNode(node) {
+                    const parent = node.parentElement;
+                    if (!parent || skipTags.has(parent.tagName) || parent.closest(".live-emoji")) {
+                        return searchTextFilter.FILTER_REJECT;
+                    }
+                    pattern.lastIndex = 0;
+                    return pattern.test(node.nodeValue || "") ? searchTextFilter.FILTER_ACCEPT : searchTextFilter.FILTER_REJECT;
+                }
+            });
+            const nodes = [];
+            while (walker.nextNode()) nodes.push(walker.currentNode);
+            nodes.forEach((node) => {
+                const text = node.nodeValue || "";
+                const fragment = document.createDocumentFragment();
+                let lastIndex = 0;
+                let match;
+                pattern.lastIndex = 0;
+                while ((match = pattern.exec(text)) !== null) {
+                    if (match.index > lastIndex) {
+                        fragment.append(document.createTextNode(text.slice(lastIndex, match.index)));
+                    }
+                    const mark = document.createElement("mark");
+                    mark.className = "search-mark";
+                    mark.textContent = match[0];
+                    fragment.append(mark);
+                    searchHits.push(mark);
+                    lastIndex = match.index + match[0].length;
+                    if (!match[0].length) pattern.lastIndex += 1;
+                }
+                if (lastIndex < text.length) {
+                    fragment.append(document.createTextNode(text.slice(lastIndex)));
+                }
+                node.parentNode.replaceChild(fragment, node);
+            });
+        };
         const updateProgress = () => {
             const max = document.documentElement.scrollHeight - window.innerHeight;
             const value = max > 0 ? Math.min(100, (window.scrollY / max) * 100) : 0;
@@ -2244,7 +2317,19 @@
         };
         const markCurrentSearchHit = () => {
             searchableBlocks.forEach((block) => block.classList.remove("search-current"));
-            if (searchHits.length) searchHits[searchIndex].classList.add("search-current");
+            document.querySelectorAll(".search-current-mark").forEach((mark) => mark.classList.remove("search-current-mark"));
+            if (searchHits.length) {
+                const currentHit = searchHits[searchIndex];
+                const parentDetails = currentHit.closest("details");
+                if (parentDetails && !parentDetails.open) {
+                    parentDetails.open = true;
+                    const parentSummary = Array.from(parentDetails.children).find((child) => child.tagName === "SUMMARY");
+                    if (parentSummary) parentSummary.setAttribute("aria-expanded", "true");
+                }
+                currentHit.classList.add("search-current-mark");
+                const currentBlock = currentHit.closest(".section, .feature-tile");
+                if (currentBlock) currentBlock.classList.add("search-current");
+            }
             renderSearchPosition();
         };
         const scrollToCurrentSearchHit = () => {
@@ -2267,11 +2352,13 @@
         };
         const updateSearch = ({ autoScroll = false } = {}) => {
             if (!searchInput || !searchCount || !searchEmpty) return;
+            clearSearchMarks();
             const query = normalize(searchInput.value);
             const terms = query.split(" ").filter(Boolean);
-            const enabled = query.length >= 2;
+            const enabled = query.length >= 1;
             const queryChanged = query !== searchQuery;
-            let hits = 0;
+            const pattern = createSearchPattern(terms);
+            let matchedBlocks = 0;
             searchHits = [];
             searchQuery = enabled ? query : "";
             document.body.classList.toggle("search-active", enabled);
@@ -2280,13 +2367,13 @@
                 block.classList.toggle("search-hit", matched);
                 block.classList.remove("search-current");
                 if (matched) {
-                    searchHits.push(block);
-                    hits += 1;
+                    matchedBlocks += 1;
+                    highlightSearchTerms(block, pattern);
                 }
             });
             if (queryChanged || searchIndex >= searchHits.length) searchIndex = 0;
             markCurrentSearchHit();
-            searchEmpty.classList.toggle("show", enabled && hits === 0);
+            searchEmpty.classList.toggle("show", enabled && matchedBlocks === 0);
             if (enabled && autoScroll && searchHits.length) {
                 scheduleSearchScroll();
             } else {
