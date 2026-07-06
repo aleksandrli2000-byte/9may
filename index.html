@@ -859,6 +859,12 @@
             justify-content: space-between;
             font-weight: 900;
             background: linear-gradient(180deg, rgba(255,255,255,0.20), transparent);
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+        summary > * {
+            pointer-events: none;
         }
         summary span {
             min-width: 0;
@@ -1325,10 +1331,15 @@
                 text-wrap: balance;
             }
             .search-shell label {
-                grid-template-columns: 18px minmax(0, 1fr);
+                grid-template-columns: 18px minmax(0, 1fr) auto;
             }
             .search-count {
-                display: none;
+                min-width: 48px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                padding: 5px 6px;
+                font-size: 10px;
             }
             .small-button {
                 min-height: 38px;
@@ -2078,6 +2089,31 @@
                 });
             }
         }
+        const detailSummaries = Array.from(document.querySelectorAll("details > summary"));
+        detailSummaries.forEach((summary) => {
+            const details = summary.parentElement;
+            if (!details) return;
+            const syncDetailsState = () => {
+                summary.setAttribute("aria-expanded", details.open ? "true" : "false");
+            };
+            const toggleDetails = () => {
+                details.open = !details.open;
+                syncDetailsState();
+            };
+            summary.setAttribute("role", "button");
+            summary.setAttribute("tabindex", "0");
+            syncDetailsState();
+            summary.addEventListener("click", (event) => {
+                event.preventDefault();
+                toggleDetails();
+            });
+            summary.addEventListener("keydown", (event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    toggleDetails();
+                }
+            });
+        });
         window.addEventListener("keydown", (event) => {
             if (searchInput && (event.ctrlKey || event.metaKey) && event.key.toLocaleLowerCase("ru-RU") === "k") {
                 event.preventDefault();
